@@ -1,0 +1,745 @@
+{% extends 'base.html' %}
+{% block title %}Home - VaxSafe{% endblock %}
+{% load static %}
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <h1>Your Health, Future-Proofed.</h1>
+    <p>The intelligent vaccination ecosystem keeping your family safe, one dose at a time.</p>
+    <div class="buttons">
+      <a href="{% url 'register' %}" class="btn-primary">Get started</a>
+      <a href="#features" class="btn-secondary">Learn More</a>
+    </div>
+  </div>
+  <div class="hero-img">
+    <img src="{% static 'images/doctor.png' %}" alt="Doctor Image">
+  </div>
+</section>
+
+<style>
+  /* ============================================
+     HERO SECTION - Beautiful Gradient Design
+     ============================================ */
+  .hero {
+    background: linear-gradient(135deg, #b0fedc 0%, #c5d2f4 100%);
+    padding: 100px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+    min-height: 600px;
+  }
+
+  .hero-text {
+    flex: 1;
+    max-width: 600px;
+  }
+
+  .hero-text h1 {
+    font-size: 56px;
+    font-weight: bold;
+    color: #2d3436;
+    margin-bottom: 25px;
+    line-height: 1.2;
+  }
+
+  .hero-text p {
+    font-size: 20px;
+    color: #636e72;
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 20px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 16px 40px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+  }
+
+  .btn-secondary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .hero-img {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-img img {
+    max-width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
+    transition: transform 0.3s ease;
+  }
+
+  .hero-img img:hover {
+    transform: scale(1.05);
+  }
+
+  /* ============================================
+     FEATURES SECTION - Vibrant Gradient Cards
+     ============================================ */
+  .features {
+    text-align: center;
+    padding: 120px 40px;
+    background: linear-gradient(to bottom, #fdfbfb 0%, #ebedee 100%);
+    position: relative;
+  }
+
+  .features::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #fa709a, #fee140, #48c6ef, #0ba360);
+  }
+
+  .features h2 {
+    font-size: 42px;
+    font-weight: bold;
+    margin-bottom: 60px;
+    color: #2d3436;
+    position: relative;
+    display: inline-block;
+  }
+
+  .features h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #fa709a, #fee140);
+    border-radius: 2px;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .feature-box {
+    display: flex;
+    align-items: center;
+    padding: 35px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    box-shadow: 0 8px 20px rgba(250, 112, 154, 0.3);
+    transition: all 0.3s ease-in-out;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .feature-box:hover::before {
+    left: 100%;
+  }
+
+  .feature-box:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(250, 112, 154, 0.4);
+  }
+
+  .feature-box:nth-child(2) {
+    background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+    box-shadow: 0 8px 20px rgba(72, 198, 239, 0.3);
+  }
+
+  .feature-box:nth-child(2):hover {
+    box-shadow: 0 12px 30px rgba(72, 198, 239, 0.4);
+  }
+
+  .feature-box:nth-child(3) {
+    background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+    box-shadow: 0 8px 20px rgba(11, 163, 96, 0.3);
+  }
+
+  .feature-box:nth-child(3):hover {
+    box-shadow: 0 12px 30px rgba(11, 163, 96, 0.4);
+  }
+
+  .feature-box:nth-child(4) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 8px 20px rgba(240, 147, 251, 0.3);
+  }
+
+  .feature-box:nth-child(4):hover {
+    box-shadow: 0 12px 30px rgba(240, 147, 251, 0.4);
+  }
+
+  .feature-icon {
+    width: 55px;
+    height: 55px;
+    margin-right: 20px;
+    flex-shrink: 0;
+    filter: brightness(0) invert(1);
+  }
+
+  .feature-text h4 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 0 8px;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .feature-text p {
+    font-size: 14px;
+    margin: 0;
+    color: #ffffff;
+    line-height: 1.6;
+    opacity: 0.95;
+  }
+
+  /* ============================================
+     ABOUT US SECTION - Card-Based Design
+     ============================================ */
+  .about {
+    padding: 120px 40px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .about::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .about h2 {
+    text-align: center;
+    font-size: 42px;
+    font-weight: bold;
+    margin-bottom: 60px;
+    color: #ffffff;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  .about h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #fa709a, #fee140);
+    border-radius: 2px;
+  }
+
+  .about-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 25px;
+    padding: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 2;
+  }
+
+  .about-content p {
+    color: #f0f0f0;
+    font-size: 17px;
+    line-height: 2;
+    text-align: justify;
+    margin: 0;
+  }
+
+  .about-content br {
+    display: block;
+    content: "";
+    margin-top: 15px;
+  }
+
+  /* Decorative Elements */
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 50px;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+  }
+
+  .stat-item:hover {
+    transform: translateY(-5px);
+  }
+
+  .stat-item h3 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #fee140;
+    margin: 0 0 10px;
+  }
+
+  .stat-item p {
+    font-size: 14px;
+    color: #ffffff;
+    opacity: 0.9;
+    margin: 0;
+    text-align: center;
+  }
+
+  /* ============================================
+     CONTACT US SECTION - Modern Form Design
+     ============================================ */
+  #contact {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 25%, #c44569 75%, #774d8e 100%);
+    padding: 120px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #contact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect fill="rgba(255,255,255,0.03)" width="50" height="50"/></svg>');
+    opacity: 0.5;
+  }
+
+  #contact h2 {
+    font-size: 42px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  #contact h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #fee140, #fa709a);
+    border-radius: 2px;
+  }
+
+  .contact-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 18px;
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 2;
+  }
+
+  form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 700px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(15px);
+    padding: 50px;
+    border-radius: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .messages {
+    width: 100%;
+    max-width: 700px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .messages p {
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .messages p.success {
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    border-left: 4px solid #4caf50;
+  }
+
+  .messages p.error {
+    background: rgba(244, 67, 54, 0.9);
+    color: white;
+    border-left: 4px solid #f44336;
+  }
+
+  .form-group {
+    position: relative;
+    margin-bottom: 25px;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 18px 20px;
+    border: 2px solid #e8e8e8;
+    border-radius: 15px;
+    font-size: 16px;
+    color: #2d3436;
+    outline: none;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .contact-form textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: #a0a0a0;
+  }
+
+  .contact-form button {
+    padding: 18px 40px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .contact-form button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5);
+    background: linear-gradient(135deg, #ee5a6f 0%, #ff6b6b 100%);
+  }
+
+  .contact-form button:active {
+    transform: translateY(-1px);
+  }
+
+  /* Contact Info Cards */
+  .contact-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    max-width: 1100px;
+    margin: 60px auto 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .info-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+  }
+
+  .info-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .info-card i {
+    font-size: 40px;
+    color: #fee140;
+    margin-bottom: 15px;
+  }
+
+  .info-card h4 {
+    color: #ffffff;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .info-card p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    margin: 0;
+  }
+
+  /* ============================================
+     RESPONSIVE DESIGN
+     ============================================ */
+  @media (max-width: 768px) {
+    .hero {
+      flex-direction: column;
+      padding: 60px 30px;
+      min-height: auto;
+      gap: 40px;
+    }
+
+    .hero-text {
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .hero-text h1 {
+      font-size: 36px;
+    }
+
+    .hero-text p {
+      font-size: 16px;
+    }
+
+    .buttons {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-img {
+      order: -1;
+    }
+
+    .hero-img img {
+      max-height: 300px;
+    }
+
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .feature-box {
+      padding: 25px;
+    }
+
+    .features h2,
+    .about h2,
+    #contact h2 {
+      font-size: 32px;
+    }
+
+    .about-content {
+      padding: 30px;
+    }
+
+    .about-stats {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .contact-form {
+      padding: 35px 25px;
+    }
+
+    .contact-info {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+</style>
+
+<section id="features" class="features">
+  <h2>Features</h2>
+  <div class="feature-grid">
+    <div class="feature-box">
+      <img src="https://img.icons8.com/ios-filled/55/195C7A/alarm.png" alt="Smart Reminders" class="feature-icon">
+      <div class="feature-text">
+        <h4>Smart Reminders</h4>
+        <p>Never miss your next Vaccine</p>
+      </div>
+    </div>
+    <div class="feature-box">
+      <img src="https://img.icons8.com/ios-filled/55/195C7A/family.png" alt="Family Tracking" class="feature-icon">
+      <div class="feature-text">
+        <h4>Family Tracking</h4>
+        <p>Manage Vaccinations for your loved ones</p>
+      </div>
+    </div>
+    <div class="feature-box">
+      <img src="https://img.icons8.com/ios-filled/55/195C7A/marker.png" alt="Center Finder" class="feature-icon">
+      <div class="feature-text">
+        <h4>Center Finder</h4>
+        <p>Locate nearby vaccination centers</p>
+      </div>
+    </div>
+    <div class="feature-box">
+      <div class="feature-text">
+        <h4>Latest Updates</h4>
+        <p>Stay informed with the newest vaccine-related news.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="about">
+  <h2>About Us</h2>
+  <div class="about-content">
+    <p>VaxSafe is a student-developed web platform dedicated to empowering Bangladeshi families with accessible vaccination management tools. <br>
+    Our system simplifies healthcare by offering intelligent scheduling, real-time reminders, and secure tracking for family members of all ages. <br>
+    Deeply integrated with Bangladesh's national immunization calendar, VaxSafe connects you to local health centers to ensure no critical dose is missed. <br>
+    We make staying protected as easy as checking your email, contributing to a safer, healthier nation.</p>
+  </div>
+
+  <div class="about-stats">
+    <div class="stat-item">
+      <h3>100%</h3>
+      <p>Secure & Private</p>
+    </div>
+    <div class="stat-item">
+      <h3>24/7</h3>
+      <p>Always Available</p>
+    </div>
+    <div class="stat-item">
+      <h3>Free</h3>
+      <p>For All Users</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <h2>Contact Us</h2>
+  <p class="contact-subtitle">We'd love to hear from you! Send us a message.</p>
+
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <p class="{{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <form method="POST" action="{% url 'send_message' %}">
+    {% csrf_token %}
+    <div class="contact-form">
+      <div class="form-group">
+        <input type="text" name="name" placeholder="Your Name" required>
+      </div>
+      <div class="form-group">
+        <input type="email" name="email" placeholder="Your Email" required>
+      </div>
+      <div class="form-group">
+        <textarea name="message" placeholder="Your Message" required></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Send Message</button>
+    </div>
+  </form>
+
+  <div class="contact-info">
+    <div class="info-card">
+      <h4>📧 Email</h4>
+      <p>support@vaxsafe.bd</p>
+    </div>
+    <div class="info-card">
+      <h4>📱 Phone</h4>
+      <p>+880 1XXX-XXXXXX</p>
+    </div>
+    <div class="info-card">
+      <h4>📍 Location</h4>
+      <p>Dhaka, Bangladesh</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

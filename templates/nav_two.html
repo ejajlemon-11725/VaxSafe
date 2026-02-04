@@ -1,0 +1,460 @@
+{% load static %}
+<nav class="nav_two">
+  <div class="logo">
+    <a href="{% url 'dashboard' %}">
+      <img src="{% static 'images/logo.png' %}" alt="VaxSafe Logo">
+    </a>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'dashboard' %}" class="nav-btn nav-btn-1">Dashboard</a></li>
+    <li><a href="{% url 'vaccine_schedule' %}" class="nav-btn nav-btn-2">Schedule</a></li>
+    <li><a href="{% url 'centers' %}" class="nav-btn nav-btn-3">Centers</a></li>
+    <li><a href="#" class="nav-btn nav-btn-4">News</a></li>
+
+    <li class="profile-menu">
+      <button class="nav-btn nav-btn-profile" id="profile-btn" onclick="toggleDropdown(event, 'profile-dropdown')">
+        <i class="fa fa-user-circle"></i> {{ request.user.first_name|default:request.user.username }} <span class="dropdown-arrow">▼</span>
+      </button>
+      <ul class="dropdown" id="profile-dropdown">
+        <li><a href="{% url 'profile' %}">Profile</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    </li>
+
+    <li class="lang-menu">
+      <button class="nav-btn nav-btn-lang" id="lang-btn" onclick="toggleDropdown(event, 'lang-dropdown')">
+        English <span class="dropdown-arrow">▼</span>
+      </button>
+      <ul class="dropdown" id="lang-dropdown">
+        <li onclick="setLanguage('English')">English</li>
+        <li onclick="setLanguage('Bangla')">বাংলা</li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+<!-- Navigation Styles -->
+<style>
+/* ========================================
+   MODERN HORIZONTAL NAVIGATION
+   Unique Buttons with Gradients
+   ======================================== */
+
+.nav_two {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 40px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 4px 15px rgba(0, 119, 182, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.nav_two .logo img {
+  height: 50px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.nav_two .logo img:hover {
+  transform: scale(1.05);
+}
+
+/* Navigation Links Container */
+.nav_two .nav-links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav_two .nav-links > li {
+  position: relative;
+}
+
+/* Base Navigation Button Style */
+.nav-btn {
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: white;
+  color: #2c3e50;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Ripple Effect */
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.nav-btn:active::before {
+  width: 200px;
+  height: 200px;
+}
+
+/* Dashboard Button - Medical Blue */
+.nav-btn-1 {
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+}
+
+.nav-btn-1:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 180, 216, 0.5);
+}
+
+/* Schedule Button - Ocean Blue */
+.nav-btn-2 {
+  background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(72, 198, 239, 0.3);
+}
+
+.nav-btn-2:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(72, 198, 239, 0.5);
+}
+
+/* Centers Button - Green */
+.nav-btn-3 {
+  background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(11, 163, 96, 0.3);
+}
+
+.nav-btn-3:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(11, 163, 96, 0.5);
+}
+
+/* News Button - Sunset Gradient */
+.nav-btn-4 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(250, 112, 154, 0.3);
+}
+
+.nav-btn-4:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(250, 112, 154, 0.5);
+}
+
+/* Profile Button - Purple */
+.nav-btn-profile {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.nav-btn-profile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.nav-btn-profile i {
+  font-size: 18px;
+}
+
+/* Language Button - Coral */
+.nav-btn-lang {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);
+}
+
+.nav-btn-lang:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(240, 147, 251, 0.5);
+}
+
+/* Dropdown Arrow Animation */
+.dropdown-arrow {
+  display: inline-block;
+  margin-left: 5px;
+  transition: transform 0.3s ease;
+}
+
+/* Active State */
+.nav-btn.active {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+  filter: brightness(1.15);
+}
+
+/* ========================================
+   DROPDOWN MENU STYLES - COMPLETELY FIXED
+   ======================================== */
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 8px 0;
+  min-width: 160px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* IMPORTANT: Show dropdown with .show class */
+.dropdown.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+}
+
+/* Dropdown list items */
+.dropdown li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  cursor: pointer !important;
+  user-select: none;
+}
+
+/* Dropdown links */
+.dropdown li a {
+  display: block;
+  padding: 12px 20px;
+  color: #2c3e50 !important;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer !important;
+}
+
+/* Hover effect */
+.dropdown li:hover {
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%) !important;
+  cursor: pointer !important;
+}
+
+.dropdown li:hover a {
+  color: white !important;
+  cursor: pointer !important;
+}
+
+/* Rounded corners */
+.dropdown li:first-child:hover {
+  border-radius: 12px 12px 0 0;
+}
+
+.dropdown li:last-child:hover {
+  border-radius: 0 0 12px 12px;
+}
+
+/* Active state */
+.dropdown li:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* Hover Glow Effect */
+.nav-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 1024px) {
+  .nav_two {
+    padding: 12px 20px;
+  }
+
+  .nav-links {
+    gap: 10px;
+  }
+
+  .nav-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav_two {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .nav-btn {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  .dropdown {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(-10px);
+  }
+
+  .dropdown.show {
+    transform: translateX(-50%) translateY(0) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links {
+    width: 100%;
+  }
+
+  .nav-links > li {
+    flex: 1 1 45%;
+  }
+
+  .nav-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+}
+</style>
+
+<!-- JavaScript - COMPLETELY REWRITTEN -->
+<script>
+// Set active state based on current URL
+document.addEventListener('DOMContentLoaded', function() {
+  const currentPath = window.location.pathname;
+  const navLinks = document.querySelectorAll('.nav-btn');
+
+  navLinks.forEach(link => {
+    if (link.getAttribute('href') === currentPath) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Toggle dropdown function
+function toggleDropdown(event, dropdownId) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const dropdown = document.getElementById(dropdownId);
+  const button = event.currentTarget;
+  const arrow = button.querySelector('.dropdown-arrow');
+
+  // Close all other dropdowns
+  document.querySelectorAll('.dropdown').forEach(dd => {
+    if (dd.id !== dropdownId) {
+      dd.classList.remove('show');
+    }
+  });
+
+  // Reset all other arrows
+  document.querySelectorAll('.dropdown-arrow').forEach(arr => {
+    if (arr !== arrow) {
+      arr.style.transform = 'rotate(0deg)';
+    }
+  });
+
+  // Toggle current dropdown
+  const isShowing = dropdown.classList.toggle('show');
+
+  // Rotate arrow
+  if (arrow) {
+    arrow.style.transform = isShowing ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+}
+
+// Language selector function
+function setLanguage(lang) {
+  const langBtn = document.getElementById('lang-btn');
+  if (lang === 'English') {
+    langBtn.innerHTML = 'English <span class="dropdown-arrow">▼</span>';
+  } else if (lang === 'Bangla') {
+    langBtn.innerHTML = 'বাংলা <span class="dropdown-arrow">▼</span>';
+  }
+
+  // Close dropdown after selection
+  document.getElementById('lang-dropdown').classList.remove('show');
+  const arrow = langBtn.querySelector('.dropdown-arrow');
+  if (arrow) arrow.style.transform = 'rotate(0deg)';
+
+  console.log('Language changed to:', lang);
+}
+
+// FIXED: Close dropdowns ONLY when clicking completely outside
+document.addEventListener('click', function(event) {
+  // Check if click is inside any dropdown menu or button
+  const clickedInsideProfile = event.target.closest('.profile-menu');
+  const clickedInsideLang = event.target.closest('.lang-menu');
+
+  // If clicked completely outside both menus, close all dropdowns
+  if (!clickedInsideProfile && !clickedInsideLang) {
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+      dropdown.classList.remove('show');
+    });
+
+    // Reset all arrows
+    document.querySelectorAll('.dropdown-arrow').forEach(arrow => {
+      arrow.style.transform = 'rotate(0deg)';
+    });
+  }
+});
+
+// IMPORTANT: Prevent dropdown from closing when clicking/hovering inside
+document.querySelectorAll('.dropdown').forEach(dropdown => {
+  // Prevent click propagation
+  dropdown.addEventListener('click', function(event) {
+    event.stopPropagation();
+  });
+
+  // Prevent mouseleave from closing dropdown
+  dropdown.addEventListener('mouseleave', function(event) {
+    event.stopPropagation();
+  });
+});
+
+// Keep dropdown open when hovering over the parent menu
+document.querySelectorAll('.profile-menu, .lang-menu').forEach(menu => {
+  menu.addEventListener('mouseleave', function(event) {
+    event.stopPropagation();
+  });
+});
+</script>

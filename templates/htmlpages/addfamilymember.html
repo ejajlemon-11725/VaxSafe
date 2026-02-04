@@ -1,0 +1,508 @@
+{% extends "base_log.html" %}
+
+{% block title %}Add Family Member{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ========================================
+   ADD FAMILY MEMBER - Modern Modal Design
+   Matching Registration Page Style
+   ======================================== */
+
+/* Blurred Background Overlay */
+.blurred-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(176, 254, 220, 0.7) 0%, rgba(197, 210, 244, 0.7) 100%);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  background: #ffffff;
+  padding: 40px 45px;
+  border-radius: 20px;
+  box-shadow: 0 15px 50px rgba(0, 119, 182, 0.25);
+  z-index: 1001;
+  animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -60%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.modal h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #0077b6;
+  text-align: center;
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modal-subtitle {
+  text-align: center;
+  color: #636e72;
+  font-size: 15px;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+/* Form Styling */
+.modal form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form Paragraphs (Django form.as_p) */
+.modal form p {
+  margin-bottom: 20px;
+}
+
+.modal form p label {
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Input Fields */
+.modal input,
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #2c3e50;
+  background: #f8fbff;
+  transition: all 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+}
+
+.modal input:focus,
+.modal select:focus,
+.modal textarea:focus {
+  outline: none;
+  border-color: #00b4d8;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.15);
+  transform: translateY(-2px);
+}
+
+.modal input::placeholder {
+  color: #98aab9;
+}
+
+/* Select Dropdown Arrow */
+.modal select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300b4d8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+/* Textarea */
+.modal textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Error Messages */
+.modal .errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 5px 0 0 0;
+}
+
+.modal .errorlist li {
+  color: #ff6b6b;
+  font-size: 13px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.modal .errorlist li::before {
+  content: "⚠";
+  font-size: 14px;
+}
+
+/* Help Text */
+.modal .helptext {
+  font-size: 12px;
+  color: #98aab9;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Action Buttons Container */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* Base Button Style */
+button,
+.btn {
+  padding: 16px 32px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  flex: 1;
+  letter-spacing: 0.5px;
+}
+
+/* Ripple Effect */
+button::before,
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+button:active::before,
+.btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Save Button - Matching "Create Account" Style */
+.save-btn {
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+}
+
+.save-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 180, 216, 0.5);
+  filter: brightness(1.1);
+}
+
+.save-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Cancel Button - Outline Style */
+.cancel-btn {
+  background: transparent;
+  color: #636e72;
+  border: 2px solid #e1e8ed;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.cancel-btn:hover {
+  background: #f8f9fa;
+  border-color: #00b4d8;
+  color: #00b4d8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Support for Buttons */
+button i,
+.btn i {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* Success Message (if any) */
+.messages {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1002;
+  max-width: 400px;
+}
+
+.alert {
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  animation: slideInRight 0.4s ease;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+  color: white;
+}
+
+.alert-error {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+}
+
+/* Loading State */
+.save-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.save-btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 600px) {
+  .modal {
+    width: 95%;
+    padding: 30px 25px;
+  }
+
+  .modal h2 {
+    font-size: 24px;
+  }
+
+  .modal-subtitle {
+    font-size: 14px;
+  }
+
+  .modal input,
+  .modal select,
+  .modal textarea {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  button,
+  .btn {
+    width: 100%;
+    padding: 14px 24px;
+  }
+}
+
+/* ========================================
+   ADDITIONAL ENHANCEMENTS
+   ======================================== */
+
+/* Required Field Indicator */
+.modal form p label.required::after {
+  content: ' *';
+  color: #ff6b6b;
+  font-weight: 700;
+}
+
+/* Form Field Focus Indicator */
+.modal form p:focus-within label {
+  color: #00b4d8;
+  transition: color 0.3s ease;
+}
+
+/* Checkbox/Radio Styling */
+.modal input[type="checkbox"],
+.modal input[type="radio"] {
+  width: auto;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+/* Date Input Styling */
+.modal input[type="date"] {
+  cursor: pointer;
+}
+
+/* Close Button (Optional) */
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 20px;
+  color: #636e72;
+  text-decoration: none;
+}
+
+.modal-close:hover {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+  transform: rotate(90deg);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+  <div class="blurred-bg"></div>
+  <div class="modal">
+    <h2>👨‍👩‍👧‍👦 Add Family Member</h2>
+    <p class="modal-subtitle">Keep track of your family's health together</p>
+
+    <form method="POST" id="familyForm">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <div class="actions">
+        <button type="submit" class="save-btn" id="saveBtn">
+          <i class="fa fa-save"></i> Save Member
+        </button>
+        <a class="btn cancel-btn" href="{% url 'familymembers' %}">
+          <i class="fa fa-times"></i> Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form Submit Animation
+document.getElementById('familyForm').addEventListener('submit', function(e) {
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.classList.add('loading');
+  saveBtn.innerHTML = '<span>Saving...</span>';
+});
+
+// Add smooth focus animations
+document.querySelectorAll('.modal input, .modal select, .modal textarea').forEach(field => {
+  field.addEventListener('focus', function() {
+    this.parentElement.style.transform = 'scale(1.01)';
+    this.parentElement.style.transition = 'transform 0.2s ease';
+  });
+
+  field.addEventListener('blur', function() {
+    this.parentElement.style.transform = 'scale(1)';
+  });
+});
+
+// Close modal on background click
+document.querySelector('.blurred-bg').addEventListener('click', function() {
+  if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+    window.location.href = "{% url 'familymembers' %}";
+  }
+});
+
+// Escape key to close
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+      window.location.href = "{% url 'familymembers' %}";
+    }
+  }
+});
+
+// Form validation feedback
+document.querySelectorAll('.modal input[required], .modal select[required]').forEach(field => {
+  field.addEventListener('invalid', function(e) {
+    e.preventDefault();
+    this.style.borderColor = '#ff6b6b';
+    this.style.animation = 'shake 0.5s';
+  });
+
+  field.addEventListener('input', function() {
+    if (this.validity.valid) {
+      this.style.borderColor = '#0ba360';
+    }
+  });
+});
+
+// Shake animation for invalid fields
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}VaxSafe{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Shared navbar style */
+    .nav2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 2rem;
+      background: white;
+      border-bottom: 1px solid #ccc;
+    }
+    .nav2 .logo img {
+      height: 40px;
+    }
+    .nav2 .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav2 .nav-links a {
+      text-decoration: none;
+      color: #000;
+      font-weight: 500;
+    }
+    .profile-menu, .lang-menu {
+      position: relative;
+      cursor: pointer;
+    }
+    .profile-menu .dropdown, .lang-menu .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%; left: 0;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      list-style: none;
+      padding: 0.5rem 0;
+      min-width: 120px;
+      z-index: 1000;
+    }
+    .profile-menu:hover .dropdown,
+    .lang-menu:hover .dropdown {
+      display: block;
+    }
+    .dropdown li {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+    .dropdown li:hover {
+      background: #f0f0f0;
+    .footer {
+  text-align: center;
+  padding: 1px 0;
+  background: #ffffff;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer p {
+  font-size: 15px;
+  color: #000000;
+}
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% include 'nav_two.html' %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+  <p>&copy; 2025 VaxSafe. All rights reserved.</p>
+</footer>
+
+  <script>
+    function setLanguage(lang) {
+      document.getElementById("lang-selected").innerText = lang + " ▼";
+      // future: send AJAX request to update user preference
+    }
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

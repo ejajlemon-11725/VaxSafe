@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Features - VaxSafe{% endblock %}
+{% block content %}
+
+<style>
+  .features {
+    text-align: center;
+    padding: 50px 20px;
+    background: #ffffff;
+  }
+
+  .features h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 40px;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .feature-box {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e8f6f9, #f3fbfc);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
+    text-align: left;
+  }
+
+  .feature-box:hover {
+    transform: translateY(-5px);
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+  }
+
+  .feature-box h4 {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+    color: #195C7A;
+  }
+
+  .feature-box p {
+    font-size: 13px;
+    margin: 3px 0 0;
+    color: #333;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section id="features" class="features">
+  <h2>Features</h2>
+  <div class="feature-grid">
+
+    <div class="feature-box">
+      <img src="https://img.icons8.com/ios-filled/50/195C7A/alarm.png" alt="Smart Reminders" class="feature-icon">
+      <div>
+        <h4>Smart Reminders</h4>
+        <p>Never miss your next Vaccine</p>
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <img src="https://img.icons8.com/ios-filled/50/195C7A/family.png" alt="Family Tracking" class="feature-icon">
+      <div>
+        <h4>Family Tracking</h4>
+        <p>Manage Vaccinations for your loved ones</p>
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <img src="https://img.icons8.com/ios-filled/50/195C7A/marker.png" alt="Center Finder" class="feature-icon">
+      <div>
+        <h4>Center Finder</h4>
+        <p>Locate nearby vaccination centers</p>
+      </div>
+    </div>
+
+    <div class="feature-box">
+      <img src="https://img.icons8.com/ios-filled/50/195C7A/plus-math.png" alt="Latest Updates" class="feature-icon">
+      <div>
+        <h4>Latest Updates</h4>
+        <p>Get health alerts and vaccine updates</p>
+      </div>
+    </div>
+
+
+  </div>
+</section>
+
+{% endblock %}

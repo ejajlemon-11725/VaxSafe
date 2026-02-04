@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% block title %}Login - VaxSafe{% endblock %}
+{% load static %}
+{% block content %}
+
+<!-- Overlay -->
+<div class="overlay-bg">
+  <div class="login-card">
+    <h2>Log In</h2>
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" name="username" placeholder="Username" required>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" name="password" placeholder="Password" required>
+      </div>
+
+      <button type="submit" class="btn-signin">Sign In</button>
+      <a href="{% url 'home' %}" class="btn-back">Back</a>
+    </form>
+
+    <div class="forgot-link">
+      <a href="#">Forgot Password?</a>
+    </div>
+
+    <div class="register-link">
+      <p>Don’t have an account?
+        <a href="{% url 'register' %}" class="register-text">Register</a>
+      </p>
+    </div>
+
+    <div class="divider">
+      <span>Or log in with</span>
+    </div>
+
+    <!-- Social login buttons -->
+    <div class="social-login">
+      <a href="#" class="btn-google">
+        <i class="fab fa-google"></i> Continue with Google
+      </a>
+      <a href="#" class="btn-facebook">
+        <i class="fab fa-facebook-f"></i> Continue with Facebook
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Font Awesome (make sure in base.html head) -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> -->
+
+<style>
+/* Overlay background */
+.overlay-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6); /* dark semi-transparent layer */
+  backdrop-filter: blur(6px); /* blur the homepage behind */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* above navbar */
+}
+
+/* Card */
+.login-card {
+  background: #fff;
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
+  width: 360px;
+  text-align: center;
+  border: 2px solid #000;
+  animation: fadeIn 0.4s ease;
+}
+
+.login-card h2 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000;
+}
+
+/* Input group with icons */
+.input-group {
+  position: relative;
+  width: 100%;
+  margin: 0.7rem 0;
+}
+
+.input-group i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  font-size: 1rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.9rem 0.9rem 0.9rem 2.5rem; /* space for icon */
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  outline: none;
+  background: #f0fff8;
+  font-size: 1rem;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+.login-card .btn-signin,
+.login-card .btn-back {
+  display: block;
+  width: 100%;
+  padding: 0.9rem;
+  margin: 0.7rem 0;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.login-card .btn-signin {
+  background: #2563eb;
+  color: #fff;
+}
+
+.login-card .btn-back {
+  background: #b2f5e9;
+  color: #000;
+}
+
+/* Links */
+.forgot-link {
+  margin: 0.5rem 0;
+  text-align: right;
+}
+
+.forgot-link a {
+  color: #2563eb;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.register-link {
+  margin-top: 0.5rem;
+}
+
+.register-link .register-text {
+  color: #007bff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.register-link .register-text:hover {
+  text-decoration: underline;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ccc;
+}
+
+.divider span {
+  padding: 0 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Social login buttons */
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.btn-google, .btn-facebook {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  width: 100%;
+  transition: all 0.3s;
+}
+
+.btn-google {
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #000;
+}
+
+.btn-google i {
+  color: #db4437;
+  font-size: 1.2rem;
+}
+
+.btn-facebook {
+  background: #1877f2;
+  border: none;
+  color: #fff;
+}
+
+.btn-facebook i {
+  font-size: 1.2rem;
+}
+
+.btn-google:hover {
+  background: #f5f5f5;
+}
+
+.btn-facebook:hover {
+  background: #145dbf;
+}
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+{% endblock %}

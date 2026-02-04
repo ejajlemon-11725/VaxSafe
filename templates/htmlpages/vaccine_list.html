@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaccine Schedule - VaxSafe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-btn.home {
+            background: #06b6d4;
+        }
+
+        .nav-btn.add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 36px;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .filters-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .vaccines-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .vaccine-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .vaccine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .vaccine-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .vaccine-title {
+            flex: 1;
+        }
+
+        .vaccine-title h3 {
+            font-size: 20px;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .vaccine-subtitle {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-scheduled {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-overdue {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-missed {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .vaccine-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .vaccine-actions {
+            display: flex;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .action-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-view {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .btn-edit {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h2 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .vaccine-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">💉</div>
+            VaxSafe
+        </div>
+        <div class="nav-buttons">
+            <a href="{% url 'dashboard' %}" class="nav-btn home">🏠 Home</a>
+            <a href="{% url 'add_vaccine' %}" class="nav-btn add">➕ Add Vaccine</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📋 Vaccination Schedule</h1>
+            <p>Manage and track all vaccination records</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-card">
+            <form method="get" action="{% url 'vaccine_list' %}">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Family Member</label>
+                        <select name="member">
+                            <option value="">All Members</option>
+                            {% for member in family_members %}
+                                <option value="{{ member.id }}" {% if selected_member == member.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ member.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select name="status">
+                            <option value="">All Status</option>
+                            {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Vaccine Type</label>
+                        <select name="vaccine_type">
+                            <option value="">All Types</option>
+                            {% for value, label in vaccine_types %}
+                                <option value="{{ value }}" {% if selected_vaccine_type == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="filter-btn">🔍 Filter</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Vaccines List -->
+        <div class="vaccines-grid">
+            {% if vaccines %}
+                {% for vaccine in vaccines %}
+                    <div class="vaccine-card">
+                        <div class="vaccine-header">
+                            <div class="vaccine-title">
+                                <h3>
+                                    {% if vaccine.vaccine_name == 'other' %}
+                                        {{ vaccine.custom_vaccine_name }}
+                                    {% else %}
+                                        {{ vaccine.get_vaccine_name_display }}
+                                    {% endif %}
+                                    - Dose {{ vaccine.dose_number }}
+                                </h3>
+                                <p class="vaccine-subtitle">👤 {{ vaccine.family_member.name }}</p>
+                            </div>
+                            <span class="status-badge status-{{ vaccine.status }}">
+                                {{ vaccine.get_status_display }}
+                            </span>
+                        </div>
+
+                        <div class="vaccine-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Scheduled Date</span>
+                                <span class="detail-value">📅 {{ vaccine.scheduled_date }}</span>
+                            </div>
+
+                            {% if vaccine.administered_date %}
+                                <div class="detail-item">
+                                    <span class="detail-label">Administered Date</span>
+                                    <span class="detail-value">✅ {{ vaccine.administered_date }}</span>
+                                </div>
+                            {% endif %}
+
+                            {% if vaccine.next_dose_date %}
+                                <div class="detail-item">
+                                    <span class="detail-label">Next Dose</span>
+                                    <span class="detail-value">🔔 {{ vaccine.next_dose_date }}</span>
+                                </div>
+                            {% endif %}
+
+                            {% if vaccine.location %}
+                                <div class="detail-item">
+                                    <span class="detail-label">Location</span>
+                                    <span class="detail-value">📍 {{ vaccine.location }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="vaccine-actions">
+                            <a href="{% url 'vaccine_detail' vaccine.id %}" class="action-btn btn-view">👁️ View</a>
+                            <a href="{% url 'edit_vaccine' vaccine.id %}" class="action-btn btn-edit">✏️ Edit</a>
+                            <a href="{% url 'delete_vaccine' vaccine.id %}" class="action-btn btn-delete">🗑️ Delete</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">💉</div>
+                    <h2>No Vaccine Records Found</h2>
+                    <p>Start tracking vaccinations by adding your first vaccine record</p>
+                    <a href="{% url 'add_vaccine' %}" class="nav-btn add">➕ Add First Vaccine</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

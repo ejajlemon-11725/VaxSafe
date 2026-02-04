@@ -1,0 +1,394 @@
+{% extends 'base_log.html' %}
+{% block title %}Dashboard - VaxSafe{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h2>📊 Dashboard</h2>
+    <p class="subtitle">Welcome back! Here's your health overview</p>
+  </div>
+
+  <!-- Dashboard Cards -->
+  <div class="dashboard-cards">
+    <div class="card card-1" data-url="{% url 'vaccine_schedule' %}">
+      <div class="icon-circle">
+        <i class="fa fa-syringe"></i>
+      </div>
+      <h3>Upcoming Vaccinations</h3>
+      <p>{{ upcoming_vaccinations.count }} upcoming vaccination(s)</p>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="card card-2" data-url="{% url 'reminder' %}">
+      <div class="icon-circle">
+        <i class="fa fa-bell"></i>
+      </div>
+      <h3>Reminders Active</h3>
+      <p>{% if reminders_active %}Active reminders set{% else %}No active reminders{% endif %}</p>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="card card-3" data-url="{% url 'familymembers' %}">
+      <div class="icon-circle">
+        <i class="fa fa-users"></i>
+      </div>
+      <h3>Family Members</h3>
+      <p>{{ family_members_count }} member(s) being tracked</p>
+      <div class="card-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- Latest Updates -->
+  <section class="latest-updates">
+    <h3>📰 Latest Updates</h3>
+    <div class="updates-box">
+      <ul>
+        {% if updates %}
+          {% for update in updates %}
+            <li>
+              <i class="fa fa-info-circle" style="color: #667eea;"></i>
+              <div>
+                <strong>{{ update.title }}</strong>
+                {% if update.description %}
+                  <p style="margin: 5px 0 0 0; color: #636e72;">{{ update.description|truncatewords:20 }}</p>
+                {% endif %}
+                <small style="color: #95a5a6;">{{ update.created_at|date:"M d, Y" }}</small>
+              </div>
+            </li>
+          {% endfor %}
+        {% else %}
+          <li class="empty-state">
+            <i class="fa fa-info-circle"></i>
+            <span>No updates available at the moment.</span>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <a class="btn-action btn-primary" href="{% url 'add_vaccine' %}">
+      <i class="fa fa-plus-circle"></i> Add Vaccine
+    </a>
+    <a class="btn-action btn-secondary" href="{% url 'addfamilymember' %}">
+      <i class="fa fa-user-plus"></i> Add Family Member
+    </a>
+  </div>
+</div>
+
+<!-- ----------------- STYLES ----------------- -->
+<style>
+/* ============================================
+   DASHBOARD PAGE - Modern Gradient Design
+   ============================================ */
+.dashboard {
+  padding: 40px 60px;
+  background: linear-gradient(135deg, #b0fedc 0%, #c5d2f4 100%);
+  min-height: calc(100vh - 80px);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.dashboard-header h2 {
+  font-size: 42px;
+  font-weight: bold;
+  color: #2d3436;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header .subtitle {
+  font-size: 18px;
+  color: #636e72;
+  margin: 0;
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.dashboard-cards .card {
+  background: white;
+  padding: 35px;
+  border-radius: 20px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-cards .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  transition: all 0.3s ease;
+}
+
+.card-1::before {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.card-2::before {
+  background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+}
+
+.card-3::before {
+  background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+}
+
+.dashboard-cards .card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-cards .card:hover::before {
+  height: 100%;
+  opacity: 0.05;
+}
+
+/* Icon Circle */
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card-1 .icon-circle {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.card-2 .icon-circle {
+  background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+}
+
+.card-3 .icon-circle {
+  background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+}
+
+.dashboard-cards .card:hover .icon-circle {
+  transform: scale(1.1) rotate(10deg);
+}
+
+.icon-circle i {
+  font-size: 32px;
+  color: white;
+}
+
+/* Card Content */
+.dashboard-cards .card h3 {
+  font-size: 20px;
+  color: #2d3436;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.dashboard-cards .card p {
+  font-size: 15px;
+  color: #636e72;
+  margin: 0;
+}
+
+.card-arrow {
+  position: absolute;
+  bottom: 20px;
+  right: 25px;
+  font-size: 24px;
+  color: #dfe6e9;
+  transition: all 0.3s ease;
+}
+
+.dashboard-cards .card:hover .card-arrow {
+  color: #667eea;
+  transform: translateX(5px);
+}
+
+/* Latest Updates Section */
+.latest-updates {
+  margin-bottom: 40px;
+}
+
+.latest-updates h3 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2d3436;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.updates-box {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px 35px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.latest-updates ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.latest-updates li {
+  padding: 18px 0;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.latest-updates li:last-child {
+  border-bottom: none;
+}
+
+.latest-updates li.empty-state {
+  justify-content: center;
+  align-items: center;
+  color: #95a5a6;
+  font-style: italic;
+  padding: 20px 0;
+}
+
+.latest-updates li.empty-state i {
+  color: #95a5a6;
+  font-size: 20px;
+}
+
+.latest-updates li:hover {
+  background: #f8f9fa;
+  padding-left: 10px;
+  border-radius: 10px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  padding: 16px 35px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(250, 112, 154, 0.4);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 30px 20px;
+  }
+
+  .dashboard-header h2 {
+    font-size: 32px;
+  }
+
+  .dashboard-header .subtitle {
+    font-size: 16px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .dashboard-cards .card {
+    padding: 25px;
+  }
+
+  .icon-circle {
+    width: 70px;
+    height: 70px;
+  }
+
+  .icon-circle i {
+    font-size: 28px;
+  }
+
+  .updates-box {
+    padding: 20px 25px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn-action {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+
+<!-- ----------------- SCRIPTS ----------------- -->
+<script>
+// Card click navigation
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('click', () => {
+    window.location.href = card.dataset.url;
+  });
+});
+
+// Add smooth hover effect
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mouseenter', function() {
+    this.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+  });
+});
+</script>
+
+{% endblock %}

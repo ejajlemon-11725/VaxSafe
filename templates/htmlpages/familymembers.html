@@ -1,0 +1,69 @@
+{% extends "base_log.html" %}
+{% block title %}
+Family Members{% endblock %}
+
+{% block content %}
+<div class="family-members">
+  <h2>Family Members</h2>
+
+  <!-- DEBUG INFO -->
+  <div style="background: #ffffcc; padding: 10px; margin-bottom: 20px; border: 2px solid #ff0000;">
+
+    <p>Logged in as: {{ request.user.username }}</p>
+    <p>Members count: {{ members.count }}</p>
+
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Member Name</th>
+        <th>Age</th>
+        <th>Vaccine</th>
+        <th>Date & Time</th>
+        <th>Notification</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member in members %}
+      <tr>
+        <td>
+          Name: {{ member.name }}
+        </td>
+        <td>
+          Age: {{ member.age }}
+        </td>
+        <td>{{ member.vaccine_name }}</td>
+        <td>{{ member.date_time }}</td>
+        <td>{{ member.notification_type }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">No family members added yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+.family-members {
+  padding: 2rem;
+}
+.family-members table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.family-members th, .family-members td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.family-members th {
+  background: #27ADB2;
+  color: #fff;
+}
+</style>
+{% endblock %}
