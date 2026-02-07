@@ -1,236 +1,569 @@
-{% extends 'base.html' %}
+{% extends 'base_log.html' %}
 {% load static %}
 
 {% block title %}Health News & Updates - VaxSafe{% endblock %}
 
-{% block content %}
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <!-- Page Header -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="mb-1">
-                                <i class="fas fa-newspaper text-primary"></i>
-                                Health News & Updates
-                            </h2>
-                            <p class="text-muted mb-0">Stay informed about the latest health and vaccination news</p>
-                        </div>
-                        <div>
-                            <span class="badge bg-primary fs-5">{{ total_news }} Articles</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Featured News Section -->
-            {% if featured_news %}
-            <div class="mb-4">
-                <h4 class="mb-3">
-                    <i class="fas fa-star text-warning"></i> Featured News
-                </h4>
-                <div class="row">
-                    {% for news in featured_news %}
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 shadow-sm border-warning hover-shadow">
-                            {% if news.image %}
-                            <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}" style="height: 200px; object-fit: cover;">
-                            {% else %}
-                            <div class="card-img-top bg-gradient-warning d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="fas fa-newspaper fa-4x text-white"></i>
-                            </div>
-                            {% endif %}
-                            <div class="card-body">
-                                <span class="badge bg-warning text-dark mb-2">{{ news.category }}</span>
-                                <h5 class="card-title">
-                                    <a href="{% url 'news_detail' news.slug %}" class="text-decoration-none text-dark">
-                                        {{ news.title|truncatewords:10 }}
-                                    </a>
-                                </h5>
-                                <p class="card-text text-muted small">
-                                    {{ news.summary|truncatewords:20 }}
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <small class="text-muted">
-                                        <i class="fas fa-calendar"></i>
-                                        {{ news.published_date|date:"M d, Y" }}
-                                    </small>
-                                    <a href="{% url 'news_detail' news.slug %}" class="btn btn-sm btn-outline-warning">
-                                        Read More <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- Search and Filter Section -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <form method="GET" action="{% url 'news_list' %}" class="row g-3">
-                        <!-- Search Box -->
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <input
-                                    type="text"
-                                    name="search"
-                                    class="form-control"
-                                    placeholder="Search news by title or content..."
-                                    value="{{ search_query }}"
-                                >
-                            </div>
-                        </div>
-
-                        <!-- Category Filter -->
-                        <div class="col-md-4">
-                            <select name="category" class="form-select">
-                                <option value="">All Categories</option>
-                                {% for category_code, category_name in categories %}
-                                    <option value="{{ category_code }}" {% if selected_category == category_code %}selected{% endif %}>
-                                        {{ category_name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Filter Button -->
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-filter"></i> Filter
-                            </button>
-                        </div>
-                    </form>
-
-                    {% if search_query or selected_category %}
-                    <div class="mt-3">
-                        <a href="{% url 'news_list' %}" class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-times"></i> Clear Filters
-                        </a>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- All News Section -->
-            <h4 class="mb-3">
-                <i class="fas fa-list"></i> All News Articles
-            </h4>
-
-            {% if news_items %}
-                <div class="row">
-                    {% for news in news_items %}
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100 shadow-sm hover-shadow">
-                            <!-- News Image -->
-                            {% if news.image %}
-                            <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}" style="height: 200px; object-fit: cover;">
-                            {% else %}
-                            <div class="card-img-top bg-gradient-primary d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="fas fa-newspaper fa-4x text-white"></i>
-                            </div>
-                            {% endif %}
-
-                            <div class="card-body d-flex flex-column">
-                                <!-- Category Badge -->
-                                <div class="mb-2">
-                                    <span class="badge
-                                        {% if news.category == 'Alert' %}bg-danger
-                                        {% elif news.category == 'COVID-19' %}bg-warning text-dark
-                                        {% elif news.category == 'Vaccines' %}bg-success
-                                        {% else %}bg-info
-                                        {% endif %}">
-                                        {{ news.category }}
-                                    </span>
-                                </div>
-
-                                <!-- Title -->
-                                <h5 class="card-title">
-                                    <a href="{% url 'news_detail' news.slug %}" class="text-decoration-none text-dark">
-                                        {{ news.title|truncatewords:12 }}
-                                    </a>
-                                </h5>
-
-                                <!-- Summary -->
-                                <p class="card-text text-muted flex-grow-1">
-                                    {{ news.summary|truncatewords:25 }}
-                                </p>
-
-                                <!-- Meta Information -->
-                                <div class="mt-auto">
-                                    <div class="d-flex justify-content-between align-items-center text-muted small mb-2">
-                                        <span>
-                                            <i class="fas fa-calendar"></i>
-                                            {{ news.published_date|date:"M d, Y" }}
-                                        </span>
-                                        <span>
-                                            <i class="fas fa-eye"></i>
-                                            {{ news.views }} views
-                                        </span>
-                                    </div>
-
-                                    <!-- Read More Button -->
-                                    <a href="{% url 'news_detail' news.slug %}" class="btn btn-outline-primary btn-sm w-100">
-                                        <i class="fas fa-book-open"></i> Read Full Article
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <!-- No News Found -->
-                <div class="card shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="fas fa-newspaper fa-4x text-muted mb-3"></i>
-                        <h4 class="text-muted">No News Articles Found</h4>
-                        {% if search_query or selected_category %}
-                            <p class="text-muted">Try adjusting your search filters</p>
-                            <a href="{% url 'news_list' %}" class="btn btn-primary mt-2">
-                                <i class="fas fa-refresh"></i> View All News
-                            </a>
-                        {% else %}
-                            <p class="text-muted">No news articles are currently available</p>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
+{% block extra_css %}
 <style>
-.hover-shadow {
+/* ========================================
+   NEWS PAGE STYLES
+   ======================================== */
+
+.news-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Page Header */
+.news-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.news-header h1 {
+    font-size: 2.8rem;
+    color: #0077b6;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.news-header p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Search and Filter Section */
+.news-filters {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+}
+
+.filter-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 45px 12px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 15px;
     transition: all 0.3s ease;
 }
 
-.hover-shadow:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+.search-box input:focus {
+    outline: none;
+    border-color: #0077b6;
+    box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
 }
 
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.search-box button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.bg-gradient-warning {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+.search-box button:hover {
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
 }
 
-.card-img-top {
-    transition: transform 0.3s ease;
+.category-filter {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
-.card:hover .card-img-top {
+.category-filter select {
+    padding: 10px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 15px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.category-filter select:focus {
+    outline: none;
+    border-color: #0077b6;
+}
+
+.clear-filters {
+    padding: 10px 25px;
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.clear-filters:hover {
+    background: #e0e0e0;
+}
+
+/* Featured News Section */
+.featured-section {
+    margin-bottom: 50px;
+}
+
+.featured-section h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.featured-section h2::before {
+    content: "★";
+    color: #ffc107;
+    font-size: 2.2rem;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+.featured-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.featured-card::before {
+    content: "FEATURED";
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 10;
+}
+
+.featured-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.featured-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.featured-card .card-content {
+    padding: 20px;
+}
+
+.featured-card .category-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.featured-card h3 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.featured-card p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.featured-card .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 13px;
+    color: #999;
+}
+
+.featured-card .read-more {
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.featured-card .read-more:hover {
     transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 119, 182, 0.3);
+}
+
+/* All News Section */
+.all-news-section {
+    margin-top: 50px;
+}
+
+.all-news-section h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.news-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.news-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.news-card .card-content {
+    padding: 18px;
+}
+
+.news-card .category-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+    color: white;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.news-card h3 {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.news-card p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.news-card .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 12px;
+    color: #999;
+}
+
+.news-card .read-more {
+    color: #0077b6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.news-card .read-more:hover {
+    color: #00b4d8;
+    text-decoration: underline;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state i {
+    font-size: 5rem;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    font-size: 1.8rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #999;
+    font-size: 1.1rem;
+}
+
+/* Stats Bar */
+.stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.stat-item .number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0077b6;
+    margin-bottom: 5px;
+}
+
+.stat-item .label {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .news-header h1 {
+        font-size: 2rem;
+    }
+
+    .filter-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .search-box,
+    .category-filter,
+    .clear-filters {
+        width: 100%;
+    }
+
+    .featured-grid,
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-bar {
+        gap: 15px;
+    }
+
+    .stat-item {
+        padding: 15px 20px;
+    }
 }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="news-container">
+    <!-- Page Header -->
+    <div class="news-header">
+        <h1>📰 Health News & Updates</h1>
+        <p>Stay informed with the latest health and vaccination news</p>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="number">{{ total_news }}</div>
+            <div class="label">Total Articles</div>
+        </div>
+        <div class="stat-item">
+            <div class="number">{{ featured_news|length }}</div>
+            <div class="label">Featured News</div>
+        </div>
+        <div class="stat-item">
+            <div class="number">{{ categories|length }}</div>
+            <div class="label">Categories</div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="news-filters">
+        <form method="GET" action="{% url 'news_list' %}">
+            <div class="filter-row">
+                <!-- Search Box -->
+                <div class="search-box">
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search articles..."
+                        value="{{ search_query }}"
+                    >
+                    <button type="submit">
+                        <i class="fa fa-search"></i> Search
+                    </button>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="category-filter">
+                    <label for="category"><i class="fa fa-filter"></i> Category:</label>
+                    <select name="category" id="category" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        {% for cat_code, cat_name in categories %}
+                            <option value="{{ cat_code }}" {% if selected_category == cat_code %}selected{% endif %}>
+                                {{ cat_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Clear Filters -->
+                {% if selected_category or search_query %}
+                    <a href="{% url 'news_list' %}" class="clear-filters">
+                        <i class="fa fa-times"></i> Clear Filters
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Featured News Section -->
+    {% if featured_news %}
+    <div class="featured-section">
+        <h2>Featured Articles</h2>
+        <div class="featured-grid">
+            {% for news in featured_news %}
+            <div class="featured-card">
+                {% if news.image %}
+                    <img src="{{ news.image.url }}" alt="{{ news.title }}">
+                {% else %}
+                    <img src="{% static 'images/default-news.jpg' %}" alt="{{ news.title }}">
+                {% endif %}
+
+                <div class="card-content">
+                    <span class="category-badge">{{ news.get_category_display }}</span>
+                    <h3>{{ news.title }}</h3>
+                    <p>{{ news.summary|truncatewords:20 }}</p>
+
+                    <div class="meta">
+                        <span><i class="fa fa-calendar"></i> {{ news.published_date|date:"M d, Y" }}</span>
+                        <span><i class="fa fa-eye"></i> {{ news.views }} views</span>
+                    </div>
+
+                    <a href="{% url 'news_detail' news.slug %}" class="read-more">
+                        Read More <i class="fa fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- All News Section -->
+    <div class="all-news-section">
+        <h2>
+            {% if selected_category %}
+                {{ selected_category }} Articles
+            {% elif search_query %}
+                Search Results for "{{ search_query }}"
+            {% else %}
+                All Articles
+            {% endif %}
+        </h2>
+
+        {% if news_items %}
+            <div class="news-grid">
+                {% for news in news_items %}
+                <div class="news-card">
+                    {% if news.image %}
+                        <img src="{{ news.image.url }}" alt="{{ news.title }}">
+                    {% else %}
+                        <img src="{% static 'images/default-news.jpg' %}" alt="{{ news.title }}">
+                    {% endif %}
+
+                    <div class="card-content">
+                        <span class="category-badge">{{ news.get_category_display }}</span>
+                        <h3>{{ news.title }}</h3>
+                        <p>{{ news.summary|truncatewords:15 }}</p>
+
+                        <div class="meta">
+                            <span><i class="fa fa-calendar"></i> {{ news.published_date|date:"M d, Y" }}</span>
+                            <a href="{% url 'news_detail' news.slug %}" class="read-more">
+                                Read More →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <i class="fa fa-newspaper"></i>
+                <h3>No articles found</h3>
+                <p>
+                    {% if search_query %}
+                        Try adjusting your search terms or filters
+                    {% else %}
+                        Check back soon for new health updates!
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

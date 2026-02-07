@@ -9,8 +9,8 @@
   <ul class="nav-links">
     <li><a href="{% url 'dashboard' %}" class="nav-btn nav-btn-1">Dashboard</a></li>
     <li><a href="{% url 'vaccine_schedule' %}" class="nav-btn nav-btn-2">Schedule</a></li>
-    <li><a href="{% url 'centers' %}" class="nav-btn nav-btn-3">Centers</a></li>
-    <li><a href="#" class="nav-btn nav-btn-4">News</a></li>
+   <li><a href="{% url 'centers' %}" class="nav-btn nav-btn-3">Centers</a></li>
+    <li><a href="{% url 'news_list' %}" class="nav-btn nav-btn-4">News</a></li>
 
     <li class="profile-menu">
       <button class="nav-btn nav-btn-profile" id="profile-btn" onclick="toggleDropdown(event, 'profile-dropdown')">
@@ -142,6 +142,7 @@
   box-shadow: 0 6px 20px rgba(72, 198, 239, 0.5);
 }
 
+
 /* Centers Button - Green */
 .nav-btn-3 {
   background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
@@ -165,6 +166,7 @@
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(250, 112, 154, 0.5);
 }
+
 
 /* Profile Button - Purple */
 .nav-btn-profile {

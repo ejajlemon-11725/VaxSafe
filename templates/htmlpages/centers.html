@@ -1,184 +1,1109 @@
-{% extends 'base.html' %}
+{% extends 'base_log.html' %}
 {% load static %}
 
 {% block title %}Vaccination Centers - VaxSafe{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <!-- Page Header -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="mb-1">
-                                <i class="fas fa-hospital-alt text-primary"></i>
-                                Vaccination Centers
-                            </h2>
-                            <p class="text-muted mb-0">Find nearby vaccination centers in your area</p>
-                        </div>
-                        <div>
-                            <span class="badge bg-primary fs-5">{{ total_centers }} Centers</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Search and Filter Section -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <form method="GET" action="{% url 'centers' %}" class="row g-3">
-                        <!-- Search Box -->
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <input
-                                    type="text"
-                                    name="search"
-                                    class="form-control"
-                                    placeholder="Search by center name, address, or vaccines..."
-                                    value="{{ search_query }}"
-                                >
-                            </div>
-                        </div>
-
-                        <!-- City Filter -->
-                        <div class="col-md-4">
-                            <select name="city" class="form-select">
-                                <option value="">All Cities</option>
-                                {% for city_code, city_name in cities %}
-                                    <option value="{{ city_code }}" {% if selected_city == city_code %}selected{% endif %}>
-                                        {{ city_name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Filter Buttons -->
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-filter"></i> Filter
-                            </button>
-                        </div>
-                    </form>
-
-                    {% if search_query or selected_city %}
-                    <div class="mt-3">
-                        <a href="{% url 'centers' %}" class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-times"></i> Clear Filters
-                        </a>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Centers List -->
-            {% if centers %}
-                <div class="row">
-                    {% for center in centers %}
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100 shadow-sm hover-shadow">
-                            <div class="card-body">
-                                <!-- Center Name -->
-                                <h5 class="card-title text-primary mb-2">
-                                    <i class="fas fa-hospital"></i>
-                                    {{ center.name }}
-                                </h5>
-
-                                <!-- City Badge -->
-                                <div class="mb-3">
-                                    <span class="badge bg-info">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        {{ center.city }}
-                                    </span>
-                                </div>
-
-                                <!-- Address -->
-                                <p class="card-text mb-2">
-                                    <i class="fas fa-location-dot text-muted"></i>
-                                    <small>{{ center.address|truncatewords:15 }}</small>
-                                </p>
-
-                                <!-- Phone -->
-                                {% if center.phone %}
-                                <p class="card-text mb-2">
-                                    <i class="fas fa-phone text-muted"></i>
-                                    <small><a href="tel:{{ center.phone }}">{{ center.phone }}</a></small>
-                                </p>
-                                {% endif %}
-
-                                <!-- Operating Hours -->
-                                {% if center.opening_time and center.closing_time %}
-                                <p class="card-text mb-2">
-                                    <i class="fas fa-clock text-muted"></i>
-                                    <small>{{ center.get_operating_hours }}</small>
-                                </p>
-                                {% endif %}
-
-                                <!-- Available Vaccines -->
-                                {% if center.available_vaccines %}
-                                <div class="mt-3">
-                                    <small class="text-muted d-block mb-1">
-                                        <i class="fas fa-syringe"></i> Available Vaccines:
-                                    </small>
-                                    <div class="d-flex flex-wrap gap-1">
-                                        {% for vaccine in center.get_vaccines_list|slice:":3" %}
-                                            <span class="badge bg-light text-dark">{{ vaccine }}</span>
-                                        {% endfor %}
-                                        {% if center.get_vaccines_list|length > 3 %}
-                                            <span class="badge bg-light text-dark">+{{ center.get_vaccines_list|length|add:"-3" }} more</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% endif %}
-
-                                <!-- View Details Button -->
-                                <div class="mt-3">
-                                    <a href="{% url 'center_detail' center.id %}" class="btn btn-outline-primary btn-sm w-100">
-                                        <i class="fas fa-info-circle"></i> View Details
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <!-- No Centers Found -->
-                <div class="card shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="fas fa-hospital-alt fa-4x text-muted mb-3"></i>
-                        <h4 class="text-muted">No Vaccination Centers Found</h4>
-                        {% if search_query or selected_city %}
-                            <p class="text-muted">Try adjusting your search filters</p>
-                            <a href="{% url 'centers' %}" class="btn btn-primary mt-2">
-                                <i class="fas fa-refresh"></i> View All Centers
-                            </a>
-                        {% else %}
-                            <p class="text-muted">No vaccination centers are currently available in our database</p>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
+<div class="centers-page">
+  <!-- Page Header -->
+  <div class="centers-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>🏥 Vaccination Centers</h1>
+        <p class="subtitle">Find nearby vaccination centers in your area</p>
+      </div>
+      <div class="header-badge">
+        <div class="centers-count">
+          <span class="count-number" id="centerCount">6</span>
+          <span class="count-label">Centers Available</span>
         </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Search & Filter Section -->
+  <div class="search-filter-section">
+    <div class="search-box">
+      <i class="fa fa-search search-icon"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by center name, address, or location..."
+        id="searchInput"
+      >
+    </div>
+
+    <div class="filter-controls">
+      <select class="filter-select" id="cityFilter">
+        <option value="">All Cities</option>
+        <option value="dhaka">Dhaka</option>
+        <option value="chittagong">Chittagong</option>
+        <option value="sylhet">Sylhet</option>
+        <option value="rajshahi">Rajshahi</option>
+        <option value="khulna">Khulna</option>
+        <option value="barisal">Barisal</option>
+      </select>
+
+      <select class="filter-select" id="vaccineFilter">
+        <option value="">All Vaccines</option>
+        <option value="covid">COVID-19</option>
+        <option value="flu">Influenza</option>
+        <option value="hepatitis">Hepatitis</option>
+        <option value="mmr">MMR</option>
+      </select>
+
+      <button class="filter-btn" onclick="applyFilters()">
+        <i class="fa fa-filter"></i> Apply Filters
+      </button>
+
+      <button class="clear-btn" onclick="clearFilters()">
+        <i class="fa fa-times"></i> Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <button class="action-btn action-nearby">
+      <i class="fa fa-location-arrow"></i>
+      <span>Find Nearest</span>
+    </button>
+    <button class="action-btn action-map">
+      <i class="fa fa-map-marked-alt"></i>
+      <span>Map View</span>
+    </button>
+    <button class="action-btn action-export">
+      <i class="fa fa-download"></i>
+      <span>Export List</span>
+    </button>
+  </div>
+
+  <!-- Centers Grid - ALL CARDS INSIDE -->
+  <div class="centers-grid" id="centersGrid">
+
+    <!-- Sample Center 1 -->
+    <div class="center-card" data-city="dhaka" data-vaccine="covid,flu">
+      <div class="center-card-header">
+        <div class="center-icon">
+          <i class="fa fa-hospital"></i>
+        </div>
+        <div class="center-verified">
+          <i class="fa fa-check-circle"></i> Verified
+        </div>
+      </div>
+
+      <div class="center-card-body">
+        <h3 class="center-name">Dhaka Medical College Hospital</h3>
+
+        <div class="center-info">
+          <div class="info-item">
+            <i class="fa fa-map-marker-alt"></i>
+            <span>Bakshibazar, Dhaka-1000</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-phone"></i>
+            <span>+880 2-8626812</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-clock"></i>
+            <span>9:00 AM - 5:00 PM</span>
+          </div>
+        </div>
+
+        <div class="vaccines-available">
+          <p class="vaccines-label"><i class="fa fa-syringe"></i> Available Vaccines:</p>
+          <div class="vaccine-badges">
+            <span class="vaccine-badge">COVID-19</span>
+            <span class="vaccine-badge">Influenza</span>
+            <span class="vaccine-badge">Hepatitis B</span>
+          </div>
+        </div>
+
+        <div class="center-stats">
+          <div class="stat-item">
+            <span class="stat-value">4.8</span>
+            <span class="stat-label">⭐ Rating</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">2.3 km</span>
+            <span class="stat-label">📍 Distance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-card-footer">
+        <button class="center-btn btn-details">
+          <i class="fa fa-info-circle"></i> View Details
+        </button>
+        <button class="center-btn btn-directions">
+          <i class="fa fa-directions"></i> Get Directions
+        </button>
+      </div>
+    </div>
+
+    <!-- Sample Center 2 -->
+    <div class="center-card" data-city="dhaka" data-vaccine="covid,mmr">
+      <div class="center-card-header">
+        <div class="center-icon">
+          <i class="fa fa-hospital"></i>
+        </div>
+        <div class="center-verified">
+          <i class="fa fa-check-circle"></i> Verified
+        </div>
+      </div>
+
+      <div class="center-card-body">
+        <h3 class="center-name">Square Hospitals Ltd.</h3>
+
+        <div class="center-info">
+          <div class="info-item">
+            <i class="fa fa-map-marker-alt"></i>
+            <span>Panthapath, Dhaka-1205</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-phone"></i>
+            <span>+880 2-8159457</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-clock"></i>
+            <span>24 Hours Open</span>
+          </div>
+        </div>
+
+        <div class="vaccines-available">
+          <p class="vaccines-label"><i class="fa fa-syringe"></i> Available Vaccines:</p>
+          <div class="vaccine-badges">
+            <span class="vaccine-badge">COVID-19</span>
+            <span class="vaccine-badge">MMR</span>
+            <span class="vaccine-badge">Polio</span>
+            <span class="vaccine-badge">+2 more</span>
+          </div>
+        </div>
+
+        <div class="center-stats">
+          <div class="stat-item">
+            <span class="stat-value">4.9</span>
+            <span class="stat-label">⭐ Rating</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">1.8 km</span>
+            <span class="stat-label">📍 Distance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-card-footer">
+        <button class="center-btn btn-details">
+          <i class="fa fa-info-circle"></i> View Details
+        </button>
+        <button class="center-btn btn-directions">
+          <i class="fa fa-directions"></i> Get Directions
+        </button>
+      </div>
+    </div>
+
+    <!-- Sample Center 3 -->
+    <div class="center-card" data-city="chittagong" data-vaccine="covid,hepatitis">
+      <div class="center-card-header">
+        <div class="center-icon">
+          <i class="fa fa-hospital"></i>
+        </div>
+        <div class="center-verified">
+          <i class="fa fa-check-circle"></i> Verified
+        </div>
+      </div>
+
+      <div class="center-card-body">
+        <h3 class="center-name">Chittagong Medical College</h3>
+
+        <div class="center-info">
+          <div class="info-item">
+            <i class="fa fa-map-marker-alt"></i>
+            <span>K.B. Fazlul Kader Road, Chittagong</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-phone"></i>
+            <span>+880 31-610221</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-clock"></i>
+            <span>8:00 AM - 6:00 PM</span>
+          </div>
+        </div>
+
+        <div class="vaccines-available">
+          <p class="vaccines-label"><i class="fa fa-syringe"></i> Available Vaccines:</p>
+          <div class="vaccine-badges">
+            <span class="vaccine-badge">COVID-19</span>
+            <span class="vaccine-badge">Hepatitis A</span>
+            <span class="vaccine-badge">Typhoid</span>
+          </div>
+        </div>
+
+        <div class="center-stats">
+          <div class="stat-item">
+            <span class="stat-value">4.7</span>
+            <span class="stat-label">⭐ Rating</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">5.2 km</span>
+            <span class="stat-label">📍 Distance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-card-footer">
+        <button class="center-btn btn-details">
+          <i class="fa fa-info-circle"></i> View Details
+        </button>
+        <button class="center-btn btn-directions">
+          <i class="fa fa-directions"></i> Get Directions
+        </button>
+      </div>
+    </div>
+
+    <!-- Sample Center 4 -->
+    <div class="center-card" data-city="dhaka" data-vaccine="covid,hepatitis,flu">
+      <div class="center-card-header">
+        <div class="center-icon">
+          <i class="fa fa-hospital"></i>
+        </div>
+        <div class="center-verified">
+          <i class="fa fa-check-circle"></i> Verified
+        </div>
+      </div>
+
+      <div class="center-card-body">
+        <h3 class="center-name">United Hospital Limited</h3>
+
+        <div class="center-info">
+          <div class="info-item">
+            <i class="fa fa-map-marker-alt"></i>
+            <span>Plot 15, Road 71, Gulshan, Dhaka-1212</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-phone"></i>
+            <span>+880 2-8836000</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-clock"></i>
+            <span>24 Hours Open</span>
+          </div>
+        </div>
+
+        <div class="vaccines-available">
+          <p class="vaccines-label"><i class="fa fa-syringe"></i> Available Vaccines:</p>
+          <div class="vaccine-badges">
+            <span class="vaccine-badge">COVID-19</span>
+            <span class="vaccine-badge">Hepatitis B</span>
+            <span class="vaccine-badge">Influenza</span>
+            <span class="vaccine-badge">+3 more</span>
+          </div>
+        </div>
+
+        <div class="center-stats">
+          <div class="stat-item">
+            <span class="stat-value">4.9</span>
+            <span class="stat-label">⭐ Rating</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">3.5 km</span>
+            <span class="stat-label">📍 Distance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-card-footer">
+        <button class="center-btn btn-details">
+          <i class="fa fa-info-circle"></i> View Details
+        </button>
+        <button class="center-btn btn-directions">
+          <i class="fa fa-directions"></i> Get Directions
+        </button>
+      </div>
+    </div>
+
+    <!-- Sample Center 5 -->
+    <div class="center-card" data-city="sylhet" data-vaccine="covid,mmr,hepatitis">
+      <div class="center-card-header">
+        <div class="center-icon">
+          <i class="fa fa-hospital"></i>
+        </div>
+        <div class="center-verified">
+          <i class="fa fa-check-circle"></i> Verified
+        </div>
+      </div>
+
+      <div class="center-card-body">
+        <h3 class="center-name">Sylhet MAG Osmani Medical College</h3>
+
+        <div class="center-info">
+          <div class="info-item">
+            <i class="fa fa-map-marker-alt"></i>
+            <span>Medical College Road, Sylhet-3100</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-phone"></i>
+            <span>+880 821-713674</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-clock"></i>
+            <span>8:00 AM - 8:00 PM</span>
+          </div>
+        </div>
+
+        <div class="vaccines-available">
+          <p class="vaccines-label"><i class="fa fa-syringe"></i> Available Vaccines:</p>
+          <div class="vaccine-badges">
+            <span class="vaccine-badge">COVID-19</span>
+            <span class="vaccine-badge">MMR</span>
+            <span class="vaccine-badge">Hepatitis A</span>
+            <span class="vaccine-badge">BCG</span>
+          </div>
+        </div>
+
+        <div class="center-stats">
+          <div class="stat-item">
+            <span class="stat-value">4.6</span>
+            <span class="stat-label">⭐ Rating</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">4.2 km</span>
+            <span class="stat-label">📍 Distance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-card-footer">
+        <button class="center-btn btn-details">
+          <i class="fa fa-info-circle"></i> View Details
+        </button>
+        <button class="center-btn btn-directions">
+          <i class="fa fa-directions"></i> Get Directions
+        </button>
+      </div>
+    </div>
+
+    <!-- Sample Center 6 -->
+    <div class="center-card" data-city="dhaka" data-vaccine="covid,flu,mmr">
+      <div class="center-card-header">
+        <div class="center-icon">
+          <i class="fa fa-hospital"></i>
+        </div>
+        <div class="center-verified">
+          <i class="fa fa-check-circle"></i> Verified
+        </div>
+      </div>
+
+      <div class="center-card-body">
+        <h3 class="center-name">Apollo Hospitals Dhaka</h3>
+
+        <div class="center-info">
+          <div class="info-item">
+            <i class="fa fa-map-marker-alt"></i>
+            <span>Plot 81, Block E, Bashundhara, Dhaka-1229</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-phone"></i>
+            <span>+880 9610001010</span>
+          </div>
+
+          <div class="info-item">
+            <i class="fa fa-clock"></i>
+            <span>24 Hours Open</span>
+          </div>
+        </div>
+
+        <div class="vaccines-available">
+          <p class="vaccines-label"><i class="fa fa-syringe"></i> Available Vaccines:</p>
+          <div class="vaccine-badges">
+            <span class="vaccine-badge">COVID-19</span>
+            <span class="vaccine-badge">Influenza</span>
+            <span class="vaccine-badge">MMR</span>
+            <span class="vaccine-badge">DTP</span>
+            <span class="vaccine-badge">+4 more</span>
+          </div>
+        </div>
+
+        <div class="center-stats">
+          <div class="stat-item">
+            <span class="stat-value">5.0</span>
+            <span class="stat-label">⭐ Rating</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">6.7 km</span>
+            <span class="stat-label">📍 Distance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-card-footer">
+        <button class="center-btn btn-details">
+          <i class="fa fa-info-circle"></i> View Details
+        </button>
+        <button class="center-btn btn-directions">
+          <i class="fa fa-directions"></i> Get Directions
+        </button>
+      </div>
+    </div>
+
+  </div>
+  <!-- END of Centers Grid -->
+
+  <!-- Empty State (Hidden by default, shown when no results) -->
+  <div class="empty-state" id="emptyState" style="display: none;">
+    <div class="empty-icon">
+      <i class="fa fa-hospital"></i>
+    </div>
+    <h3>No Vaccination Centers Found</h3>
+    <p>Try adjusting your search filters or check back later</p>
+    <button class="empty-action-btn" onclick="clearFilters()">
+      <i class="fa fa-refresh"></i> Reset Filters
+    </button>
+  </div>
 </div>
 
 <style>
-.hover-shadow {
-    transition: all 0.3s ease;
+/* ========================================
+   VACCINATION CENTERS PAGE - Modern Design
+   ======================================== */
+
+.centers-page {
+  padding: 40px 60px;
+  background: linear-gradient(135deg, #b0fedc 0%, #c5d2f4 100%);
+  min-height: calc(100vh - 80px);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.hover-shadow:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+/* Page Header */
+.centers-header {
+  margin-bottom: 30px;
+  animation: slideDown 0.5s ease;
 }
 
-.gap-1 {
-    gap: 0.25rem;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 119, 182, 0.15);
+}
+
+.header-text h1 {
+  font-size: 36px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 5px 0;
+}
+
+.header-text .subtitle {
+  color: #636e72;
+  font-size: 16px;
+  margin: 0;
+}
+
+.centers-count {
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  padding: 20px 30px;
+  border-radius: 15px;
+  text-align: center;
+  color: white;
+  min-width: 120px;
+}
+
+.count-number {
+  display: block;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.count-label {
+  display: block;
+  font-size: 13px;
+  margin-top: 5px;
+  opacity: 0.9;
+}
+
+/* Search & Filter Section */
+.search-filter-section {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.search-box {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00b4d8;
+  font-size: 18px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 20px 16px 55px;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background: #f8fbff;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #00b4d8;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.15);
+}
+
+.filter-controls {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  flex: 1;
+  min-width: 180px;
+  padding: 12px 18px;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #00b4d8;
+  box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.15);
+}
+
+.filter-btn {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
+}
+
+.filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 180, 216, 0.4);
+}
+
+.clear-btn {
+  padding: 12px 28px;
+  background: #f8f9fa;
+  color: #636e72;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+  background: #e9ecef;
+  border-color: #00b4d8;
+  color: #00b4d8;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  flex: 1;
+  min-width: 150px;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 15px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.action-nearby {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.action-nearby:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.action-map {
+  background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+  color: white;
+}
+
+.action-map:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(11, 163, 96, 0.4);
+}
+
+.action-export {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+}
+
+.action-export:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(250, 112, 154, 0.4);
+}
+
+/* Centers Grid */
+.centers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+/* Center Card */
+.center-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.center-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 119, 182, 0.2);
+}
+
+.center-card-header {
+  background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(0, 119, 182, 0.1) 100%);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #00b4d8;
+}
+
+.center-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+}
+
+.center-verified {
+  background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.center-card-body {
+  padding: 25px;
+}
+
+.center-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+}
+
+.center-info {
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #636e72;
+  font-size: 14px;
+}
+
+.info-item i {
+  color: #00b4d8;
+  width: 20px;
+  font-size: 14px;
+}
+
+.vaccines-available {
+  margin-bottom: 20px;
+}
+
+.vaccines-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.vaccines-label i {
+  color: #00b4d8;
+}
+
+.vaccine-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vaccine-badge {
+  background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(0, 119, 182, 0.1) 100%);
+  color: #0077b6;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(0, 180, 216, 0.3);
+}
+
+.center-stats {
+  display: flex;
+  gap: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e9ecef;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: #636e72;
+  margin-top: 3px;
+}
+
+.center-card-footer {
+  padding: 20px;
+  background: #f8f9fa;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #e9ecef;
+}
+
+.center-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-details {
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  color: white;
+}
+
+.btn-details:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+}
+
+.btn-directions {
+  background: white;
+  color: #00b4d8;
+  border: 2px solid #00b4d8;
+}
+
+.btn-directions:hover {
+  background: #00b4d8;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+  font-size: 80px;
+  color: #00b4d8;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #636e72;
+  margin-bottom: 30px;
+}
+
+.empty-action-btn {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
+}
+
+.empty-action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 180, 216, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .centers-page {
+    padding: 30px 40px;
+  }
+
+  .centers-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .centers-page {
+    padding: 20px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .header-text h1 {
+    font-size: 28px;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .quick-actions {
+    flex-direction: column;
+  }
+
+  .centers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .center-card-footer {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-text h1 {
+    font-size: 24px;
+  }
+
+  .center-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 </style>
+
+<script>
+// Update center count on page load
+document.addEventListener('DOMContentLoaded', function() {
+  updateCenterCount();
+
+  // Card animation
+  const cards = document.querySelectorAll('.center-card');
+  cards.forEach((card, index) => {
+    card.style.animationDelay = `${index * 0.1}s`;
+  });
+});
+
+// Update center count
+function updateCenterCount() {
+  const cards = document.querySelectorAll('.center-card');
+  const visibleCards = Array.from(cards).filter(card => card.style.display !== 'none');
+  document.getElementById('centerCount').textContent = visibleCards.length;
+}
+
+// Filter functionality
+function applyFilters() {
+  const searchValue = document.getElementById('searchInput').value.toLowerCase();
+  const cityValue = document.getElementById('cityFilter').value;
+  const vaccineValue = document.getElementById('vaccineFilter').value;
+
+  const cards = document.querySelectorAll('.center-card');
+  let visibleCount = 0;
+
+  cards.forEach(card => {
+    const cardText = card.textContent.toLowerCase();
+    const cardCity = card.getAttribute('data-city');
+    const cardVaccines = card.getAttribute('data-vaccine');
+
+    let showCard = true;
+
+    // Search filter
+    if (searchValue && !cardText.includes(searchValue)) {
+      showCard = false;
+    }
+
+    // City filter
+    if (cityValue && cardCity !== cityValue) {
+      showCard = false;
+    }
+
+    // Vaccine filter
+    if (vaccineValue && !cardVaccines.includes(vaccineValue)) {
+      showCard = false;
+    }
+
+    if (showCard) {
+      card.style.display = 'block';
+      visibleCount++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // Update count
+  document.getElementById('centerCount').textContent = visibleCount;
+
+  // Show/hide empty state
+  const emptyState = document.getElementById('emptyState');
+  const centersGrid = document.getElementById('centersGrid');
+
+  if (visibleCount === 0) {
+    centersGrid.style.display = 'none';
+    emptyState.style.display = 'block';
+  } else {
+    centersGrid.style.display = 'grid';
+    emptyState.style.display = 'none';
+  }
+}
+
+// Clear filters
+function clearFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('cityFilter').value = '';
+  document.getElementById('vaccineFilter').value = '';
+
+  const cards = document.querySelectorAll('.center-card');
+  cards.forEach(card => {
+    card.style.display = 'block';
+  });
+
+  // Update count
+  updateCenterCount();
+
+  document.getElementById('centersGrid').style.display = 'grid';
+  document.getElementById('emptyState').style.display = 'none';
+}
+
+// Real-time search
+document.getElementById('searchInput').addEventListener('input', function() {
+  applyFilters();
+});
+</script>
+
 {% endblock %}
