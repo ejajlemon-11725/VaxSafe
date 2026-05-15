@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Vaccine - VaxSafe</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-buttons { display: flex; gap: 10px; }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-btn.home     { background: #06b6d4; }
+        .nav-btn.schedule { background: #3b82f6; }
+        .nav-btn.home:hover     { background: #0891b2; }
+        .nav-btn.schedule:hover { background: #2563eb; }
+
+        .container  { max-width: 900px; margin: 0 auto; }
+
+        .page-header { text-align: center; margin-bottom: 40px; }
+
+        .page-header h1 {
+            font-size: 36px;
+            color: #2d3748;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .page-header .icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .page-header p { color: #64748b; font-size: 16px; }
+
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .form-section { margin-bottom: 30px; }
+
+        .section-title {
+            font-size: 20px;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 600;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.full-width { grid-template-columns: 1fr; }
+
+        .form-group { display: flex; flex-direction: column; }
+
+        .form-group label {
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group label .required { color: #ef4444; }
+
+        .form-control {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea.form-control { resize: vertical; min-height: 100px; }
+        select.form-control   { cursor: pointer; }
+
+        .info-text { font-size: 12px; color: #94a3b8; margin-top: 5px; }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary { background: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background: #cbd5e1; }
+
+        .alert { padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; }
+        .alert-error   { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+        .alert-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .navbar   { flex-direction: column; gap: 15px; }
+            .form-card { padding: 25px; }
+        }
+
+        .vaccine-info-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .vaccine-info-card h3  { color: #1e40af; margin-bottom: 10px; font-size: 16px; }
+        .vaccine-info-card ul  { list-style: none; color: #475569; font-size: 14px; }
+        .vaccine-info-card li  { padding: 5px 0; padding-left: 20px; position: relative; }
+        .vaccine-info-card li:before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; }
+
+        /* ✅ Admin selector styles */
+        .admin-user-selector {
+            background: #fff3cd;
+            border: 1.5px solid #ffc107;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+        }
+
+        .admin-user-selector > label {
+            font-weight: 700;
+            color: #856404;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .admin-user-selector select {
+            border: 1.5px solid #ffc107 !important;
+            border-radius: 8px;
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .admin-user-selector small {
+            color: #856404;
+            margin-top: 6px;
+            display: block;
+            font-size: 12px;
+        }
+
+        /* ✅ Loading indicator */
+        .user-loading {
+            display: none;
+            margin-top: 10px;
+            padding: 8px 14px;
+            background: #fff8e1;
+            border: 1px dashed #ffc107;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #856404;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid #ffc107;
+            border-top-color: #856404;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ✅ Active user badge */
+        .active-user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 1px solid #b1dfbb;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #155724;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="page-addvaccine">
+
+<nav class="navbar">
+    <div class="logo">
+        <div class="logo-icon">💉</div>
+        VaxSafe
+    </div>
+    <div class="nav-buttons">
+        <a href="{% url 'dashboard' %}"       class="nav-btn home">🏠 Home</a>
+        <a href="{% url 'vaccine_schedule' %}" class="nav-btn schedule">📋 Schedule</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="page-header">
+        <h1><span class="icon">💉</span> Add Vaccine Record</h1>
+        <p>Add a new vaccination record for a family member</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="vaccine-info-card">
+        <h3>📌 Important Information</h3>
+        <ul>
+            <li>Please ensure all required fields are filled accurately</li>
+            <li>Keep your vaccine batch number and manufacturer details for future reference</li>
+            <li>Set reminders to never miss important vaccination dates</li>
+            <li>You can update the status once the vaccine is administered</li>
+        </ul>
+    </div>
+
+    <div class="form-card">
+        <form method="post" action="{% url 'add_vaccine' %}">
+            {% csrf_token %}
+
+            <!-- ═══════════════════════════════════════════════════
+                 ✅ Admin Block — User Selector (Page-Reload Based)
+            ═══════════════════════════════════════════════════ -->
+            {% if is_admin %}
+            <div class="admin-user-selector">
+
+                <label>👤 কার জন্য Vaccine সেট করছেন? (Admin Only)</label>
+
+                <!--
+                    ✅ KEY CHANGE:
+                    onchange এ page reload করবে ?target_user=ID দিয়ে।
+                    এতে Django নিজেই সেই user এর family members দিয়ে
+                    নিচের Basic Info dropdown render করবে।
+                    name="target_user" রাখা হয়েছে POST এও কাজ করার জন্য।
+                -->
+                <select name="target_user" id="adminTargetUser">
+    <option value="">— নিজের জন্য (Default) —</option>
+    <option value="all" {% if selected_target_user_id == 'all' %}selected{% endif %}>
+        👥 সবার জন্য (All Users) — সব user কে notification যাবে
+    </option>
+    {% for u in all_users %}
+        <option value="{{ u.id }}"
+            {% if selected_target_user_id == u.id|stringformat:"s" %}selected{% endif %}>
+            {{ u.get_full_name|default:u.username }}
+            {% if u.email %}— {{ u.email }}{% endif %}
+        </option>
+    {% endfor %}
+</select>
+
+                <small>⚡ User সিলেক্ট করলে পেজ রিলোড হবে এবং ঐ User এর Family Members লোড হবে।</small>
+
+                <!-- Loading indicator -->
+                <div class="user-loading" id="userLoading">
+                    <span class="spinner"></span>
+                    <span>লোড হচ্ছে…</span>
+                </div>
+
+                <!-- Currently selected user badge -->
+                {% if selected_target_user_id %}
+                <div class="active-user-badge">
+                    ✅ নির্বাচিত User: <strong>{{ target_user.get_full_name|default:target_user.username }}</strong>
+                    &nbsp;—&nbsp; নিচের Family Member তালিকা এই user এর।
+                </div>
+                {% endif %}
+
+            </div>
+
+            <!--
+                ✅ admin_family_member_id hidden — POST এ override এর জন্য।
+                Basic Info এর id_family_member dropdown select করলে এখানে sync হবে।
+            -->
+            <input type="hidden" name="admin_family_member_id" id="adminFamilyMemberHidden" value="">
+
+            {% endif %}
+            <!-- ✅ Admin Block শেষ -->
+
+
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h2 class="section-title">Basic Information</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_family_member">
+                            Family Member <span class="required">*</span>
+                        </label>
+                        <!--
+                            ✅ এই dropdown এখন Django থেকে সঠিক user এর
+                            family members দিয়ে render হচ্ছে (views.py এ queryset সেট করা হয়েছে)।
+                        -->
+                        {{ form.family_member }}
+                        <span class="info-text">
+                            {% if selected_target_user_id %}
+                                Showing family members of: <strong>{{ target_user.get_full_name|default:target_user.username }}</strong>
+                            {% else %}
+                                Select the person receiving this vaccine
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_name">
+                            Vaccine Type <span class="required">*</span>
+                        </label>
+                        {{ form.name }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_dose_number">
+                            Dose Number <span class="required">*</span>
+                        </label>
+                        {{ form.dose_number }}
+                        <span class="info-text">1st dose, 2nd dose, booster, etc.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date Information -->
+            <div class="form-section">
+                <h2 class="section-title">Date Information</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_date_administered">
+                            Date Administered/Scheduled <span class="required">*</span>
+                        </label>
+                        {{ form.date_administered }}
+                        <span class="info-text">When was/will the vaccine be given?</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_next_dose_date">Next Dose Date</label>
+                        {{ form.next_dose_date }}
+                        <span class="info-text">When is the next dose due?</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_healthcare_provider">Healthcare Provider</label>
+                        {{ form.healthcare_provider }}
+                        <span class="info-text">Doctor or nurse name</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_status">Status <span class="required">*</span></label>
+                        {{ form.status }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Details -->
+            <div class="form-section">
+                <h2 class="section-title">Additional Details</h2>
+
+                <div class="form-row full-width">
+                    <div class="form-group">
+                        <label for="id_location">Vaccination Center/Hospital</label>
+                        {{ form.location }}
+                        <span class="info-text">Where will/did the vaccination take place?</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_batch_number">Batch/Lot Number</label>
+                        {{ form.batch_number }}
+                        <span class="info-text">Found on the vaccine vial</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_manufacturer">Manufacturer</label>
+                        {{ form.manufacturer }}
+                        <span class="info-text">Who manufactured the vaccine?</span>
+                    </div>
+                </div>
+
+                <div class="form-row full-width">
+                    <div class="form-group">
+                        <label for="id_notes">Notes</label>
+                        {{ form.notes }}
+                        <span class="info-text">Any additional information or observations</span>
+                    </div>
+                </div>
+
+                <div class="form-row full-width">
+                    <div class="form-group">
+                        <label for="id_side_effects">Side Effects</label>
+                        {{ form.side_effects }}
+                        <span class="info-text">Any side effects experienced (optional)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="{% url 'vaccine_schedule' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">💾 Save Vaccine Record</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ✅ ADMIN: User Selector → Page Reload
+     Basic Info family_member → admin_family_member_id sync
+═══════════════════════════════════════════════════ -->
+{% if is_admin %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ── 1. User selector onchange → page reload with ?target_user=ID ──────
+    const adminUserSelect = document.getElementById('adminTargetUser');
+    const loadingDiv      = document.getElementById('userLoading');
+
+   if (adminUserSelect) {
+    adminUserSelect.addEventListener('change', function () {
+        const uid = this.value.trim();
+
+        if (uid === 'all') {
+            // ✅ "All" selected → page reload না করে family member hide করো
+            const familyRow = document.getElementById('id_family_member')
+                ?.closest('.form-row') || document.getElementById('id_family_member')?.closest('.form-group');
+            if (familyRow) {
+                familyRow.style.display = 'none';
+            }
+
+            // Info banner দেখাও
+            let allBanner = document.getElementById('allUsersBanner');
+            if (!allBanner) {
+                allBanner = document.createElement('div');
+                allBanner.id = 'allUsersBanner';
+                allBanner.style.cssText = `
+                    background:#d4edda; border:1.5px solid #28a745;
+                    border-radius:10px; padding:14px 18px; margin-top:12px;
+                    color:#155724; font-size:14px; font-weight:600;
+                `;
+                allBanner.innerHTML = '👥 <strong>সবার জন্য</strong> — এই vaccine সব active user এর account এ যোগ হবে এবং সবাইকে App Notification + Email পাঠানো হবে। Family Member selection প্রযোজ্য নয়।';
+                adminUserSelect.closest('.admin-user-selector').appendChild(allBanner);
+            }
+            allBanner.style.display = 'block';
+            return; // page reload করবে না
+        }
+
+        // বাকি logic আগের মতো
+        const familyRow = document.getElementById('id_family_member')
+            ?.closest('.form-row') || document.getElementById('id_family_member')?.closest('.form-group');
+        if (familyRow) familyRow.style.display = '';
+
+        const allBanner = document.getElementById('allUsersBanner');
+        if (allBanner) allBanner.style.display = 'none';
+
+        if (loadingDiv) loadingDiv.style.display = 'flex';
+        adminUserSelect.disabled = true;
+
+        if (uid) {
+            window.location.href = '{% url "add_vaccine" %}?target_user=' + uid;
+        } else {
+            window.location.href = '{% url "add_vaccine" %}';
+        }
+    });
+
+    // ✅ Page load এ "all" selected থাকলে family member hide করো
+    if (adminUserSelect.value === 'all') {
+        adminUserSelect.dispatchEvent(new Event('change'));
+    }
+}
+
+    // ── 2. Basic Info family_member → hidden input sync ───────────────────
+    //    (POST এ admin_family_member_id হিসেবে পাঠানো হবে)
+    const basicFamilySelect = document.getElementById('id_family_member');
+    const hiddenInput       = document.getElementById('adminFamilyMemberHidden');
+
+    if (basicFamilySelect && hiddenInput) {
+        // প্রথম লোডে sync
+        hiddenInput.value = basicFamilySelect.value;
+
+        basicFamilySelect.addEventListener('change', function () {
+            hiddenInput.value = this.value;
+        });
+    }
+
+    // ── 3. Date auto status ───────────────────────────────────────────────
+    const dateField   = document.querySelector('input[name="date_administered"]');
+    const statusField = document.querySelector('select[name="status"]');
+
+    if (dateField && statusField) {
+        dateField.addEventListener('change', function () {
+            const today = new Date().toISOString().split('T')[0];
+            if (this.value && this.value <= today) {
+                statusField.value = 'Completed';
+            }
+        });
+    }
+});
+</script>
+{% endif %}
+
+<script>
+(function () {
+  const LANG_KEY = 'vaxsafe_lang';
+  const translations = {
+    "Home": "হোম", "Features": "বৈশিষ্ট্যসমূহ", "About Us": "আমাদের সম্পর্কে",
+    "Contact Us": "যোগাযোগ করুন", "Register": "নিবন্ধন", "Log In": "লগ ইন",
+    "Logout": "লগআউট", "Dashboard": "ড্যাশবোর্ড", "Schedule": "সময়সূচি",
+    "Centers": "কেন্দ্রসমূহ", "News": "সংবাদ", "Profile": "প্রোফাইল",
+    "Cancel": "বাতিল", "Add Vaccine Record": "টিকার রেকর্ড যোগ করুন",
+    "Add a new vaccination record for a family member": "পরিবারের সদস্যের জন্য নতুন টিকার রেকর্ড যোগ করুন",
+    "Basic Information": "মৌলিক তথ্য", "Vaccine Type": "টিকার ধরন",
+    "Dose Number": "ডোজ নম্বর", "Date Information": "তারিখের তথ্য",
+    "Date Administered/Scheduled": "প্রদান/নির্ধারিত তারিখ",
+    "Next Dose Date": "পরবর্তী ডোজের তারিখ",
+    "Healthcare Provider": "স্বাস্থ্যসেবা প্রদানকারী",
+    "Additional Details": "অতিরিক্ত বিবরণ",
+    "Vaccination Center/Hospital": "টিকাদান কেন্দ্র/হাসপাতাল",
+    "Batch/Lot Number": "ব্যাচ/লট নম্বর", "Manufacturer": "প্রস্তুতকারক",
+    "Side Effects": "পার্শ্বপ্রতিক্রিয়া", "💾 Save Vaccine Record": "💾 রেকর্ড সংরক্ষণ",
+    "📌 Important Information": "📌 গুরুত্বপূর্ণ তথ্য", "Status": "অবস্থা",
+    "Location": "অবস্থান", "Notes": "নোট",
+    "Please ensure all required fields are filled accurately": "অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য সঠিকভাবে পূরণ করুন",
+  };
+  const reverseMap = {};
+  for (const [en, bn] of Object.entries(translations)) reverseMap[bn] = en;
+
+  function translateNode(node, toBangla) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent.trim();
+      if (!text) return;
+      if (toBangla) { const bn = translations[text]; if (bn) node.textContent = node.textContent.replace(text, bn); }
+      else          { const en = reverseMap[text];    if (en) node.textContent = node.textContent.replace(text, en); }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName.toLowerCase();
+      if (['script','style','select'].includes(tag)) return;
+      if (node.hasAttribute && node.hasAttribute('placeholder')) {
+        const ph = node.getAttribute('placeholder');
+        if (toBangla && translations[ph]) node.setAttribute('placeholder', translations[ph]);
+        else if (!toBangla && reverseMap[ph]) node.setAttribute('placeholder', reverseMap[ph]);
+      }
+      node.childNodes.forEach(child => translateNode(child, toBangla));
+    }
+  }
+
+  function applyLanguage(lang) {
+    localStorage.setItem(LANG_KEY, lang);
+    const toBangla = (lang === 'bn');
+    document.body.childNodes.forEach(n => translateNode(n, toBangla));
+    document.querySelectorAll('#lang-btn').forEach(btn => {
+      btn.innerHTML = (lang === 'bn' ? 'বাংলা' : 'English') + ' <span class="dropdown-arrow">▼</span>';
+    });
+  }
+
+  window.setLanguage = function(lang) {
+    const code = (lang === 'Bangla' || lang === 'bn') ? 'bn' : 'en';
+    applyLanguage(code);
+    const dd = document.getElementById('lang-dropdown');
+    if (dd) dd.classList.remove('show');
+    const btn = document.getElementById('lang-btn');
+    if (btn) { const arrow = btn.querySelector('.dropdown-arrow'); if (arrow) arrow.style.transform = 'rotate(0deg)'; }
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'bn') applyLanguage('bn');
+  });
+})();
+</script>
+
+</body>
+</html>

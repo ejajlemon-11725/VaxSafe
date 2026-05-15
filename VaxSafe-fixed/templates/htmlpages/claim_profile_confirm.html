@@ -1,0 +1,256 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-claim-confirm{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================================
+       UNIQUE STYLES — CLAIM PROFILE CONFIRM  (Task 3)
+       prefix: ccp- (claim-confirm-profile)
+       ============================================================ */
+    .ccp-wrap {
+        max-width: 620px;
+        margin: 50px auto 60px;
+        padding: 0 20px;
+    }
+
+    .ccp-card {
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .ccp-head {
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: #fff;
+        padding: 36px 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .ccp-head::before {
+        content: ""; position: absolute;
+        top: -60px; right: -60px;
+        width: 200px; height: 200px;
+        background: rgba(255,255,255,0.12); border-radius: 50%;
+    }
+    .ccp-head::after {
+        content: ""; position: absolute;
+        bottom: -80px; left: -80px;
+        width: 220px; height: 220px;
+        background: rgba(255,255,255,0.08); border-radius: 50%;
+    }
+    .ccp-head > * { position: relative; z-index: 1; }
+    .ccp-icon-big {
+        width: 90px; height: 90px;
+        background: rgba(255,255,255,0.22);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 42px;
+        margin: 0 auto 14px;
+        backdrop-filter: blur(10px);
+    }
+    .ccp-head h2 {
+        font-size: 26px;
+        margin: 0 0 6px;
+        font-weight: 800;
+    }
+    .ccp-head p { margin: 0; opacity: 0.92; font-size: 14px; }
+
+    .ccp-body { padding: 32px 36px; }
+
+    .ccp-profile-card {
+        background: linear-gradient(135deg, #e8f8f5, #d1f2eb);
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 22px;
+        text-align: center;
+    }
+    .ccp-profile-avatar {
+        width: 72px; height: 72px;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: #fff;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center; justify-content: center;
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+    .ccp-profile-name {
+        font-size: 22px;
+        font-weight: 800;
+        color: #1e7e5a;
+        margin: 0 0 4px;
+    }
+    .ccp-profile-relation {
+        font-size: 14px;
+        color: #16a085;
+        font-weight: 600;
+    }
+
+    .ccp-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 18px 0;
+    }
+    .ccp-stat {
+        background: rgba(255,255,255,0.7);
+        border-radius: 10px;
+        padding: 12px 8px;
+    }
+    .ccp-stat-num {
+        font-size: 22px;
+        font-weight: 800;
+        color: #16a085;
+        line-height: 1;
+    }
+    .ccp-stat-label {
+        font-size: 11px;
+        color: #5d6d7e;
+        margin-top: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .ccp-info {
+        background: #f8fafc;
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 20px;
+    }
+    .ccp-info h4 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        color: #34495e;
+        font-weight: 700;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .ccp-info ul {
+        list-style: none;
+        padding: 0; margin: 0;
+        font-size: 13px;
+        color: #5d6d7e;
+        line-height: 1.7;
+    }
+    .ccp-info ul li::before {
+        content: "✓";
+        color: #2ecc71;
+        font-weight: 700;
+        margin-right: 8px;
+    }
+
+    .ccp-actions {
+        display: flex;
+        gap: 12px;
+    }
+    .ccp-btn {
+        flex: 1;
+        padding: 14px 22px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: transform .15s, box-shadow .2s;
+    }
+    .ccp-btn-claim {
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(22, 160, 133, 0.3);
+    }
+    .ccp-btn-claim:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(22, 160, 133, 0.4); }
+    .ccp-btn-cancel {
+        background: #f0f3f7;
+        color: #5d6d7e;
+    }
+    .ccp-btn-cancel:hover { background: #dfe6ec; }
+
+    @media (max-width: 540px) {
+        .ccp-head, .ccp-body { padding: 24px; }
+        .ccp-actions { flex-direction: column; }
+        .ccp-stats { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ccp-wrap">
+    <div class="ccp-card">
+        <div class="ccp-head">
+            <div class="ccp-icon-big"><i class="fa fa-hand-holding-heart"></i></div>
+            <h2>Profile Claim করবেন?</h2>
+            <p>আপনি এই profile-এর নতুন caretaker হতে চাইছেন।</p>
+        </div>
+
+        <div class="ccp-body">
+
+            <div class="ccp-profile-card">
+                <div class="ccp-profile-avatar">{{ member.name|first|upper }}</div>
+                <h3 class="ccp-profile-name">{{ member.name }}</h3>
+                <div class="ccp-profile-relation">
+                    <i class="fa fa-link"></i> {{ member.relation }}
+                </div>
+
+                <div class="ccp-stats">
+                    <div class="ccp-stat">
+                        <div class="ccp-stat-num">{{ vaccine_count }}</div>
+                        <div class="ccp-stat-label">Vaccines</div>
+                    </div>
+                    <div class="ccp-stat">
+                        <div class="ccp-stat-num">{{ member.display_age }}</div>
+                        <div class="ccp-stat-label">বয়স</div>
+                    </div>
+                    <div class="ccp-stat">
+                        <div class="ccp-stat-num" style="font-size: 16px; padding-top: 4px;">
+                            {{ member.blood_group|default:"—" }}
+                        </div>
+                        <div class="ccp-stat-label">Blood</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ccp-info">
+                <h4><i class="fa fa-info-circle" style="color: #16a085;"></i> Claim করলে কী হবে?</h4>
+                <ul>
+                    <li>আপনি এই profile-এর নতুন caretaker হবেন</li>
+                    <li>সব {{ vaccine_count }} টি vaccine record আপনার account-এ আসবে</li>
+                    <li>আপনি এই profile-এর জন্য নতুন vaccine schedule করতে পারবেন</li>
+                    <li>আগের caretaker একটি notification পাবেন</li>
+                </ul>
+            </div>
+
+            {% if member.handoff_note %}
+            <div style="background: #fff8e1; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; border-left: 4px solid #f39c12;">
+                <strong style="color: #b9770e; font-size: 13px;">
+                    <i class="fa fa-quote-left"></i> পূর্ববর্তী Note:
+                </strong>
+                <p style="margin: 6px 0 0; font-size: 13px; color: #6e6e3a;">
+                    {{ member.handoff_note }}
+                </p>
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="ccp-actions">
+                    <a href="{% url 'claimable_profiles' %}" class="ccp-btn ccp-btn-cancel">
+                        <i class="fa fa-arrow-left"></i> ফিরে যান
+                    </a>
+                    <button type="submit" class="ccp-btn ccp-btn-claim">
+                        <i class="fa fa-check-circle"></i> হ্যাঁ, Claim করুন
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

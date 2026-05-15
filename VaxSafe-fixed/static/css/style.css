@@ -1,0 +1,2046 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap');
+
+/* ========================================
+   VAXSAFE - CUSTOM COLOR VARIABLES
+   ======================================== */
+:root {
+  /* Primary Healthcare Colors */
+  --primary-blue: #0077b6;
+  --primary-teal: #00b4d8;
+  --primary-cyan: #48cae4;
+
+  /* Secondary Colors */
+  --secondary-purple: #667eea;
+  --secondary-violet: #764ba2;
+  --secondary-pink: #fa709a;
+
+  /* Accent Colors */
+  --accent-green: #0ba360;
+  --accent-orange: #ff8c42;
+  --accent-coral: #ff6b6b;
+
+  /* Neutral Colors */
+  --white: #ffffff;
+  --light-gray: #f8f9fa;
+  --medium-gray: #e1e8ed;
+  --dark-gray: #2c3e50;
+  --text-dark: #1a1a1a;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  --gradient-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-success: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+  --gradient-sunset: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --gradient-ocean: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 119, 182, 0.1);
+  --shadow-md: 0 4px 15px rgba(0, 119, 182, 0.2);
+  --shadow-lg: 0 8px 25px rgba(0, 119, 182, 0.3);
+  --shadow-hover: 0 12px 35px rgba(0, 119, 182, 0.4);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 50px;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* ========================================
+   GENERAL STYLES
+   ======================================== */
+body {
+  margin: 0;
+  font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-dark);
+  background: var(--light-gray);
+  line-height: 1.6;
+}
+
+/* ========================================
+   UNIQUE BUTTON STYLES
+   ======================================== */
+
+/* Base Button */
+.btn {
+  display: inline-block;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* Button Sizes */
+.btn-sm {
+  padding: 10px 24px;
+  font-size: 14px;
+}
+
+.btn-md {
+  padding: 14px 32px;
+  font-size: 16px;
+}
+
+.btn-lg {
+  padding: 18px 40px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Primary Button - Medical Blue Gradient */
+.btn-primary {
+  background: var(--gradient-primary);
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Secondary Button - Purple Gradient */
+.btn-secondary {
+  background: var(--gradient-secondary);
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Success Button - Green Gradient */
+.btn-success {
+  background: var(--gradient-success);
+  color: var(--white);
+  box-shadow: 0 4px 15px rgba(11, 163, 96, 0.3);
+}
+
+.btn-success:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(11, 163, 96, 0.4);
+}
+
+/* Outline Button - Teal */
+.btn-outline {
+  background: transparent;
+  color: var(--primary-teal);
+  border: 2px solid var(--primary-teal);
+  box-shadow: none;
+}
+
+.btn-outline:hover {
+  background: var(--primary-teal);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Outline Secondary - Purple */
+.btn-outline-secondary {
+  background: transparent;
+  color: var(--secondary-purple);
+  border: 2px solid var(--secondary-purple);
+  box-shadow: none;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--secondary-purple);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Ghost Button - Subtle */
+.btn-ghost {
+  background: rgba(0, 180, 216, 0.1);
+  color: var(--primary-teal);
+  border: none;
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(0, 180, 216, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Gradient Button - Animated */
+.btn-gradient {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 50%, #48c6ef 100%);
+  background-size: 200% 200%;
+  color: var(--white);
+  animation: gradient-shift 3s ease infinite;
+  box-shadow: var(--shadow-md);
+  font-weight: 700;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.btn-gradient:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Neon Button - Glowing Effect */
+.btn-neon {
+  background: var(--primary-teal);
+  color: var(--white);
+  border: 2px solid var(--primary-teal);
+  box-shadow: 0 0 20px rgba(0, 180, 216, 0.5),
+              0 0 40px rgba(0, 180, 216, 0.3),
+              0 0 60px rgba(0, 180, 216, 0.1);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.btn-neon:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 30px rgba(0, 180, 216, 0.7),
+              0 0 60px rgba(0, 180, 216, 0.5),
+              0 0 90px rgba(0, 180, 216, 0.3);
+}
+
+/* 3D Button - Depth Effect */
+.btn-3d {
+  background: var(--primary-blue);
+  color: var(--white);
+  box-shadow: 0 6px 0 #005f8a,
+              0 8px 15px rgba(0, 119, 182, 0.3);
+  border-radius: var(--radius-md);
+}
+
+.btn-3d:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #005f8a,
+              0 12px 20px rgba(0, 119, 182, 0.4);
+}
+
+.btn-3d:active {
+  transform: translateY(2px);
+  box-shadow: 0 4px 0 #005f8a,
+              0 6px 10px rgba(0, 119, 182, 0.3);
+}
+
+/* Pill Button - Rounded */
+.btn-pill {
+  background: var(--gradient-ocean);
+  color: var(--white);
+  border-radius: var(--radius-full);
+  padding: 12px 36px;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-pill:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Icon Button */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-icon i,
+.btn-icon svg {
+  font-size: 18px;
+  transition: transform var(--transition-normal);
+}
+
+.btn-icon:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-icon:hover i,
+.btn-icon:hover svg {
+  transform: translateX(4px);
+}
+
+/* Glow Button */
+.btn-glow {
+  background: var(--white);
+  color: var(--primary-teal);
+  border: 2px solid var(--primary-teal);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+  transition: all var(--transition-normal);
+}
+
+.btn-glow:hover {
+  background: var(--primary-teal);
+  color: var(--white);
+  box-shadow: 0 0 20px rgba(0, 180, 216, 0.6),
+              0 0 40px rgba(0, 180, 216, 0.4);
+  transform: scale(1.05);
+}
+
+/* Ripple Button */
+.btn-ripple {
+  background: var(--secondary-purple);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.btn-ripple:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Full Width Button */
+.btn-block {
+  width: 100%;
+  display: block;
+}
+
+/* Disabled State */
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ========================================
+   NAVBAR
+   ======================================== */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 70px;
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.logo img {
+  height: 100%;
+  max-height: 150px;
+  width: auto;
+  display: block;
+  margin-left: 20px;
+}
+
+.nav-links a {
+  margin-left: 25px;
+  text-decoration: none;
+  color: var(--dark-gray);
+  font-size: 16px;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-teal);
+  transition: width var(--transition-normal);
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--primary-teal);
+}
+
+.login-btn {
+  font-weight: bold;
+  color: var(--primary-teal);
+}
+
+/* Sticky Navbar */
+.navbar.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+}
+
+/* ========================================
+   HERO SECTION
+   ======================================== */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 100px 10%;
+  background: linear-gradient(135deg, #b0fedc 0%, #c5d2f4 100%);
+  min-height: 80vh;
+}
+
+.hero-img img {
+  max-width: 500px;
+  height: auto;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.hero-text h1 {
+  font-size: 60px;
+  margin-bottom: 15px;
+  color: var(--dark-gray);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.hero-text p {
+  font-size: 25px;
+  margin-bottom: 50px;
+  color: var(--dark-gray);
+  opacity: 0.9;
+}
+
+.buttons a {
+  margin-right: 15px;
+}
+
+/* ========================================
+   FEATURES SECTION
+   ======================================== */
+.features {
+  padding: 80px 10%;
+  text-align: center;
+  background: var(--white);
+}
+
+.features h2 {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--dark-gray);
+  margin-bottom: 20px;
+}
+
+.features > p {
+  font-size: 18px;
+  color: var(--dark-gray);
+  opacity: 0.8;
+  margin-bottom: 60px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  justify-items: center;
+  margin-top: 30px;
+}
+
+.feature-box {
+  background: var(--white);
+  padding: 40px 30px;
+  border-radius: var(--radius-xl);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s forwards;
+}
+
+.feature-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--gradient-sunset);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-normal);
+}
+
+.feature-box:hover::before {
+  transform: scaleX(1);
+}
+
+.feature-box:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.feature-box:nth-child(1)::before {
+  background: var(--gradient-sunset);
+}
+
+.feature-box:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.feature-box:nth-child(2)::before {
+  background: var(--gradient-ocean);
+}
+
+.feature-box:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+.feature-box:nth-child(3)::before {
+  background: var(--gradient-success);
+}
+
+.feature-box:nth-child(4) {
+  animation-delay: 0.7s;
+}
+
+.feature-box:nth-child(4)::before {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.feature-box:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 25px;
+  background: var(--gradient-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  transition: transform var(--transition-normal);
+}
+
+.feature-box:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.feature-box h4 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: var(--dark-gray);
+  font-weight: 700;
+}
+
+.feature-box p {
+  font-size: 16px;
+  color: var(--dark-gray);
+  opacity: 0.8;
+  line-height: 1.7;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   ABOUT SECTION
+   ======================================== */
+.about {
+  padding: 80px 10%;
+  text-align: center;
+  background: var(--gradient-secondary);
+  color: var(--white);
+}
+
+.about h2 {
+  color: var(--white);
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.about p {
+  font-size: 18px;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto;
+  opacity: 0.95;
+}
+
+/* ========================================
+   CONTACT SECTION
+   ======================================== */
+.contact {
+  padding: 80px 5%;
+  text-align: center;
+  background: var(--gradient-primary);
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.contact h2 {
+  color: var(--white);
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.contact > p {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 18px;
+  margin-bottom: 50px;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.contact form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  background: var(--white);
+  padding: 50px 60px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.contact input,
+.contact textarea {
+  width: 100%;
+  padding: 18px 20px;
+  margin-bottom: 25px;
+  border: 2px solid var(--medium-gray);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  color: var(--dark-gray);
+  outline: none;
+  transition: all var(--transition-normal);
+  background: #f8fbff;
+  box-sizing: border-box;
+  font-family: inherit;
+  text-align: center;
+}
+
+.contact input::placeholder,
+.contact textarea::placeholder {
+  color: #98aab9;
+  text-align: center;
+  font-weight: 500;
+}
+
+.contact input:focus,
+.contact textarea:focus {
+  border-color: var(--primary-teal);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.15);
+  transform: translateY(-2px);
+}
+
+.contact textarea {
+  min-height: 150px;
+  resize: vertical;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.contact button {
+  width: 100%;
+  background: var(--gradient-primary);
+  color: var(--white);
+  cursor: pointer;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 18px 40px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.contact button:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.contact button:active {
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.footer {
+  text-align: center;
+  padding: 30px 0;
+  background: var(--gradient-secondary);
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  width: 100%;
+}
+
+.footer p {
+  font-size: 15px;
+  color: var(--white);
+  margin: 0;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease-out;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media screen and (max-width: 992px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 60px 5%;
+  }
+
+  .hero-text h1 {
+    font-size: 48px;
+  }
+
+  .hero-text p {
+    font-size: 20px;
+  }
+
+  .hero-img img {
+    max-width: 400px;
+    margin-top: 40px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar {
+    height: 60px;
+  }
+
+  .logo img {
+    max-height: 120px;
+  }
+
+  .nav-links a {
+    margin-left: 15px;
+    font-size: 14px;
+  }
+
+  .hero-text h1 {
+    font-size: 36px;
+  }
+
+  .hero-text p {
+    font-size: 18px;
+  }
+
+  .features h2,
+  .about h2,
+  .contact h2 {
+    font-size: 32px;
+  }
+
+  .feature-box h4 {
+    font-size: 20px;
+  }
+
+  .feature-box p {
+    font-size: 15px;
+  }
+
+  .btn {
+    padding: 12px 28px;
+    font-size: 15px;
+  }
+
+  .btn-lg {
+    padding: 16px 36px;
+    font-size: 16px;
+  }
+
+  .contact form {
+    padding: 40px 30px;
+    max-width: 100%;
+  }
+
+  .contact input,
+  .contact textarea {
+    padding: 16px 18px;
+    font-size: 15px;
+  }
+
+  .contact button {
+    padding: 16px 30px;
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-text h1 {
+    font-size: 28px;
+  }
+
+  .hero-text p {
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+
+  .hero-img img {
+    max-width: 300px;
+  }
+
+  .buttons a {
+    display: block;
+    margin: 10px auto;
+    max-width: 250px;
+  }
+
+  .features,
+  .about,
+  .contact {
+    padding: 50px 5%;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 10px; }
+.mt-2 { margin-top: 20px; }
+.mt-3 { margin-top: 30px; }
+.mt-4 { margin-top: 40px; }
+
+.mb-1 { margin-bottom: 10px; }
+.mb-2 { margin-bottom: 20px; }
+.mb-3 { margin-bottom: 30px; }
+.mb-4 { margin-bottom: 40px; }
+
+.p-1 { padding: 10px; }
+.p-2 { padding: 20px; }
+.p-3 { padding: 30px; }
+.p-4 { padding: 40px; }
+
+/* ========================================
+   SIDEBAR NAVIGATION BUTTONS
+   Matching Registration Page Style
+   ======================================== */
+
+/* Sidebar Container */
+.sidebar-menu {
+  background: var(--white);
+  padding: 20px 0;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  min-width: 250px;
+}
+
+/* Remove default list styling */
+.sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin: 8px 15px;
+  position: relative;
+  animation: slideInLeft 0.3s ease-out;
+  animation-fill-mode: both;
+}
+
+/* Staggered animation for menu items */
+.sidebar-menu li:nth-child(1) { animation-delay: 0.1s; }
+.sidebar-menu li:nth-child(2) { animation-delay: 0.2s; }
+.sidebar-menu li:nth-child(3) { animation-delay: 0.3s; }
+.sidebar-menu li:nth-child(4) { animation-delay: 0.4s; }
+.sidebar-menu li:nth-child(5) { animation-delay: 0.5s; }
+.sidebar-menu li:nth-child(6) { animation-delay: 0.6s; }
+
+/* Sidebar Button Base Style - Matching Registration Form */
+.sidebar-menu a,
+.sidebar-menu button {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dark-gray);
+  text-decoration: none;
+  border: none;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Ripple Effect on Click */
+.sidebar-menu a::after,
+.sidebar-menu button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.sidebar-menu a:active::after,
+.sidebar-menu button:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* Hover Effect - Matching "Create Account" Button Gradient */
+.sidebar-menu a:hover,
+.sidebar-menu button:hover {
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  color: var(--white);
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+}
+
+/* Active/Selected Button - Same as Registration Button */
+.sidebar-menu a.active,
+.sidebar-menu button.active {
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  color: var(--white);
+  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+  transform: translateX(5px);
+}
+
+/* Active Border Indicator */
+.sidebar-menu a.active::before,
+.sidebar-menu button.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--accent-orange);
+  border-radius: 0 4px 4px 0;
+  z-index: 1;
+}
+
+/* Icon Support */
+.sidebar-menu a i,
+.sidebar-menu button i,
+.sidebar-menu a svg,
+.sidebar-menu button svg {
+  margin-right: 12px;
+  font-size: 18px;
+  transition: transform var(--transition-normal);
+}
+
+.sidebar-menu a:hover i,
+.sidebar-menu button:hover i,
+.sidebar-menu a:hover svg,
+.sidebar-menu button:hover svg {
+  transform: scale(1.2);
+}
+
+/* Profile Button Style */
+.sidebar-menu .profile-btn {
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--secondary-purple);
+  font-weight: 600;
+  border: 2px solid transparent;
+}
+
+.sidebar-menu .profile-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--white);
+  border-color: var(--secondary-purple);
+}
+
+/* Profile Icon */
+.profile-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  color: var(--white);
+  font-weight: 700;
+  transition: transform var(--transition-normal);
+}
+
+.sidebar-menu .profile-btn:hover .profile-icon {
+  transform: rotate(360deg) scale(1.1);
+}
+
+/* Language Selector */
+.sidebar-menu .language-selector {
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--secondary-purple);
+  font-weight: 600;
+  justify-content: space-between;
+}
+
+.sidebar-menu .language-selector:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--white);
+}
+
+/* Dropdown Arrow */
+.dropdown-arrow {
+  margin-left: auto;
+  transition: transform var(--transition-normal);
+}
+
+.sidebar-menu .language-selector:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Notification Badge */
+.sidebar-menu .badge {
+  margin-left: auto;
+  background: var(--accent-coral);
+  color: var(--white);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
+}
+
+.sidebar-menu a:hover .badge,
+.sidebar-menu button:hover .badge {
+  background: var(--white);
+  color: var(--primary-teal);
+  transform: scale(1.1);
+}
+
+/* Slide in animation */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive Design for Sidebar */
+@media screen and (max-width: 768px) {
+  .sidebar-menu {
+    min-width: 100%;
+    border-radius: 0;
+  }
+
+  .sidebar-menu a,
+  .sidebar-menu button {
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  .sidebar-menu li {
+    margin: 6px 10px;
+  }
+}
+/* ========================================
+   PAGE SECTION (used in aboutUs, contact)
+   ======================================== */
+.page-section {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 50px 40px;
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  line-height: 1.9;
+}
+
+.page-section h1 {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--primary-blue);
+  margin-bottom: 25px;
+  border-bottom: 3px solid var(--primary-teal);
+  padding-bottom: 15px;
+}
+
+.page-section p {
+  font-size: 17px;
+  color: var(--dark-gray);
+  opacity: 0.9;
+}
+
+/* Bangla text rendering improvement */
+:lang(bn),
+[data-lang="bn"],
+.bangla {
+  font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+  line-height: 1.9;
+  letter-spacing: 0.2px;
+}
+
+/* ================================================================
+   ★ PER-PAGE UNIQUE THEMES — 28 pages, each own identity ★
+   Each page = unique background + accent + signature button style.
+   Scoped via body.page-XYZ → no bleed into global styles.
+   ================================================================ */
+
+/* Shared btn base for page themes */
+[class*="page-"] .theme-btn,
+[class*="page-"] .btn-primary,
+[class*="page-"] button[type="submit"],
+[class*="page-"] .cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(.2,.8,.2,1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+}
+
+/* ====== 1. HOME — Ocean Dawn (teal→coral) ====== */
+body.page-home {
+  background: linear-gradient(135deg,#caf0f8 0%,#ffe8d6 50%,#ffd6a5 100%);
+}
+body.page-home h1,body.page-home h2{color:#023e8a}
+body.page-home .theme-btn,body.page-home .btn-primary,body.page-home .cta-btn{
+  background:linear-gradient(135deg,#00b4d8,#ff6b6b);
+  color:#fff;border-radius:50px;
+  box-shadow:0 8px 25px rgba(0,180,216,.35);
+}
+body.page-home .theme-btn:hover,body.page-home .btn-primary:hover,body.page-home .cta-btn:hover{
+  transform:translateY(-3px) scale(1.03);
+  box-shadow:0 14px 40px rgba(255,107,107,.5);
+}
+
+/* ====== 2. LOGIN — Midnight Aurora ====== */
+body.page-login{background:linear-gradient(135deg,#0f2027 0%,#203a43 50%,#2c5364 100%);min-height:100vh}
+body.page-login .content{color:#e0f7fa}
+body.page-login h1,body.page-login h2{color:#80ffdb;text-shadow:0 2px 20px rgba(128,255,219,.4)}
+body.page-login input{
+  background:rgba(255,255,255,0.92);
+  border:2px solid #80ffdb;
+  color:#0f2027;
+  -webkit-text-fill-color:#0f2027;
+  caret-color:#0f2027;
+  border-radius:30px;
+}
+body.page-login input::placeholder{
+  color:#547a7a;
+  -webkit-text-fill-color:#547a7a;
+}
+body.page-login .theme-btn,body.page-login .btn-primary,body.page-login button[type="submit"]{
+  background:linear-gradient(135deg,#06ffa5,#00b4d8);
+  color:#0f2027;border-radius:12px;
+  box-shadow:0 0 30px rgba(6,255,165,.4),inset 0 0 20px rgba(255,255,255,.15);
+}
+body.page-login .theme-btn:hover,body.page-login button[type="submit"]:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 50px rgba(6,255,165,.7);
+  letter-spacing:1.5px;
+}
+
+/* ====== 3. REGISTER — Cherry Blossom ====== */
+body.page-register{background:linear-gradient(135deg,#ffdde1 0%,#ee9ca7 100%);min-height:100vh}
+body.page-register h1,body.page-register h2{color:#c2185b}
+body.page-register .theme-btn,body.page-register .btn-primary,body.page-register button[type="submit"]{
+  background:#fff;color:#c2185b;border:2px solid #c2185b;
+  border-radius:4px;padding:14px 36px;
+  box-shadow:4px 4px 0 #c2185b;
+}
+body.page-register button[type="submit"]:hover{
+  background:#c2185b;color:#fff;
+  transform:translate(-2px,-2px);
+  box-shadow:6px 6px 0 #880e4f;
+}
+
+/* ====== 4. VERIFY — Emerald Forest ====== */
+body.page-verify{background:linear-gradient(135deg,#134e5e 0%,#71b280 100%);min-height:100vh;color:#f0fff4}
+body.page-verify h1,body.page-verify h2{color:#d8f3dc}
+body.page-verify .theme-btn,body.page-verify button[type="submit"]{
+  background:linear-gradient(135deg,#52b788,#2d6a4f);
+  color:#fff;border-radius:30px 8px 30px 8px;
+  box-shadow:0 6px 20px rgba(45,106,79,.5);
+}
+body.page-verify button[type="submit"]:hover{
+  border-radius:8px 30px 8px 30px;
+  transform:translateY(-3px);
+}
+
+/* ====== 5. ABOUT US — Forest Emerald ====== */
+body.page-aboutUs{background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 50%,#a5d6a7 100%);min-height:100vh}
+body.page-aboutUs .page-section{background:#fff;border-top:6px solid #2e7d32}
+body.page-aboutUs h1{color:#1b5e20;border-bottom-color:#66bb6a}
+body.page-aboutUs .theme-btn{
+  background:#2e7d32;color:#fff;border-radius:10px;
+  padding:14px 40px;
+  box-shadow:0 6px 20px rgba(46,125,50,.4);
+}
+body.page-aboutUs .theme-btn:hover{
+  background:#1b5e20;letter-spacing:2px;
+  box-shadow:0 10px 30px rgba(27,94,32,.5);
+  transform:translateY(-2px);
+}
+
+/* ====== 6. CONTACT — Sunset Citrus ====== */
+body.page-contact{background:linear-gradient(135deg,#ff9a56 0%,#ff6a88 50%,#ffc3a0 100%);min-height:100vh}
+body.page-contact .page-section{background:#fff;border-left:8px solid #ff6a88}
+body.page-contact h1{color:#ff6a88;border-bottom-color:#ff9a56}
+body.page-contact .theme-btn,body.page-contact button[type="submit"]{
+  background:#fff;color:#ff6a88;border:3px dashed #ff6a88;
+  border-radius:50px;padding:12px 30px;
+}
+body.page-contact button[type="submit"]:hover{
+  background:#ff6a88;color:#fff;border-style:solid;
+  transform:rotate(-1deg) scale(1.05);
+}
+
+/* ====== 7. FEATURES — Electric Indigo ====== */
+body.page-features{background:linear-gradient(135deg,#4e54c8 0%,#8f94fb 100%);min-height:100vh;color:#fff}
+body.page-features h1,body.page-features h2{color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.2)}
+body.page-features .theme-btn,body.page-features .cta-btn{
+  background:rgba(255,255,255,.15);color:#fff;
+  border:2px solid rgba(255,255,255,.5);backdrop-filter:blur(10px);
+  border-radius:16px;
+}
+body.page-features .theme-btn:hover{
+  background:#fff;color:#4e54c8;
+  box-shadow:0 0 40px rgba(255,255,255,.8);
+  transform:translateY(-4px);
+}
+
+/* ====== 8. DASHBOARD — Cyber Mint ====== */
+body.page-dashboard{background:linear-gradient(135deg,#0f3443 0%,#34e89e 100%);min-height:100vh}
+body.page-dashboard h1,body.page-dashboard h2{color:#0f3443}
+body.page-dashboard .theme-btn,body.page-dashboard .btn-primary{
+  background:#0f3443;color:#34e89e;
+  border:2px solid #34e89e;border-radius:0;
+  font-family:monospace;text-transform:uppercase;
+  box-shadow:0 0 0 0 #34e89e;
+}
+body.page-dashboard .theme-btn:hover{
+  box-shadow:6px 6px 0 0 #34e89e;
+  transform:translate(-3px,-3px);
+}
+
+/* ====== 9. PROFILE — Rose Gold ====== */
+body.page-profile{background:linear-gradient(135deg,#f6d365 0%,#fda085 100%);min-height:100vh}
+body.page-profile h1,body.page-profile h2{color:#8b4513}
+body.page-profile .theme-btn,body.page-profile .btn-primary{
+  background:linear-gradient(135deg,#b76e79,#e8a5a5);
+  color:#fff;border-radius:50px;
+  box-shadow:0 8px 20px rgba(183,110,121,.4);
+  border:2px solid rgba(255,255,255,.6);
+}
+body.page-profile .theme-btn:hover{
+  background:linear-gradient(135deg,#e8a5a5,#b76e79);
+  transform:translateY(-3px) scale(1.05);
+}
+
+/* ====== 10. ADD FAMILY — Sky Lemon ====== */
+body.page-addfamilymember{background:linear-gradient(135deg,#fdfcfb 0%,#e2d1c3 50%,#89f7fe 100%);min-height:100vh}
+body.page-addfamilymember h1,body.page-addfamilymember h2{color:#1a5490}
+body.page-addfamilymember .theme-btn,body.page-addfamilymember button[type="submit"]{
+  background:#fff;color:#1a5490;
+  border:none;border-bottom:5px solid #1a5490;
+  border-radius:12px 12px 2px 2px;padding:14px 32px;
+  box-shadow:0 4px 12px rgba(26,84,144,.2);
+}
+body.page-addfamilymember button[type="submit"]:hover{
+  border-bottom-color:#89f7fe;
+  border-bottom-width:10px;
+  transform:translateY(-5px);
+}
+
+/* ====== 11. FAMILY MEMBERS — Lavender Field ====== */
+body.page-familymembers{background:linear-gradient(135deg,#d4a5f9 0%,#a8e6cf 100%);min-height:100vh}
+body.page-familymembers h1,body.page-familymembers h2{color:#5e2a84}
+body.page-familymembers .theme-btn,body.page-familymembers .btn-primary{
+  background:#5e2a84;color:#fff;
+  border-radius:20px 5px 20px 5px;padding:12px 28px;
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.15);
+}
+body.page-familymembers .theme-btn:hover{
+  background:#7e22ce;
+  border-radius:5px 20px 5px 20px;
+}
+
+/* ====== 12. ADD VACCINE — Coral Reef ====== */
+body.page-addvaccine{background:linear-gradient(135deg,#ff6e7f 0%,#bfe9ff 100%);min-height:100vh}
+body.page-addvaccine h1,body.page-addvaccine h2{color:#c92a52}
+body.page-addvaccine .theme-btn,body.page-addvaccine button[type="submit"]{
+  background:linear-gradient(90deg,#ff6e7f,#bfe9ff);
+  color:#fff;border-radius:50px;padding:14px 40px;
+  background-size:200% 100%;
+  text-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+body.page-addvaccine button[type="submit"]:hover{
+  background-position:100% 0;
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 12px 30px rgba(255,110,127,.5);
+}
+
+/* ====== 13. VACCINE LIST — Deep Sea ====== */
+body.page-vaccine_list{background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);min-height:100vh;color:#e3f2fd}
+body.page-vaccine_list h1,body.page-vaccine_list h2{color:#90caf9}
+body.page-vaccine_list .theme-btn{
+  background:transparent;color:#90caf9;
+  border:2px solid #90caf9;border-radius:8px;padding:12px 28px;
+  position:relative;
+}
+body.page-vaccine_list .theme-btn:hover{
+  background:#90caf9;color:#1e3c72;
+  box-shadow:0 0 20px #90caf9,0 0 40px rgba(144,202,249,.5);
+}
+
+/* ====== 14. VACCINE SCHEDULE — Fresh Lime ====== */
+body.page-vaccine_schedule{background:linear-gradient(135deg,#b2f7ef 0%,#efe9ae 100%);min-height:100vh}
+body.page-vaccine_schedule h1,body.page-vaccine_schedule h2{color:#2d5016}
+body.page-vaccine_schedule .theme-btn,body.page-vaccine_schedule .btn-primary{
+  background:#2d5016;color:#efe9ae;
+  border-radius:4px;padding:12px 28px;
+  border-left:5px solid #7cb342;
+  border-right:5px solid #7cb342;
+}
+body.page-vaccine_schedule .theme-btn:hover{
+  background:#7cb342;color:#fff;
+  border-left-width:15px;border-right-width:15px;
+}
+
+/* ====== 15. VACCINE HISTORY — Antique Paper ====== */
+body.page-vaccine_history{background:linear-gradient(135deg,#f5e6d3 0%,#d4b896 100%);min-height:100vh}
+body.page-vaccine_history h1,body.page-vaccine_history h2{color:#5d4037;font-family:Georgia,serif}
+body.page-vaccine_history .theme-btn,body.page-vaccine_history .btn-primary{
+  background:#5d4037;color:#f5e6d3;
+  border-radius:2px;padding:12px 32px;
+  font-family:Georgia,serif;letter-spacing:1px;
+  border:1px solid #3e2723;
+  box-shadow:3px 3px 0 #3e2723;
+}
+body.page-vaccine_history .theme-btn:hover{
+  transform:translate(-2px,-2px);
+  box-shadow:5px 5px 0 #3e2723;
+}
+
+/* ====== 16. SUBMIT REQUEST — Neon Peach ====== */
+body.page-submit_vaccine_request{background:linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%);min-height:100vh}
+body.page-submit_vaccine_request h1,body.page-submit_vaccine_request h2{color:#bf360c}
+body.page-submit_vaccine_request .theme-btn,body.page-submit_vaccine_request button[type="submit"]{
+  background:#fff;color:#bf360c;
+  border:none;border-radius:50px;padding:14px 36px;
+  box-shadow:0 0 0 3px #bf360c inset,0 8px 20px rgba(191,54,12,.3);
+}
+body.page-submit_vaccine_request button[type="submit"]:hover{
+  background:#bf360c;color:#fff;
+  box-shadow:0 0 0 3px #fff inset,0 12px 30px rgba(191,54,12,.5);
+  transform:scale(1.05);
+}
+
+/* ====== 17. MY REQUESTS — Teal Blush ====== */
+body.page-my_vaccine_requests{background:linear-gradient(135deg,#c9ffbf 0%,#ffafbd 100%);min-height:100vh}
+body.page-my_vaccine_requests h1,body.page-my_vaccine_requests h2{color:#00695c}
+body.page-my_vaccine_requests .theme-btn,body.page-my_vaccine_requests .btn-primary{
+  background:#00695c;color:#fff;
+  border-radius:30px 30px 30px 5px;padding:12px 28px;
+  box-shadow:0 6px 15px rgba(0,105,92,.4);
+}
+body.page-my_vaccine_requests .theme-btn:hover{
+  border-radius:5px 30px 30px 30px;
+  background:#00897b;
+  transform:translateY(-2px);
+}
+
+/* ====== 18. ADMIN REQUESTS — Crimson Authority ====== */
+body.page-admin_vaccine_requests{background:linear-gradient(135deg,#232526 0%,#8b0000 100%);min-height:100vh;color:#f5f5f5}
+body.page-admin_vaccine_requests h1,body.page-admin_vaccine_requests h2{color:#ffcdd2;text-transform:uppercase;letter-spacing:3px}
+body.page-admin_vaccine_requests .theme-btn,body.page-admin_vaccine_requests .btn-primary{
+  background:#8b0000;color:#fff;
+  border-radius:0;padding:12px 32px;
+  text-transform:uppercase;letter-spacing:2px;font-weight:700;
+  border:2px solid #ffcdd2;
+}
+body.page-admin_vaccine_requests .theme-btn:hover{
+  background:#c62828;letter-spacing:4px;
+  box-shadow:0 0 25px rgba(255,205,210,.6);
+}
+
+/* ====== 19. DELETE CONFIRM — Danger Zone ====== */
+body.page-delete_vaccine_confirm{background:linear-gradient(135deg,#434343 0%,#000000 100%);min-height:100vh;color:#fff}
+body.page-delete_vaccine_confirm h1,body.page-delete_vaccine_confirm h2{color:#ff5252}
+body.page-delete_vaccine_confirm .theme-btn,body.page-delete_vaccine_confirm button[type="submit"]{
+  background:#ff1744;color:#fff;border:none;
+  border-radius:8px;padding:14px 36px;
+  text-transform:uppercase;font-weight:700;letter-spacing:2px;
+  animation:dangerPulse 2s infinite;
+}
+@keyframes dangerPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,23,68,.7)}
+  50%{box-shadow:0 0 0 15px rgba(255,23,68,0)}
+}
+body.page-delete_vaccine_confirm button[type="submit"]:hover{
+  background:#d50000;animation:none;
+  box-shadow:0 0 30px rgba(255,23,68,.9);
+}
+
+/* ====== 20. CENTERS — Ocean Breeze ====== */
+body.page-centers{background:linear-gradient(135deg,#2193b0 0%,#6dd5ed 100%);min-height:100vh;color:#fff}
+body.page-centers h1,body.page-centers h2{color:#e0f7fa}
+body.page-centers .theme-btn,body.page-centers .btn-primary{
+  background:#fff;color:#2193b0;
+  border-radius:50px 0 50px 0;padding:12px 32px;
+  box-shadow:-5px 5px 0 rgba(255,255,255,.3);
+}
+body.page-centers .theme-btn:hover{
+  border-radius:0 50px 0 50px;
+  box-shadow:5px -5px 0 rgba(255,255,255,.3);
+  transform:translateY(-3px);
+}
+
+/* ====== 21. CENTER DETAIL — Tropical Lagoon ====== */
+body.page-center_detail{background:linear-gradient(135deg,#00c6ff 0%,#0072ff 100%);min-height:100vh;color:#fff}
+body.page-center_detail h1,body.page-center_detail h2{color:#e1f5fe}
+body.page-center_detail .theme-btn,body.page-center_detail .btn-primary{
+  background:rgba(255,255,255,.2);color:#fff;
+  border:2px solid rgba(255,255,255,.6);backdrop-filter:blur(8px);
+  border-radius:12px;padding:12px 28px;
+}
+body.page-center_detail .theme-btn:hover{
+  background:#fff;color:#0072ff;
+  box-shadow:0 8px 30px rgba(0,114,255,.5);
+  transform:scale(1.05);
+}
+
+/* ====== 22. NEWS — Newsprint ====== */
+body.page-news{background:linear-gradient(135deg,#f9f9f9 0%,#e0e0e0 100%);min-height:100vh}
+body.page-news h1,body.page-news h2{color:#212121;font-family:Georgia,'Times New Roman',serif;border-bottom:3px double #212121;padding-bottom:10px}
+body.page-news .theme-btn,body.page-news .btn-primary{
+  background:#212121;color:#fff;
+  border-radius:0;padding:12px 28px;
+  font-family:Georgia,serif;
+  border:2px solid #212121;
+}
+body.page-news .theme-btn:hover{
+  background:#fff;color:#212121;
+  letter-spacing:2px;
+}
+
+/* ====== 23. NEWS DETAIL — Warm Parchment ====== */
+body.page-news_detail{background:linear-gradient(135deg,#fdfbfb 0%,#ebedee 100%);min-height:100vh}
+body.page-news_detail h1,body.page-news_detail h2{color:#3e2723;font-family:Georgia,serif}
+body.page-news_detail .theme-btn,body.page-news_detail .btn-primary{
+  background:transparent;color:#3e2723;
+  border:1px solid #3e2723;border-radius:0;padding:10px 24px;
+  font-family:Georgia,serif;font-style:italic;
+}
+body.page-news_detail .theme-btn:hover{
+  background:#3e2723;color:#fdfbfb;
+  font-style:normal;letter-spacing:2px;
+}
+
+/* ====== 24. VACCINE UPDATES — Fresh Azure ====== */
+body.page-vaccine_updates{background:linear-gradient(135deg,#e0eafc 0%,#cfdef3 100%);min-height:100vh}
+body.page-vaccine_updates h1,body.page-vaccine_updates h2{color:#1565c0}
+body.page-vaccine_updates .theme-btn,body.page-vaccine_updates .btn-primary{
+  background:#1565c0;color:#fff;
+  border-radius:8px;padding:12px 28px;
+  box-shadow:0 4px 0 #0d47a1,0 8px 15px rgba(21,101,192,.3);
+}
+body.page-vaccine_updates .theme-btn:hover{
+  transform:translateY(3px);
+  box-shadow:0 1px 0 #0d47a1,0 4px 8px rgba(21,101,192,.3);
+}
+
+/* ====== 25. VACCINE UPDATE DETAIL — Sky Mint ====== */
+body.page-vaccine_updates_detail{background:linear-gradient(135deg,#a1c4fd 0%,#c2e9fb 100%);min-height:100vh}
+body.page-vaccine_updates_detail h1,body.page-vaccine_updates_detail h2{color:#0d47a1}
+body.page-vaccine_updates_detail .theme-btn,body.page-vaccine_updates_detail .btn-primary{
+  background:#fff;color:#0d47a1;
+  border:2px solid #0d47a1;
+  border-radius:50px;padding:10px 28px;
+}
+body.page-vaccine_updates_detail .theme-btn:hover{
+  background:#0d47a1;color:#fff;
+  box-shadow:0 0 20px rgba(13,71,161,.5);
+}
+
+/* ====== 26. NOTIFICATIONS — Amber Bell ====== */
+body.page-notifications{background:linear-gradient(135deg,#fff8e1 0%,#ffe082 100%);min-height:100vh}
+body.page-notifications h1,body.page-notifications h2{color:#e65100}
+body.page-notifications .theme-btn,body.page-notifications .btn-primary{
+  background:#e65100;color:#fff;
+  border-radius:50px;padding:12px 28px;
+  box-shadow:0 6px 20px rgba(230,81,0,.4);
+}
+body.page-notifications .theme-btn:hover{
+  animation:bell 0.5s ease;
+  background:#ff6f00;
+}
+@keyframes bell{
+  0%,100%{transform:rotate(0)}
+  25%{transform:rotate(-8deg)}
+  75%{transform:rotate(8deg)}
+}
+
+/* ====== 27. REMINDER — Twilight Pink ====== */
+body.page-reminder{background:linear-gradient(135deg,#fbc2eb 0%,#a6c1ee 100%);min-height:100vh}
+body.page-reminder h1,body.page-reminder h2{color:#6a1b9a}
+body.page-reminder .theme-btn,body.page-reminder .btn-primary{
+  background:linear-gradient(135deg,#6a1b9a,#4527a0);
+  color:#fff;
+  border-radius:50px;padding:12px 32px;
+  box-shadow:0 8px 25px rgba(106,27,154,.4);
+}
+body.page-reminder .theme-btn:hover{
+  background:linear-gradient(135deg,#ab47bc,#7e57c2);
+  transform:translateY(-3px) scale(1.04);
+}
+
+/* ====== 28. SET REMINDER — Soft Mint ====== */
+body.page-set_reminder{background:linear-gradient(135deg,#d299c2 0%,#fef9d7 100%);min-height:100vh}
+body.page-set_reminder h1,body.page-set_reminder h2{color:#4a148c}
+body.page-set_reminder .theme-btn,body.page-set_reminder button[type="submit"]{
+  background:#fef9d7;color:#4a148c;
+  border:3px solid #4a148c;
+  border-radius:0 20px 0 20px;padding:12px 32px;font-weight:700;
+}
+body.page-set_reminder button[type="submit"]:hover{
+  background:#4a148c;color:#fef9d7;
+  border-radius:20px 0 20px 0;
+  letter-spacing:2px;
+}
+
+/* Global card softening for theme pages */
+[class*="page-"] .card,
+[class*="page-"] .feature-card{
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(10px);
+}
+
+/* ================================================================
+   ★ MISSING PAGE THEMES — 13 new pages ★
+   ================================================================ */
+
+/* ====== 29. ADMIN TRANSFER — Steel Command ====== */
+body.page-admin_transfer {
+  background: linear-gradient(135deg, #1c1c2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  color: #e0e0e0;
+}
+body.page-admin_transfer h1,
+body.page-admin_transfer h2 {
+  color: #00d4ff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+body.page-admin_transfer .theme-btn,
+body.page-admin_transfer .btn-primary,
+body.page-admin_transfer button[type="submit"] {
+  background: transparent;
+  color: #00d4ff;
+  border: 2px solid #00d4ff;
+  border-radius: 0;
+  padding: 14px 36px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 700;
+  position: relative;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.1), 0 0 20px rgba(0, 212, 255, 0.2);
+}
+body.page-admin_transfer button[type="submit"]:hover {
+  background: #00d4ff;
+  color: #1c1c2e;
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
+  letter-spacing: 5px;
+}
+
+/* ====== 30. APPROVE REQUEST CONFIRM — Victory Green ====== */
+body.page-approve_request_confirm {
+  background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 50%, #66bb6a 100%);
+  min-height: 100vh;
+}
+body.page-approve_request_confirm h1,
+body.page-approve_request_confirm h2 {
+  color: #1b5e20;
+  font-weight: 800;
+}
+body.page-approve_request_confirm .theme-btn,
+body.page-approve_request_confirm button[type="submit"] {
+  background: #2e7d32;
+  color: #fff;
+  border-radius: 50px;
+  padding: 14px 40px;
+  font-weight: 700;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 3px #2e7d32, 0 8px 25px rgba(46, 125, 50, 0.4);
+  transition: all 0.3s ease;
+}
+body.page-approve_request_confirm button[type="submit"]:hover {
+  background: #1b5e20;
+  box-shadow: 0 0 0 5px #1b5e20, 0 12px 35px rgba(27, 94, 32, 0.6);
+  transform: translateY(-3px) scale(1.04);
+}
+
+/* ====== 31. DELETE FAMILY MEMBER CONFIRM — Obsidian Warning ====== */
+body.page-delete_family_member_confirm {
+  background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+  min-height: 100vh;
+  color: #fff;
+}
+body.page-delete_family_member_confirm h1,
+body.page-delete_family_member_confirm h2 {
+  color: #ff8a80;
+  font-weight: 800;
+}
+body.page-delete_family_member_confirm .theme-btn,
+body.page-delete_family_member_confirm button[type="submit"] {
+  background: #ff3d00;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 36px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: warningPulse 2.5s infinite;
+}
+@keyframes warningPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 61, 0, 0.7); }
+  50% { box-shadow: 0 0 0 14px rgba(255, 61, 0, 0); }
+}
+body.page-delete_family_member_confirm button[type="submit"]:hover {
+  background: #bf360c;
+  animation: none;
+  box-shadow: 0 0 35px rgba(255, 61, 0, 0.9);
+  transform: scale(1.05);
+}
+
+/* ====== 32. DEPENDENT UPGRADE — Golden Upgrade ====== */
+body.page-dependent_upgrade {
+  background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  min-height: 100vh;
+}
+body.page-dependent_upgrade h1,
+body.page-dependent_upgrade h2 {
+  color: #3e2723;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+body.page-dependent_upgrade .theme-btn,
+body.page-dependent_upgrade button[type="submit"] {
+  background: #3e2723;
+  color: #ffd200;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 40px;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 0 #1a0e0a, 0 10px 20px rgba(62, 39, 35, 0.4);
+  transition: all 0.2s ease;
+}
+body.page-dependent_upgrade button[type="submit"]:hover {
+  background: #1a0e0a;
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #1a0e0a, 0 4px 10px rgba(62, 39, 35, 0.3);
+}
+
+/* ====== 33. FAMILY ACCEPT INVITE — Spring Welcome ====== */
+body.page-family_accept_invite {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  min-height: 100vh;
+}
+body.page-family_accept_invite h1,
+body.page-family_accept_invite h2 {
+  color: #006064;
+  font-weight: 800;
+}
+body.page-family_accept_invite .theme-btn,
+body.page-family_accept_invite button[type="submit"] {
+  background: #fff;
+  color: #00897b;
+  border: 3px solid #00897b;
+  border-radius: 50px;
+  padding: 14px 40px;
+  font-weight: 700;
+  box-shadow: 0 8px 25px rgba(0, 137, 123, 0.3);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+body.page-family_accept_invite button[type="submit"]:hover {
+  background: #00897b;
+  color: #fff;
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 16px 40px rgba(0, 137, 123, 0.5);
+}
+
+/* ====== 34. FAMILY CREATE — Warm Earth ====== */
+body.page-family_create {
+  background: linear-gradient(135deg, #ffeaa7 0%, #dfe6e9 50%, #b2bec3 100%);
+  min-height: 100vh;
+}
+body.page-family_create h1,
+body.page-family_create h2 {
+  color: #2d3436;
+  font-weight: 800;
+}
+body.page-family_create .theme-btn,
+body.page-family_create button[type="submit"] {
+  background: #2d3436;
+  color: #ffeaa7;
+  border: none;
+  border-radius: 6px;
+  padding: 14px 36px;
+  font-weight: 700;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 5px 5px 0 #636e72;
+  transition: all 0.25s ease;
+}
+body.page-family_create button[type="submit"]:hover {
+  background: #636e72;
+  color: #fff;
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 #2d3436;
+}
+
+/* ====== 35. FAMILY INVITE — Festive Confetti ====== */
+body.page-family_invite {
+  background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #6c5ce7 100%);
+  min-height: 100vh;
+  color: #fff;
+}
+body.page-family_invite h1,
+body.page-family_invite h2 {
+  color: #fff;
+  text-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+  font-weight: 800;
+}
+body.page-family_invite .theme-btn,
+body.page-family_invite button[type="submit"] {
+  background: #fff;
+  color: #6c5ce7;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 40px;
+  font-weight: 800;
+  box-shadow: 0 8px 30px rgba(108, 92, 231, 0.4);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+body.page-family_invite button[type="submit"]:hover {
+  background: #6c5ce7;
+  color: #fff;
+  transform: translateY(-4px) rotate(-2deg) scale(1.06);
+  box-shadow: 0 18px 45px rgba(108, 92, 231, 0.6);
+}
+
+/* ====== 36. LEAVE FAMILY — Dusk Farewell ====== */
+body.page-leave_family {
+  background: linear-gradient(135deg, #4a4a4a 0%, #7f7f7f 50%, #bdbdbd 100%);
+  min-height: 100vh;
+  color: #fff;
+}
+body.page-leave_family h1,
+body.page-leave_family h2 {
+  color: #fff;
+  font-weight: 800;
+  opacity: 0.9;
+}
+body.page-leave_family .theme-btn,
+body.page-leave_family button[type="submit"] {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  padding: 14px 36px;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+body.page-leave_family button[type="submit"]:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* ====== 37. OVERDUE VACCINATIONS — Alert Red ====== */
+body.page-overdue_vaccinations {
+  background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
+  min-height: 100vh;
+}
+body.page-overdue_vaccinations h1,
+body.page-overdue_vaccinations h2 {
+  color: #7f0000;
+  font-weight: 800;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.4);
+}
+body.page-overdue_vaccinations .theme-btn,
+body.page-overdue_vaccinations .btn-primary {
+  background: #7f0000;
+  color: #f9d423;
+  border: none;
+  border-radius: 6px;
+  padding: 14px 36px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0 6px 20px rgba(127, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+body.page-overdue_vaccinations .theme-btn:hover,
+body.page-overdue_vaccinations .btn-primary:hover {
+  background: #f9d423;
+  color: #7f0000;
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 12px 30px rgba(127, 0, 0, 0.4);
+}
+
+/* ====== 38. REJECT REQUEST CONFIRM — Storm Gray ====== */
+body.page-reject_request_confirm {
+  background: linear-gradient(135deg, #373b44 0%, #4286f4 100%);
+  min-height: 100vh;
+  color: #e0e0e0;
+}
+body.page-reject_request_confirm h1,
+body.page-reject_request_confirm h2 {
+  color: #ef9a9a;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+body.page-reject_request_confirm .theme-btn,
+body.page-reject_request_confirm button[type="submit"] {
+  background: #ef5350;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 14px 36px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 15px rgba(239, 83, 80, 0.5);
+  transition: all 0.3s ease;
+}
+body.page-reject_request_confirm button[type="submit"]:hover {
+  background: #c62828;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(198, 40, 40, 0.6);
+  letter-spacing: 4px;
+}
+
+/* ====== 39. UPCOMING VACCINATIONS — Sky Countdown ====== */
+body.page-upcoming_vaccinations {
+  background: linear-gradient(135deg, #e0f7fa 0%, #80deea 50%, #26c6da 100%);
+  min-height: 100vh;
+}
+body.page-upcoming_vaccinations h1,
+body.page-upcoming_vaccinations h2 {
+  color: #006064;
+  font-weight: 800;
+}
+body.page-upcoming_vaccinations .theme-btn,
+body.page-upcoming_vaccinations .btn-primary {
+  background: #006064;
+  color: #e0f7fa;
+  border: none;
+  border-radius: 50px 8px 50px 8px;
+  padding: 13px 34px;
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(0, 96, 100, 0.4);
+  transition: all 0.35s ease;
+}
+body.page-upcoming_vaccinations .theme-btn:hover,
+body.page-upcoming_vaccinations .btn-primary:hover {
+  background: #00838f;
+  border-radius: 8px 50px 8px 50px;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 131, 143, 0.5);
+}
+
+/* ====== 40. VACCINE DETAIL — Deep Emerald ====== */
+body.page-vaccine_detail {
+  background: linear-gradient(135deg, #0f9b58 0%, #00bf8f 100%);
+  min-height: 100vh;
+  color: #fff;
+}
+body.page-vaccine_detail h1,
+body.page-vaccine_detail h2 {
+  color: #e8f5e9;
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+body.page-vaccine_detail .theme-btn,
+body.page-vaccine_detail .btn-primary {
+  background: #fff;
+  color: #0f9b58;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 36px;
+  font-weight: 700;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+body.page-vaccine_detail .theme-btn:hover,
+body.page-vaccine_detail .btn-primary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ====== 41. VERIFY EMAIL — Soft Violet ====== */
+body.page-verifyemail {
+  background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 50%, #9fa8da 100%);
+  min-height: 100vh;
+}
+body.page-verifyemail h1,
+body.page-verifyemail h2 {
+  color: #283593;
+  font-weight: 800;
+}
+body.page-verifyemail .theme-btn,
+body.page-verifyemail button[type="submit"] {
+  background: linear-gradient(135deg, #3949ab, #1a237e);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 40px;
+  font-weight: 700;
+  box-shadow: 0 8px 25px rgba(57, 73, 171, 0.5);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+body.page-verifyemail button[type="submit"]:hover {
+  background: linear-gradient(135deg, #5c6bc0, #3949ab);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 16px 40px rgba(57, 73, 171, 0.6);
+}

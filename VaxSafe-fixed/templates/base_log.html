@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}VaxSafe{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ── Global resets ───────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      color: #2c3e50;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1;
+      padding: 0;
+    }
+
+    /* ── Flash messages ──────────────────────────── */
+    .messages-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 380px;
+    }
+
+    .alert {
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.12);
+      animation: slide-in .3s ease;
+      cursor: pointer;
+    }
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .alert-success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+    .alert-error,
+    .alert-danger  { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+    .alert-warning { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
+    .alert-info    { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+
+    .alert-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: inherit;
+      opacity: .6;
+      padding: 0;
+      line-height: 1;
+    }
+    .alert-close:hover { opacity: 1; }
+
+    /* ── Footer ─────────────────────────────────── */
+    .footer {
+      text-align: center;
+      padding: 14px 0;
+      background: #ffffff;
+      box-shadow: 0 -2px 4px rgba(0,0,0,.05);
+      width: 100%;
+      margin-top: auto;
+    }
+    .footer p {
+      font-size: 14px;
+      color: #636e72;
+      margin: 0;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  {# ── Navigation ─────────────────────────────── #}
+  {% include 'nav_two.html' %}
+
+  {# ── Django Messages ─────────────────────────── #}
+  {% if messages %}
+  <div class="messages-container" id="messages-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" onclick="this.remove()">
+      {% if message.tags == 'success' %}
+        <i class="fa fa-check-circle"></i>
+      {% elif message.tags == 'error' or message.tags == 'danger' %}
+        <i class="fa fa-times-circle"></i>
+      {% elif message.tags == 'warning' %}
+        <i class="fa fa-exclamation-triangle"></i>
+      {% else %}
+        <i class="fa fa-info-circle"></i>
+      {% endif %}
+      <span>{{ message }}</span>
+      <button class="alert-close" onclick="event.stopPropagation();this.parentElement.remove();">&times;</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# ── Main Content ────────────────────────────── #}
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  {# ── Footer ──────────────────────────────────── #}
+  <footer class="footer">
+    <p>&copy; 2026 VaxSafe. All rights reserved.</p>
+  </footer>
+
+  {# ── Auto-dismiss messages ───────────────────── #}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const container = document.getElementById('messages-container');
+      if (!container) return;
+      setTimeout(function () {
+        container.querySelectorAll('.alert').forEach(function (el) {
+          el.style.transition = 'opacity .4s';
+          el.style.opacity = '0';
+          setTimeout(() => el.remove(), 400);
+        });
+      }, 5000);  // 5 seconds
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

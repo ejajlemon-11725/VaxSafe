@@ -1,0 +1,259 @@
+<nav class="navbar">
+  <div class="logo">
+    {% load static %}
+    <img src="{% static 'images/logo.png' %}" alt="VaxSafe Logo">
+  </div>
+  <div class="nav-links">
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'home' %}#features">Features</a>
+    <a href="{% url 'home' %}#about">About Us</a>
+    <a href="{% url 'home' %}#contact">Contact Us</a>
+
+    {% if user.is_authenticated %}
+
+      <!-- ✅ নোটিফিকেশন বেল -->
+      <div class="notif-wrapper" style="position:relative; display:inline-block;">
+        <button class="notif-bell-btn" id="notifToggle" onclick="toggleNotifDropdown()" style="
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 20px;
+          position: relative;
+          padding: 4px 8px;
+        ">
+          🔔
+          {% if unread_notif_count > 0 %}
+            <span style="
+              position: absolute;
+              top: -4px; right: -4px;
+              background: #e53935;
+              color: white;
+              border-radius: 50%;
+              font-size: 10px;
+              font-weight: 700;
+              width: 18px; height: 18px;
+              display: flex; align-items: center; justify-content: center;
+              line-height: 1;
+            ">{{ unread_notif_count }}</span>
+          {% endif %}
+        </button>
+
+        <!-- Dropdown -->
+        <div id="notifDropdown" style="
+          display: none;
+          position: absolute;
+          right: 0; top: 110%;
+          width: 300px;
+          background: white;
+          border-radius: 10px;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+          z-index: 9999;
+          overflow: hidden;
+          border: 1px solid #e0e0e0;
+        ">
+          <!-- Header -->
+          <div style="
+            background: #009688;
+            color: white;
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+            <span>🔔 নোটিফিকেশন</span>
+            {% if unread_notif_count > 0 %}
+              <span style="
+                background: #e53935;
+                border-radius: 12px;
+                padding: 2px 8px;
+                font-size: 11px;
+              ">{{ unread_notif_count }} নতুন</span>
+            {% endif %}
+          </div>
+
+          <!-- Items -->
+          <div style="max-height: 250px; overflow-y: auto;">
+            {% if latest_notifications %}
+              {% for notif in latest_notifications %}
+                <a href="{% url 'notification_list' %}" style="
+                  display: block;
+                  padding: 12px 16px;
+                  border-bottom: 1px solid #f5f5f5;
+                  text-decoration: none;
+                  color: #263238;
+                  transition: background 0.15s;
+                " onmouseover="this.style.background='#f0faf9'"
+                   onmouseout="this.style.background='white'">
+                  <div style="font-size: 13px; font-weight: 600;">
+                    {% if notif.notif_type == 'reminder' %}🔔
+                    {% elif notif.notif_type == 'update' %}💉
+                    {% else %}⚠️{% endif %}
+                    {{ notif.title }}
+                  </div>
+                  <div style="font-size: 12px; color: #78909c; margin-top: 3px;">
+                    {{ notif.message|truncatechars:55 }}
+                  </div>
+                  <div style="font-size: 11px; color: #b0bec5; margin-top: 4px;">
+                    {{ notif.created_at|timesince }} আগে
+                  </div>
+                </a>
+              {% endfor %}
+            {% else %}
+              <div style="
+                padding: 24px 16px;
+                text-align: center;
+                color: #90a4ae;
+                font-size: 13px;
+              ">
+                <div style="font-size: 28px; margin-bottom: 8px;">🔕</div>
+                কোনো নতুন নোটিফিকেশন নেই
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Footer -->
+          <a href="{% url 'notification_list' %}" style="
+            display: block;
+            text-align: center;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #009688;
+            border-top: 1px solid #e0e0e0;
+            text-decoration: none;
+            background: #f9f9f9;
+          " onmouseover="this.style.background='#e0f2f1'"
+             onmouseout="this.style.background='#f9f9f9'">
+            সব নোটিফিকেশন দেখুন →
+          </a>
+        </div>
+      </div>
+      <!-- ✅ বেল শেষ -->
+
+      <a href="{% url 'logout' %}" class="login-btn">Logout</a>
+
+    {% else %}
+      <a href="{% url 'register' %}">Register</a>
+      <a href="{% url 'login' %}" class="login-btn">Log In</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- ✅ Dropdown বন্ধ করার Script -->
+<script>
+function toggleNotifDropdown() {
+  const dropdown = document.getElementById('notifDropdown');
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+// বাইরে ক্লিক করলে বন্ধ হবে
+document.addEventListener('click', function(e) {
+  const wrapper = document.querySelector('.notif-wrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    const dropdown = document.getElementById('notifDropdown');
+    if (dropdown) dropdown.style.display = 'none';
+  }
+});
+</script>
+
+<script>
+// ============================================================
+//  VaxSafe — Language Toggle  (English ↔ বাংলা)
+// ============================================================
+(function () {
+  const LANG_KEY = 'vaxsafe_lang';
+  const translations = {
+    "Home": "হোম",
+    "Features": "বৈশিষ্ট্যসমূহ",
+    "About Us": "আমাদের সম্পর্কে",
+    "Contact Us": "যোগাযোগ করুন",
+    "Register": "নিবন্ধন",
+    "Log In": "লগ ইন",
+    "Logout": "লগআউট",
+    "Dashboard": "ড্যাশবোর্ড",
+    "Schedule": "সময়সূচি",
+    "Centers": "কেন্দ্রসমূহ",
+    "News": "সংবাদ",
+    "Profile": "প্রোফাইল",
+    "Language": "ভাষা",
+    "Your Health, Future-Proofed.": "আপনার স্বাস্থ্য, ভবিষ্যতের জন্য নিরাপদ।",
+    "The intelligent vaccination ecosystem keeping your family safe, one dose at a time.": "পরিবারের সুরক্ষায় বুদ্ধিমান টিকা ব্যবস্থাপনা — একটি ডোজ একটি সময়ে।",
+    "Get started": "শুরু করুন",
+    "Learn More": "আরও জানুন",
+    "Smart Reminders": "স্মার্ট অনুস্মারক",
+    "Never miss your next Vaccine": "পরবর্তী টিকার কথা কখনো ভুলবেন না",
+    "Family Tracking": "পারিবারিক ট্র্যাকিং",
+    "Manage Vaccinations for your loved ones": "প্রিয়জনদের টিকাদান পরিচালনা করুন",
+    "Center Finder": "কেন্দ্র খুঁজুন",
+    "Locate nearby vaccination centers": "কাছের টিকাদান কেন্দ্র খুঁজুন",
+    "Latest Updates": "সর্বশেষ আপডেট",
+    "Secure & Private": "নিরাপদ ও গোপনীয়",
+    "Always Available": "সর্বদা উপলব্ধ",
+    "For All Users": "সকল ব্যবহারকারীর জন্য",
+    "Send Message": "বার্তা পাঠান",
+    "Send": "পাঠান",
+    "Sign In": "প্রবেশ করুন",
+    "Back": "পেছনে যান",
+    "Cancel": "বাতিল",
+    "Save Changes": "পরিবর্তন সংরক্ষণ",
+    "All rights reserved.": "সর্বস্বত্ব সংরক্ষিত।",
+    "Completed": "সম্পন্ন",
+    "Pending": "অপেক্ষমাণ",
+    "Scheduled": "নির্ধারিত",
+    "Overdue": "বিলম্বিত",
+    "Submit": "জমা দিন",
+    "Resend OTP": "OTP পুনরায় পাঠান",
+  };
+
+  const reverseMap = {};
+  for (const [en, bn] of Object.entries(translations)) {
+    reverseMap[bn] = en;
+  }
+
+  function translateNode(node, toBangla) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent.trim();
+      if (!text) return;
+      if (toBangla) {
+        const bn = translations[text];
+        if (bn) node.textContent = node.textContent.replace(text, bn);
+      } else {
+        const en = reverseMap[text];
+        if (en) node.textContent = node.textContent.replace(text, en);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName.toLowerCase();
+      if (['script','style','select'].includes(tag)) return;
+      if (node.hasAttribute && node.hasAttribute('placeholder')) {
+        const ph = node.getAttribute('placeholder');
+        if (toBangla && translations[ph]) node.setAttribute('placeholder', translations[ph]);
+        else if (!toBangla && reverseMap[ph]) node.setAttribute('placeholder', reverseMap[ph]);
+      }
+      node.childNodes.forEach(child => translateNode(child, toBangla));
+    }
+  }
+
+  function applyLanguage(lang) {
+    localStorage.setItem(LANG_KEY, lang);
+    const toBangla = (lang === 'bn');
+    document.body.childNodes.forEach(n => translateNode(n, toBangla));
+    document.querySelectorAll('#lang-btn').forEach(btn => {
+      btn.innerHTML = (lang === 'bn' ? 'বাংলা' : 'English') + ' <span class="dropdown-arrow">▼</span>';
+    });
+  }
+
+  window.setLanguage = function(lang) {
+    const code = (lang === 'Bangla' || lang === 'bn') ? 'bn' : 'en';
+    applyLanguage(code);
+    const dd = document.getElementById('lang-dropdown');
+    if (dd) dd.classList.remove('show');
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'bn') applyLanguage('bn');
+  });
+})();
+</script>

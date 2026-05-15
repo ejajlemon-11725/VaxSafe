@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% block body_class %}page-aboutUs{% endblock %}
+
+{% block title %}About Us - VaxSafe
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <h1>About Us</h1>
+  <p> VaxSafe is a student-developed web platform empowering Bangladeshi families with comprehensive vaccination management tools, bridging the gap to essential healthcare. <br>
+
+
+
+
+Our complete ecosystem ensures no critical dose is missed through intelligent scheduling, real-time government updates, and secure tracking for family members of all ages.<br>
+
+
+
+
+Deeply integrated with the national immunization calendar, we provide location-specific access to health centers and mobile units.<br>
+
+
+
+
+VaxSafe combines modern technology with local expertise to make family health protection as simple and reliable as checking your email.<br> </p>
+</section>
+{% endblock %}
+<script>
+// ============================================================
+//  VaxSafe — Language Toggle  (English ↔ বাংলা)
+// ============================================================
+(function () {
+  const LANG_KEY = 'vaxsafe_lang';
+  const translations = {
+    "Home": "হোম",
+    "Features": "বৈশিষ্ট্যসমূহ",
+    "About Us": "আমাদের সম্পর্কে",
+    "Contact Us": "যোগাযোগ করুন",
+    "Register": "নিবন্ধন",
+    "Log In": "লগ ইন",
+    "Logout": "লগআউট",
+    "Dashboard": "ড্যাশবোর্ড",
+    "Schedule": "সময়সূচি",
+    "Centers": "কেন্দ্রসমূহ",
+    "News": "সংবাদ",
+    "Profile": "প্রোফাইল",
+    "Language": "ভাষা",
+    "Your Health, Future-Proofed.": "আপনার স্বাস্থ্য, ভবিষ্যতের জন্য নিরাপদ।",
+    "The intelligent vaccination ecosystem keeping your family safe, one dose at a time.": "পরিবারের সুরক্ষায় বুদ্ধিমান টিকা ব্যবস্থাপনা — একটি ডোজ একটি সময়ে।",
+    "Get started": "শুরু করুন",
+    "Learn More": "আরও জানুন",
+    "Smart Reminders": "স্মার্ট অনুস্মারক",
+    "Never miss your next Vaccine": "পরবর্তী টিকার কথা কখনো ভুলবেন না",
+    "Family Tracking": "পারিবারিক ট্র্যাকিং",
+    "Manage Vaccinations for your loved ones": "প্রিয়জনদের টিকাদান পরিচালনা করুন",
+    "Center Finder": "কেন্দ্র খুঁজুন",
+    "Locate nearby vaccination centers": "কাছের টিকাদান কেন্দ্র খুঁজুন",
+    "Latest Updates": "সর্বশেষ আপডেট",
+    "Stay informed with the newest vaccine-related news.": "টিকা সংক্রান্ত সর্বশেষ খবর জানুন।",
+    "Get health alerts and vaccine updates": "স্বাস্থ্য সতর্কতা ও টিকা আপডেট পান",
+    "Secure & Private": "নিরাপদ ও গোপনীয়",
+    "Always Available": "সর্বদা উপলব্ধ",
+    "For All Users": "সকল ব্যবহারকারীর জন্য",
+    "VaxSafe is a student-developed web platform dedicated to empowering Bangladeshi families with accessible vaccination management tools.": "VaxSafe একটি শিক্ষার্থী-নির্মিত প্ল্যাটফর্ম যা বাংলাদেশের পরিবারগুলোকে সহজলভ্য টিকা ব্যবস্থাপনার সুবিধা দেয়।",
+    "Our system simplifies healthcare by offering intelligent scheduling, real-time reminders, and secure tracking for family members of all ages.": "আমাদের সিস্টেম বুদ্ধিমান সময়সূচি ও রিয়েল-টাইম অনুস্মারকের মাধ্যমে স্বাস্থ্যসেবা সহজ করে।",
+    "Deeply integrated with Bangladesh's national immunization calendar, VaxSafe connects you to local health centers to ensure no critical dose is missed.": "জাতীয় টিকাদান ক্যালেন্ডারের সাথে সংযুক্ত, VaxSafe আপনাকে স্থানীয় স্বাস্থ্যকেন্দ্রের সাথে যুক্ত করে।",
+    "We make staying protected as easy as checking your email, contributing to a safer, healthier nation.": "সুরক্ষিত থাকাকে আমরা ইমেইল চেক করার মতোই সহজ করে তুলি।",
+    "We\'d love to hear from you! Send us a message.": "আপনার কাছ থেকে শুনতে চাই! আমাদের বার্তা পাঠান।",
+    "Send Message": "বার্তা পাঠান",
+    "Send": "পাঠান",
+    "Sign In": "প্রবেশ করুন",
+    "Back": "পেছনে যান",
+    "Forgot Password?": "পাসওয়ার্ড ভুলে গেছেন?",
+    "Don\'t have an account?": "অ্যাকাউন্ট নেই?",
+    "Or log in with": "অথবা লগ ইন করুন",
+    "Continue with Google": "Google দিয়ে চালিয়ে যান",
+    "Continue with Facebook": "Facebook দিয়ে চালিয়ে যান",
+    "Create Account": "অ্যাকাউন্ট তৈরি করুন",
+    "Join VaxSafe and protect your family\'s health": "VaxSafe-এ যোগ দিন এবং পরিবারের স্বাস্থ্য রক্ষা করুন",
+    "Back to Home": "হোমে ফিরুন",
+    "Already have an account?": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
+    "Welcome back! Here\'s your health overview": "স্বাগতম! এখানে আপনার স্বাস্থ্য সারসংক্ষেপ",
+    "Upcoming Vaccinations": "আসন্ন টিকাদান",
+    "Reminders Active": "সক্রিয় অনুস্মারক",
+    "Family Members": "পরিবারের সদস্য",
+    "No updates available at the moment.": "এই মুহূর্তে কোনো আপডেট নেই।",
+    "Add Vaccine": "টিকা যোগ করুন",
+    "Add Family Member": "সদস্য যোগ করুন",
+    "Member Name": "সদস্যের নাম",
+    "Notification": "বিজ্ঞপ্তি",
+    "No family members added yet.": "এখনো কোনো সদস্য যোগ করা হয়নি।",
+    "Keep track of your family\'s health together": "একসাথে পরিবারের স্বাস্থ্য ট্র্যাক করুন",
+    "Save Member": "সদস্য সংরক্ষণ",
+    "Cancel": "বাতিল",
+    "Add Vaccine Record": "টিকার রেকর্ড যোগ করুন",
+    "Add a new vaccination record for a family member": "পরিবারের সদস্যের জন্য নতুন টিকার রেকর্ড যোগ করুন",
+    "Basic Information": "মৌলিক তথ্য",
+    "Vaccine Type": "টিকার ধরন",
+    "Dose Number": "ডোজ নম্বর",
+    "Date Information": "তারিখের তথ্য",
+    "Date Administered/Scheduled": "প্রদান/নির্ধারিত তারিখ",
+    "Next Dose Date": "পরবর্তী ডোজের তারিখ",
+    "Healthcare Provider": "স্বাস্থ্যসেবা প্রদানকারী",
+    "Additional Details": "অতিরিক্ত বিবরণ",
+    "Vaccination Center/Hospital": "টিকাদান কেন্দ্র/হাসপাতাল",
+    "Batch/Lot Number": "ব্যাচ/লট নম্বর",
+    "Manufacturer": "প্রস্তুতকারক",
+    "Side Effects": "পার্শ্বপ্রতিক্রিয়া",
+    "💾 Save Vaccine Record": "💾 রেকর্ড সংরক্ষণ",
+    "🏥 Vaccination Centers": "🏥 টিকাদান কেন্দ্রসমূহ",
+    "Find nearby vaccination centers in your area": "আপনার এলাকার কাছের টিকাদান কেন্দ্র খুঁজুন",
+    "Centers Available": "টি কেন্দ্র উপলব্ধ",
+    "All Cities": "সকল শহর",
+    "All Vaccines": "সকল টিকা",
+    "Apply Filters": "ফিল্টার প্রয়োগ",
+    "Find Nearest": "নিকটতম খুঁজুন",
+    "Map View": "মানচিত্র দেখুন",
+    "Export List": "তালিকা রপ্তানি",
+    "Verified": "যাচাইকৃত",
+    "View Details": "বিস্তারিত দেখুন",
+    "Get Directions": "দিকনির্দেশনা পান",
+    "No Vaccination Centers Found": "কোনো টিকাদান কেন্দ্র পাওয়া যায়নি",
+    "Reset Filters": "ফিল্টার রিসেট",
+    "24 Hours Open": "২৪ ঘণ্টা খোলা",
+    "My Profile": "আমার প্রোফাইল",
+    "Profile Information": "প্রোফাইল তথ্য",
+    "Not provided": "প্রদান করা হয়নি",
+    "Choose File": "ফাইল বেছে নিন",
+    "No file chosen": "কোনো ফাইল নেই",
+    "Save Changes": "পরিবর্তন সংরক্ষণ",
+    "Delete Photo": "ছবি মুছুন",
+    "📅 Vaccination Schedule": "📅 টিকাদান সময়সূচি",
+    "Manage upcoming doses and health records for your family.": "পরিবারের আসন্ন ডোজ ও স্বাস্থ্য রেকর্ড পরিচালনা করুন।",
+    "Edit List": "তালিকা সম্পাদনা",
+    "Add Reminder": "অনুস্মারক যোগ করুন",
+    "No Records Found": "কোনো রেকর্ড নেই",
+    "Your scheduled vaccinations will appear here.": "নির্ধারিত টিকাদান এখানে দেখাবে।",
+    "New Appointment": "নতুন অ্যাপয়েন্টমেন্ট",
+    "Set a new vaccination reminder": "নতুন টিকাদান অনুস্মারক সেট করুন",
+    "Vaccine Name": "টিকার নাম",
+    "Notify Via": "বিজ্ঞপ্তি মাধ্যম",
+    "Save Schedule": "সময়সূচি সংরক্ষণ",
+    "Completed": "সম্পন্ন",
+    "Pending": "অপেক্ষমাণ",
+    "💉 Vaccination Schedule": "💉 টিকাদান সময়সূচি",
+    "Track and manage your family\'s vaccine records": "পরিবারের টিকার রেকর্ড ট্র্যাক ও পরিচালনা করুন",
+    "Add New Vaccine": "নতুন টিকা যোগ করুন",
+    "All Status": "সকল অবস্থা",
+    "Scheduled": "নির্ধারিত",
+    "Overdue": "বিলম্বিত",
+    "All Members": "সকল সদস্য",
+    "Upcoming": "আসন্ন",
+    "Total Records": "মোট রেকর্ড",
+    "Upcoming Vaccines": "আসন্ন টিকাসমূহ",
+    "Past Vaccines": "পূর্ববর্তী টিকাসমূহ",
+    "days until": "দিন বাকি",
+    "No Vaccine Records Yet": "এখনো কোনো রেকর্ড নেই",
+    "Add First Vaccine": "প্রথম টিকা যোগ করুন",
+    "📰 Health News & Updates": "📰 স্বাস্থ্য সংবাদ ও আপডেট",
+    "Stay informed with the latest health and vaccination news": "সর্বশেষ স্বাস্থ্য ও টিকাদান সংবাদ থেকে আপডেট থাকুন",
+    "Total Articles": "মোট নিবন্ধ",
+    "Featured News": "বৈশিষ্ট্যযুক্ত সংবাদ",
+    "Search articles...": "নিবন্ধ খুঁজুন...",
+    "All Categories": "সকল বিভাগ",
+    "Clear Filters": "ফিল্টার মুছুন",
+    "Featured Articles": "বৈশিষ্ট্যযুক্ত নিবন্ধ",
+    "Read More": "আরও পড়ুন",
+    "All Articles": "সকল নিবন্ধ",
+    "No articles found": "কোনো নিবন্ধ নেই",
+    "Back to News": "সংবাদে ফিরুন",
+    "Summary": "সারসংক্ষেপ",
+    "Related Articles": "সম্পর্কিত নিবন্ধ",
+    "Latest Vaccine Updates": "সর্বশেষ টিকা আপডেট",
+    "All News": "সকল সংবাদ",
+    "Add New Update": "নতুন আপডেট",
+    "Search updates...": "আপডেট খুঁজুন...",
+    "No updates found": "কোনো আপডেট নেই",
+    "Back to Updates": "আপডেটে ফিরুন",
+    "Edit Update": "আপডেট সম্পাদনা",
+    "Verify your Email": "ইমেইল যাচাই করুন",
+    "Please enter the OTP sent to your email:": "আপনার ইমেইলে পাঠানো OTP লিখুন:",
+    "Enter OTP": "OTP লিখুন",
+    "Submit": "জমা দিন",
+    "Resend OTP": "OTP পুনরায় পাঠান",
+    "All rights reserved.": "সর্বস্বত্ব সংরক্ষিত।",
+    "Filter": "ফিল্টার",
+    "Export": "রপ্তানি",
+    "Apply": "প্রয়োগ",
+    "Status": "অবস্থা",
+    "Location": "অবস্থান",
+    "Notes": "নোট",
+    "Age": "বয়স",
+    "Date & Time": "তারিখ ও সময়",
+    "📋 Vaccination Schedule": "📋 টিকাদান সময়সূচি",
+    "Manage and track all vaccination records": "সকল টিকাদান রেকর্ড পরিচালনা ও ট্র্যাক করুন",
+    "Scheduled Date": "নির্ধারিত তারিখ",
+    "Administered Date": "প্রদানের তারিখ",
+    "Next Dose": "পরবর্তী ডোজ",
+    "No Vaccine Records Found": "কোনো রেকর্ড পাওয়া যায়নি",
+    "Stay informed about vaccination programs, campaigns and new programmes": "টিকাদান কর্মসূচি সম্পর্কে আপডেট থাকুন",
+    "General Vaccine News": "সাধারণ টিকা সংবাদ",
+    "VaxSafe combines modern technology with local expertise to make family health protection as simple and reliable as checking your email.": "VaxSafe আধুনিক প্রযুক্তি মিলিয়ে পারিবারিক স্বাস্থ্য সুরক্ষা সহজ করে।",
+    "📌 Important Information": "📌 গুরুত্বপূর্ণ তথ্য",
+    "Please ensure all required fields are filled accurately": "অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য সঠিকভাবে পূরণ করুন",
+  };
+
+  // Build reverse map (bn → en)
+  const reverseMap = {};
+  for (const [en, bn] of Object.entries(translations)) {
+    reverseMap[bn] = en;
+  }
+
+  function translateNode(node, toBangla) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent.trim();
+      if (!text) return;
+      if (toBangla) {
+        const bn = translations[text];
+        if (bn) node.textContent = node.textContent.replace(text, bn);
+      } else {
+        const en = reverseMap[text];
+        if (en) node.textContent = node.textContent.replace(text, en);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Skip script, style, input value, select
+      const tag = node.tagName.toLowerCase();
+      if (['script','style','select'].includes(tag)) return;
+      // Translate placeholder
+      if (node.hasAttribute && node.hasAttribute('placeholder')) {
+        const ph = node.getAttribute('placeholder');
+        if (toBangla && translations[ph]) node.setAttribute('placeholder', translations[ph]);
+        else if (!toBangla && reverseMap[ph]) node.setAttribute('placeholder', reverseMap[ph]);
+      }
+      node.childNodes.forEach(child => translateNode(child, toBangla));
+    }
+  }
+
+  function applyLanguage(lang) {
+    localStorage.setItem(LANG_KEY, lang);
+    const toBangla = (lang === 'bn');
+    document.body.childNodes.forEach(n => translateNode(n, toBangla));
+    // Update all lang buttons label
+    document.querySelectorAll('#lang-btn').forEach(btn => {
+      const arrow = btn.querySelector('.dropdown-arrow') ? ' <span class="dropdown-arrow">▼</span>' : '';
+      btn.innerHTML = (lang === 'bn' ? 'বাংলা' : 'English') + ' <span class="dropdown-arrow">▼</span>';
+    });
+    // highlight active
+    document.querySelectorAll('#lang-dropdown li').forEach(li => {
+      li.style.fontWeight = '';
+    });
+  }
+
+  // Override setLanguage globally
+  window.setLanguage = function(lang) {
+    const code = (lang === 'Bangla' || lang === 'bn') ? 'bn' : 'en';
+    applyLanguage(code);
+    document.getElementById('lang-dropdown').classList.remove('show');
+    const btn = document.getElementById('lang-btn');
+    if (btn) {
+      const arrow = btn.querySelector('.dropdown-arrow');
+      if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+  };
+
+  // Apply saved language on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'bn') applyLanguage('bn');
+  });
+})();
+</script>

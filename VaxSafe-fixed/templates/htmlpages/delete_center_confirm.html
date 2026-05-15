@@ -1,0 +1,80 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-delete-center{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dcc-wrap {
+        max-width: 540px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+    .dcc-card {
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        text-align: center;
+    }
+    .dcc-head {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: #fff;
+        padding: 36px 24px 28px;
+    }
+    .dcc-icon {
+        width: 76px; height: 76px;
+        margin: 0 auto 16px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 36px;
+    }
+    .dcc-head h2 { margin: 0; font-size: 24px; font-weight: 800; }
+    .dcc-body { padding: 30px 32px; }
+    .dcc-body p { color: #5d6d7e; font-size: 15px; line-height: 1.6; margin: 0 0 10px; }
+    .dcc-body strong { color: #2c3e50; }
+    .dcc-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .dcc-btn {
+        flex: 1; padding: 13px 22px; border: none; border-radius: 12px;
+        font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none;
+        display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+        transition: transform .15s, box-shadow .2s;
+    }
+    .dcc-btn-del {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(231, 76, 60, 0.3);
+    }
+    .dcc-btn-del:hover { transform: translateY(-2px); }
+    .dcc-btn-cancel { background: #f0f3f7; color: #5d6d7e; }
+    .dcc-btn-cancel:hover { background: #dfe6ec; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dcc-wrap">
+    <div class="dcc-card">
+        <div class="dcc-head">
+            <div class="dcc-icon"><i class="fa fa-triangle-exclamation"></i></div>
+            <h2>কেন্দ্র মুছে ফেলবেন?</h2>
+        </div>
+        <div class="dcc-body">
+            <p>আপনি কি নিশ্চিত যে <strong>{{ center.name }}</strong> ({{ center.area }}) কেন্দ্রটি deactivate করতে চান?</p>
+            <p style="font-size: 13px; color: #95a5a6;">
+                <i class="fa fa-info-circle"></i> এটি কেন্দ্রটিকে user দের কাছ থেকে hide করবে, পুরোপুরি delete করবে না।
+            </p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="dcc-actions">
+                    <a href="{% url 'area_centers' %}" class="dcc-btn dcc-btn-cancel">
+                        <i class="fa fa-arrow-left"></i> ফিরে যান
+                    </a>
+                    <button type="submit" class="dcc-btn dcc-btn-del">
+                        <i class="fa fa-trash"></i> হ্যাঁ, মুছুন
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

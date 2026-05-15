@@ -1,0 +1,159 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-delete_vaccine_confirm{% endblock %}
+{% block title %}Delete Vaccine - VaxSafe{% endblock %}
+
+{% block content %}
+<div class="delete-page">
+  <div class="delete-card">
+    <div class="delete-icon">🗑️</div>
+    <h2>Delete Vaccine Record</h2>
+    <p class="delete-subtitle">Are you sure you want to delete this vaccine record?</p>
+
+    <div class="vaccine-info">
+      <div class="info-row">
+        <span class="label">💉 Vaccine:</span>
+        <span class="value">{{ vaccine.name }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">👤 For:</span>
+        <span class="value">{{ vaccine.get_recipient_name }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">📅 Date:</span>
+        <span class="value">{{ vaccine.date_administered|date:"d M Y" }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">📋 Dose:</span>
+        <span class="value">{{ vaccine.dose_number }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">📊 Status:</span>
+        <span class="value">{{ vaccine.status }}</span>
+      </div>
+    </div>
+
+    <p class="warning-text">⚠️ This action cannot be undone.</p>
+
+    <div class="action-buttons">
+      <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn-confirm-delete">
+          🗑️ Yes, Delete
+        </button>
+      </form>
+      <a href="{% url 'vaccine_schedule' %}" class="btn-cancel">
+        ✖ Cancel
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.delete-page {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, #b0fedc 0%, #c5d2f4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.delete-card {
+  background: white;
+  border-radius: 20px;
+  padding: 50px 40px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  text-align: center;
+  border-top: 5px solid #ff6b6b;
+}
+.delete-icon { font-size: 60px; margin-bottom: 20px; }
+.delete-card h2 { font-size: 26px; font-weight: 800; color: #2c3e50; margin-bottom: 10px; }
+.delete-subtitle { color: #636e72; font-size: 16px; margin-bottom: 30px; }
+.vaccine-info {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px 25px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.info-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 15px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row .label { font-weight: 600; color: #2c3e50; min-width: 110px; }
+.info-row .value { color: #636e72; }
+.warning-text { color: #e17055; font-size: 14px; font-weight: 600; margin-bottom: 30px; }
+.action-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+.btn-confirm-delete {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255,107,107,0.4);
+}
+.btn-confirm-delete:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255,107,107,0.5); }
+.btn-cancel {
+  background: transparent;
+  color: #636e72;
+  border: 2px solid #dfe6e9;
+  border-radius: 25px;
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-cancel:hover { background: #f8f9fa; border-color: #636e72; color: #2c3e50; transform: translateY(-2px); }
+@media (max-width: 480px) {
+  .delete-card { padding: 35px 25px; }
+  .action-buttons { flex-direction: column; }
+  .btn-confirm-delete, .btn-cancel { width: 100%; justify-content: center; }
+}
+</style>
+
+<script>
+// Translate this page's static text based on saved language
+(function() {
+  const lang = localStorage.getItem('vaxsafe_lang');
+  if (lang === 'bn') {
+    const map = {
+      "Delete Vaccine Record":               "টিকার রেকর্ড মুছুন",
+      "Are you sure you want to delete this vaccine record?": "আপনি কি এই টিকার রেকর্ডটি মুছে ফেলতে চান?",
+      "💉 Vaccine:":                          "💉 টিকা:",
+      "👤 For:":                             "👤 যার জন্য:",
+      "📅 Date:":                            "📅 তারিখ:",
+      "📋 Dose:":                            "📋 ডোজ:",
+      "📊 Status:":                          "📊 অবস্থা:",
+      "⚠️ This action cannot be undone.":   "⚠️ এই কাজটি আর পূর্বাবস্থায় ফেরানো যাবে না।",
+      "🗑️ Yes, Delete":                     "🗑️ হ্যাঁ, মুছুন",
+      "✖ Cancel":                            "✖ বাতিল",
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      function walk(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const t = node.textContent.trim();
+          if (map[t]) node.textContent = node.textContent.replace(t, map[t]);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          if (['script','style'].includes(node.tagName.toLowerCase())) return;
+          node.childNodes.forEach(walk);
+        }
+      }
+      document.body.childNodes.forEach(walk);
+    });
+  }
+})();
+</script>
+{% endblock %}

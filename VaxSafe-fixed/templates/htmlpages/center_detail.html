@@ -1,0 +1,453 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-center_detail{% endblock %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .detail-page {
+        padding: 40px 0;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e8f4fd 100%);
+        min-height: calc(100vh - 80px);
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #0077b6;
+        font-weight: 600;
+        text-decoration: none;
+        margin-bottom: 25px;
+        padding: 10px 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+        background: #0077b6;
+        color: white;
+        transform: translateX(-3px);
+    }
+
+    .detail-header {
+        background: white;
+        border-radius: 20px;
+        padding: 35px 40px;
+        box-shadow: 0 4px 20px rgba(0,119,182,0.12);
+        margin-bottom: 25px;
+        border-left: 6px solid #00b4d8;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .center-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: #2c3e50;
+        margin: 0 0 10px 0;
+    }
+
+    .badge-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .badge-verified {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-active {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .rating-display {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .stars { color: #ffc107; font-size: 18px; }
+
+    .rating-number {
+        font-size: 20px;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    /* Info Cards Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    }
+
+    .info-card h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0077b6;
+        margin: 0 0 20px 0;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e3f2fd;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f8f9fa;
+        font-size: 15px;
+        color: #444;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+
+    .info-row i {
+        color: #00b4d8;
+        width: 20px;
+        font-size: 15px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #2c3e50;
+        min-width: 100px;
+    }
+
+    /* Vaccines Section */
+    .vaccines-card {
+        background: white;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        margin-bottom: 25px;
+    }
+
+    .vaccines-card h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0077b6;
+        margin: 0 0 20px 0;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e3f2fd;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .vaccine-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .vaccine-tag {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        color: #0077b6;
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #90caf9;
+    }
+
+    /* Map Section */
+    .map-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        margin-bottom: 25px;
+    }
+
+    .map-card-header {
+        padding: 20px 28px;
+        border-bottom: 2px solid #e3f2fd;
+        font-size: 16px;
+        font-weight: 700;
+        color: #0077b6;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    #detail-map {
+        width: 100%;
+        height: 400px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+    }
+
+    .btn-action {
+        flex: 1;
+        min-width: 180px;
+        padding: 16px 24px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.3s;
+    }
+
+    .btn-directions {
+        background: linear-gradient(135deg, #00b4d8, #0077b6);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0,180,216,0.3);
+    }
+
+    .btn-directions:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,180,216,0.4);
+        color: white;
+    }
+
+    .btn-call {
+        background: linear-gradient(135deg, #0ba360, #3cba92);
+        color: white;
+        box-shadow: 0 4px 15px rgba(11,163,96,0.3);
+    }
+
+    .btn-call:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(11,163,96,0.4);
+        color: white;
+    }
+
+    .btn-back {
+        background: white;
+        color: #0077b6;
+        border: 2px solid #0077b6;
+    }
+
+    .btn-back:hover {
+        background: #0077b6;
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    @media (max-width: 768px) {
+        .info-grid { grid-template-columns: 1fr; }
+        .center-title { font-size: 24px; }
+        .detail-header { padding: 25px; }
+        .action-buttons { flex-direction: column; }
+        .btn-action { min-width: unset; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+    <div class="container">
+
+        <!-- Back Button -->
+        <a href="{% url 'centers' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Centers
+        </a>
+
+        <!-- Header -->
+        <div class="detail-header">
+            <div class="header-top">
+                <div>
+                    <h1 class="center-title">🏥 {{ center.name }}</h1>
+                    <div class="badge-group">
+                        {% if center.is_verified %}
+                        <span class="badge badge-verified">✓ Verified</span>
+                        {% endif %}
+                        {% if center.is_active %}
+                        <span class="badge badge-active">● Active</span>
+                        {% endif %}
+                    </div>
+                    {% if center.rating > 0 %}
+                    <div class="rating-display">
+                        <span class="stars">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= center.rating %}⭐{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="rating-number">{{ center.rating }} / 5</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+
+            <!-- Location & Contact -->
+            <div class="info-card">
+                <h3><i class="fas fa-map-marker-alt"></i> Location & Contact</h3>
+                <div class="info-row">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="info-label">Address:</span>
+                    <span>{{ center.address }}</span>
+                </div>
+                <div class="info-row">
+                    <i class="fas fa-city"></i>
+                    <span class="info-label">City:</span>
+                    <span>{{ center.city }}</span>
+                </div>
+                {% if center.phone %}
+                <div class="info-row">
+                    <i class="fas fa-phone"></i>
+                    <span class="info-label">Phone:</span>
+                    <span>{{ center.phone }}</span>
+                </div>
+                {% endif %}
+                {% if center.email %}
+                <div class="info-row">
+                    <i class="fas fa-envelope"></i>
+                    <span class="info-label">Email:</span>
+                    <span>{{ center.email }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Operating Hours -->
+            <div class="info-card">
+                <h3><i class="fas fa-clock"></i> Operating Hours</h3>
+                <div class="info-row">
+                    <i class="fas fa-sun"></i>
+                    <span class="info-label">Opens:</span>
+                    <span>{{ center.opening_time|time:"g:i A" }}</span>
+                </div>
+                <div class="info-row">
+                    <i class="fas fa-moon"></i>
+                    <span class="info-label">Closes:</span>
+                    <span>{{ center.closing_time|time:"g:i A" }}</span>
+                </div>
+                <div class="info-row">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="info-label">Status:</span>
+                    {% if center.is_active %}
+                    <span style="color: green; font-weight: 600;">✓ Currently Active</span>
+                    {% else %}
+                    <span style="color: red; font-weight: 600;">✗ Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Vaccines -->
+        <div class="vaccines-card">
+            <h3><i class="fas fa-syringe"></i> Available Vaccines</h3>
+            <div class="vaccine-tags">
+                {% for vaccine in center.get_available_vaccines_list %}
+                <span class="vaccine-tag">💉 {{ vaccine }}</span>
+                {% empty %}
+                <p style="color: #636e72;">No vaccine information available.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Map -->
+        {% if center.latitude and center.longitude %}
+        <div class="map-card">
+            <div class="map-card-header">
+                <i class="fas fa-map"></i> Location on Map
+            </div>
+            <div id="detail-map"></div>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'centers' %}" class="btn-action btn-back">
+                <i class="fas fa-list"></i> All Centers
+            </a>
+            {% if center.phone %}
+            <a href="tel:{{ center.phone }}" class="btn-action btn-call">
+                <i class="fas fa-phone"></i> Call Now
+            </a>
+            {% endif %}
+            {% if center.latitude and center.longitude %}
+            <a href="https://www.google.com/maps/dir/?api=1&destination={{ center.latitude }},{{ center.longitude }}"
+               target="_blank" class="btn-action btn-directions">
+                <i class="fas fa-directions"></i> Get Directions
+            </a>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if center.latitude and center.longitude %}
+<script>
+    function initMap() {
+        const centerLocation = { lat: {{ center.latitude }}, lng: {{ center.longitude }} };
+
+        const map = new google.maps.Map(document.getElementById('detail-map'), {
+            zoom: 15,
+            center: centerLocation,
+        });
+
+        const marker = new google.maps.Marker({
+            position: centerLocation,
+            map: map,
+            title: '{{ center.name }}',
+            icon: { url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png' }
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+            content: `
+                <div style="padding:10px; max-width:220px;">
+                    <h4 style="margin:0 0 8px 0; color:#0077b6;">{{ center.name }}</h4>
+                    <p style="margin:0; font-size:13px; color:#444;">📍 {{ center.address }}, {{ center.city }}</p>
+                    {% if center.phone %}
+                    <p style="margin:5px 0 0 0; font-size:13px; color:#444;">📞 {{ center.phone }}</p>
+                    {% endif %}
+                </div>
+            `
+        });
+
+        marker.addListener('click', () => infoWindow.open(map, marker));
+        infoWindow.open(map, marker);
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_key }}&callback=initMap" async defer></script>
+{% endif %}
+{% endblock %}

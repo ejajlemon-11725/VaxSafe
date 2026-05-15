@@ -1,0 +1,250 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-vaccine_history{% endblock %}
+{% block title %}{{ title }} — VaxSafe{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="vh-page">
+
+  <!-- Header -->
+  <div class="vh-header">
+    <div class="vh-header-left">
+      <a href="{% url 'familymembers' %}" class="back-btn">← পরিবারের তালিকা</a>
+      <h2>💉 {{ member_name }} — Vaccine History</h2>
+      <span class="relation-badge">{{ member_relation }}</span>
+    </div>
+    <div class="vh-stats">
+      <div class="stat-pill total">মোট: {{ total }}</div>
+      <div class="stat-pill done">সম্পন্ন: {{ completed_count }}</div>
+      <div class="stat-pill upcoming">নির্ধারিত: {{ scheduled_count }}</div>
+      {% if overdue_count %}<div class="stat-pill overdue">বিলম্বিত: {{ overdue_count }}</div>{% endif %}
+    </div>
+  </div>
+
+  <!-- Vaccine Table -->
+  {% if vaccines %}
+  <div class="vh-table-wrapper">
+    <table class="vh-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>টিকার নাম</th>
+          <th>ডোজ</th>
+          <th>তারিখ</th>
+          <th>পরবর্তী ডোজ</th>
+          <th>স্থান</th>
+          <th>স্বাস্থ্যকর্মী</th>
+          <th>অবস্থা</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in vaccines %}
+        <tr class="row-{{ v.status|lower }}">
+          <td>{{ forloop.counter }}</td>
+          <td>
+            <strong>{{ v.name }}</strong>
+            {% if v.manufacturer %}<br><small class="muted">{{ v.manufacturer }}</small>{% endif %}
+          </td>
+          <td><span class="dose-badge">{{ v.dose_number }}</span></td>
+          <td>{{ v.date_administered|date:"d M Y" }}</td>
+          <td>
+            {% if v.next_dose_date %}
+              {{ v.next_dose_date|date:"d M Y" }}
+            {% else %}
+              <span class="muted">—</span>
+            {% endif %}
+          </td>
+          <td>{{ v.location|default:"—" }}</td>
+          <td>{{ v.healthcare_provider|default:"—" }}</td>
+          <td>
+            {% if v.status == 'Completed' %}
+              <span class="status-badge completed">✅ সম্পন্ন</span>
+            {% elif v.status == 'Scheduled' %}
+              <span class="status-badge scheduled">📅 নির্ধারিত</span>
+            {% elif v.status == 'Overdue' %}
+              <span class="status-badge overdue">⚠️ বিলম্বিত</span>
+            {% else %}
+              <span class="status-badge cancelled">❌ বাতিল</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% if v.notes %}
+        <tr class="notes-row">
+          <td colspan="8"><small>📝 <strong>নোট:</strong> {{ v.notes }}</small></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">💉</div>
+    <h3>কোনো Vaccine Record নেই</h3>
+    <p>{{ member_name }} এর জন্য এখনো কোনো টিকার রেকর্ড নেই।</p>
+    {% if user.is_staff or user.is_superuser %}
+      <a href="{% url 'add_vaccine' %}" class="btn-add">+ Vaccine যোগ করুন</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- ── STYLES ── -->
+<style>
+.vh-page {
+  padding: 40px 60px;
+  background: linear-gradient(135deg, #e0f7fa 0%, #e8eaf6 100%);
+  min-height: calc(100vh - 80px);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header */
+.vh-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.vh-header-left h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2d3436;
+  margin: 8px 0 5px;
+}
+.back-btn {
+  font-size: 14px;
+  color: #667eea;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+.back-btn:hover { text-decoration: underline; }
+.relation-badge {
+  background: #667eea;
+  color: white;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+/* Stats */
+.vh-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.stat-pill {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+}
+.stat-pill.total    { background: #636e72; }
+.stat-pill.done     { background: #00b894; }
+.stat-pill.upcoming { background: #0984e3; }
+.stat-pill.overdue  { background: #d63031; }
+
+/* Table */
+.vh-table-wrapper {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+.vh-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.vh-table thead tr {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+.vh-table th {
+  padding: 14px 16px;
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+}
+.vh-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background .2s;
+}
+.vh-table tbody tr:hover { background: #f8f9fa; }
+.vh-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  vertical-align: middle;
+  color: #2d3436;
+}
+.notes-row td {
+  padding: 4px 16px 12px;
+  background: #ffeaa750;
+  font-size: 13px;
+  color: #636e72;
+}
+
+/* row color hints */
+.row-completed { border-left: 4px solid #00b894; }
+.row-scheduled { border-left: 4px solid #0984e3; }
+.row-overdue   { border-left: 4px solid #d63031; }
+.row-cancelled { border-left: 4px solid #b2bec3; }
+
+.muted { color: #b2bec3; }
+
+/* Dose badge */
+.dose-badge {
+  background: #dfe6e9;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-badge.completed { background: #d4edda; color: #155724; }
+.status-badge.scheduled { background: #cce5ff; color: #004085; }
+.status-badge.overdue   { background: #f8d7da; color: #721c24; }
+.status-badge.cancelled { background: #e2e3e5; color: #383d41; }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  padding: 60px 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+.empty-icon { font-size: 60px; margin-bottom: 15px; }
+.empty-state h3 { font-size: 22px; color: #2d3436; margin-bottom: 8px; }
+.empty-state p  { color: #636e72; margin-bottom: 20px; }
+.btn-add {
+  display: inline-block;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform .2s;
+}
+.btn-add:hover { transform: translateY(-2px); }
+
+@media (max-width: 768px) {
+  .vh-page { padding: 20px 15px; }
+  .vh-header { flex-direction: column; }
+  .vh-table-wrapper { overflow-x: auto; }
+}
+</style>
+{% endblock %}

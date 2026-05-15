@@ -1,0 +1,282 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-notifications{% endblock %}
+{% block title %}নোটিফিকেশন - VaxSafe{% endblock %}
+
+{% block content %}
+<div class="notif-page">
+  <div class="notif-container">
+
+    <!-- Header -->
+    <div class="notif-header">
+      <div>
+        <h2>🔔 আমার নোটিফিকেশন</h2>
+        <p>আপনার সকল রিমাইন্ডার ও আপডেট এখানে দেখুন</p>
+      </div>
+      {% if unread_count > 0 %}
+        <span class="unread-badge">{{ unread_count }} টি নতুন</span>
+      {% endif %}
+    </div>
+
+    <!-- Notification List -->
+    {% if notifications %}
+      <div class="notif-list">
+        {% for notif in notifications %}
+          <div class="notif-card {% if not notif.is_read %}notif-unread{% endif %}">
+            <div class="notif-icon">
+              {% if notif.notif_type == 'reminder' %}
+                <span class="icon-bubble icon-reminder">🔔</span>
+              {% elif notif.notif_type == 'update' %}
+                <span class="icon-bubble icon-update">💉</span>
+              {% else %}
+                <span class="icon-bubble icon-alert">⚠️</span>
+              {% endif %}
+            </div>
+
+            <div class="notif-body">
+              <div class="notif-title">{{ notif.title }}</div>
+              <div class="notif-message">{{ notif.message }}</div>
+              <div class="notif-meta">
+                <span class="notif-time">🕐 {{ notif.created_at|date:"d M Y, h:i A" }}</span>
+                <span class="notif-type-tag notif-type-{{ notif.notif_type }}">
+                  {{ notif.get_notif_type_display }}
+                </span>
+              </div>
+            </div>
+
+            <div class="notif-actions">
+              {% if not notif.is_read %}
+                <span class="notif-dot" title="নতুন"></span>
+              {% endif %}
+              <a href="{% url 'delete_notification' notif.pk %}"
+                 class="notif-delete"
+                 onclick="return confirm('এই নোটিফিকেশন মুছে ফেলবেন?')"
+                 title="মুছুন">
+                🗑️
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <!-- Empty State -->
+      <div class="notif-empty">
+        <div class="empty-icon">🔕</div>
+        <h4>কোনো নোটিফিকেশন নেই</h4>
+        <p>ভ্যাকসিন রিমাইন্ডার সেট করলে এখানে দেখাবে।</p>
+        <a href="{% url 'reminder_list' %}" class="btn-go-reminder">
+          ⏰ রিমাইন্ডার সেট করুন
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<style>
+:root {
+  --primary:     #009688;
+  --primary-dark:#00796b;
+  --accent:      #e0f2f1;
+  --text-dark:   #263238;
+  --text-grey:   #546e7a;
+  --bg-page:     #f4f6f8;
+  --white:       #ffffff;
+  --radius:      12px;
+  --shadow:      0 4px 20px rgba(0,0,0,0.06);
+}
+
+.notif-page {
+  padding: 40px 20px;
+  min-height: 100vh;
+  background: var(--bg-page);
+  background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+  background-size: 20px 20px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.notif-container {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* Header */
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--white);
+  padding: 24px 28px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border-left: 5px solid var(--primary);
+  margin-bottom: 24px;
+}
+
+.notif-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.notif-header p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-grey);
+}
+
+.unread-badge {
+  background: #e53935;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* List */
+.notif-list { display: flex; flex-direction: column; gap: 12px; }
+
+/* Card */
+.notif-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 1px solid transparent;
+}
+
+.notif-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.notif-unread {
+  border-left: 4px solid var(--primary);
+  background: #f0faf9;
+}
+
+/* Icon */
+.icon-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.icon-reminder { background: #e0f2f1; }
+.icon-update   { background: #e3f2fd; }
+.icon-alert    { background: #fff8e1; }
+
+/* Body */
+.notif-body { flex: 1; min-width: 0; }
+
+.notif-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 5px;
+}
+
+.notif-message {
+  font-size: 14px;
+  color: var(--text-grey);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.notif-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.notif-time {
+  font-size: 12px;
+  color: #90a4ae;
+}
+
+.notif-type-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+.notif-type-reminder { background: #e0f2f1; color: #00695c; }
+.notif-type-update   { background: #e3f2fd; color: #1565c0; }
+.notif-type-alert    { background: #fff8e1; color: #e65100; }
+
+/* Actions */
+.notif-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.notif-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e53935;
+  display: inline-block;
+}
+
+.notif-delete {
+  padding: 6px 10px;
+  border: 1px solid #ef9a9a;
+  border-radius: 6px;
+  color: #e53935;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.notif-delete:hover { background: #ffebee; }
+
+/* Empty State */
+.notif-empty {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-grey);
+}
+.empty-icon  { font-size: 48px; margin-bottom: 12px; }
+.notif-empty h4 { margin: 0 0 8px 0; font-size: 18px; color: var(--text-dark); }
+.notif-empty p  { margin: 0 0 20px 0; font-size: 14px; }
+
+.btn-go-reminder {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-go-reminder:hover { background: var(--primary-dark); }
+
+@media (max-width: 600px) {
+  .notif-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .notif-card   { flex-wrap: wrap; }
+  .notif-body   { width: 100%; }
+}
+</style>
+
+{% endblock %}

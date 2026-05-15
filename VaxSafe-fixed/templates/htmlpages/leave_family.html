@@ -1,0 +1,318 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-leave-family{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================================
+       UNIQUE STYLES — LEAVE FAMILY  (Task 3)
+       prefix: lf- (leave-family)
+       ============================================================ */
+    .lf-wrap {
+        max-width: 880px;
+        margin: 40px auto 60px;
+        padding: 0 20px;
+    }
+
+    .lf-card {
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .lf-head {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: #fff;
+        padding: 30px 36px;
+        position: relative;
+        overflow: hidden;
+    }
+    .lf-head::before {
+        content: ""; position: absolute;
+        right: -50px; top: -50px;
+        width: 220px; height: 220px;
+        background: rgba(255,255,255,0.1); border-radius: 50%;
+    }
+    .lf-head h2 {
+        margin: 0 0 6px;
+        font-size: 26px;
+        font-weight: 800;
+        position: relative; z-index: 1;
+    }
+    .lf-head p {
+        margin: 0;
+        opacity: 0.92;
+        font-size: 14px;
+        position: relative; z-index: 1;
+    }
+
+    .lf-body { padding: 32px 36px; }
+
+    /* ---------- Managed Members alert ---------- */
+    .lf-alert {
+        background: linear-gradient(135deg, #fff8e1, #ffecb3);
+        border-left: 5px solid #f39c12;
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 24px;
+    }
+    .lf-alert-title {
+        font-weight: 700;
+        color: #b9770e;
+        margin-bottom: 8px;
+        font-size: 15px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .lf-managed-list {
+        list-style: none;
+        padding: 0; margin: 10px 0 0;
+    }
+    .lf-managed-list li {
+        background: rgba(255,255,255,0.7);
+        padding: 8px 14px;
+        border-radius: 10px;
+        margin-bottom: 6px;
+        font-size: 14px;
+        display: flex; align-items: center; gap: 10px;
+    }
+    .lf-managed-list li::before {
+        content: "👤";
+        font-size: 16px;
+    }
+
+    /* ---------- Action Tabs ---------- */
+    .lf-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    .lf-tab {
+        background: #f8fafc;
+        border: 2px solid #e1e8ed;
+        border-radius: 14px;
+        padding: 18px 14px;
+        text-align: center;
+        cursor: pointer;
+        transition: all .25s;
+    }
+    .lf-tab:hover { border-color: #9b59b6; transform: translateY(-2px); }
+    .lf-tab.active {
+        border-color: #9b59b6;
+        background: linear-gradient(135deg, #f5eef8, #ebdef0);
+        box-shadow: 0 4px 16px rgba(155, 89, 182, 0.18);
+    }
+    .lf-tab-icon {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+    .lf-tab-title {
+        font-weight: 700;
+        color: #2c3e50;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    .lf-tab-desc {
+        font-size: 12px;
+        color: #7f8c8d;
+        line-height: 1.4;
+    }
+
+    .lf-panel { display: none; }
+    .lf-panel.active { display: block; }
+
+    /* ---------- Form Fields ---------- */
+    .lf-field { margin-bottom: 18px; }
+    .lf-field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #34495e;
+        margin-bottom: 7px;
+    }
+    .lf-input, .lf-select, .lf-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e8ed;
+        border-radius: 12px;
+        font-size: 14px;
+        background: #f8fafc;
+        font-family: inherit;
+        transition: border-color .2s, background .2s;
+    }
+    .lf-textarea { resize: vertical; min-height: 80px; }
+    .lf-input:focus, .lf-select:focus, .lf-textarea:focus {
+        outline: none; border-color: #9b59b6; background: #fff;
+    }
+
+    /* ---------- Actions ---------- */
+    .lf-actions {
+        display: flex; gap: 12px;
+        margin-top: 26px;
+        padding-top: 22px;
+        border-top: 1px solid #f0f3f7;
+    }
+    .lf-btn {
+        flex: 1;
+        padding: 13px 22px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: transform .15s, box-shadow .2s;
+    }
+    .lf-btn-leave {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(155, 89, 182, 0.3);
+    }
+    .lf-btn-leave:hover { transform: translateY(-2px); }
+    .lf-btn-cancel {
+        background: #f0f3f7;
+        color: #5d6d7e;
+    }
+    .lf-btn-cancel:hover { background: #dfe6ec; }
+
+    .lf-helper {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 13px;
+        color: #5d6d7e;
+        line-height: 1.5;
+        margin-top: 6px;
+    }
+
+    @media (max-width: 640px) {
+        .lf-head, .lf-body { padding: 22px; }
+        .lf-tabs { grid-template-columns: 1fr; }
+        .lf-actions { flex-direction: column; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lf-wrap">
+    <div class="lf-card">
+        <div class="lf-head">
+            <h2>🚪 Family ছাড়ার আগে কয়েকটি কথা</h2>
+            <p>আপনি <strong>{{ family.family_name }}</strong> family ছাড়তে যাচ্ছেন।</p>
+        </div>
+
+        <form method="post" class="lf-body" id="leave-form">
+            {% csrf_token %}
+
+            {% if managed_members %}
+            <div class="lf-alert">
+                <div class="lf-alert-title">
+                    <i class="fa fa-triangle-exclamation"></i>
+                    আপনি এখন <strong>{{ managed_members.count }} টি</strong> profile manage করছেন
+                </div>
+                <p style="margin: 4px 0 0; color: #6e6e3a; font-size: 13px;">
+                    Family ছাড়ার আগে এই profile গুলোর কী হবে সেটা decide করুন:
+                </p>
+                <ul class="lf-managed-list">
+                    {% for fm in managed_members %}
+                    <li><strong>{{ fm.name }}</strong> ({{ fm.relation }})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="lf-tabs">
+                <div class="lf-tab active" data-action="handoff" onclick="selectAction(this, 'handoff')">
+                    <div class="lf-tab-icon">🤝</div>
+                    <div class="lf-tab-title">কাউকে দিয়ে যান</div>
+                    <div class="lf-tab-desc">Family-র অন্য কাউকে handover করুন</div>
+                </div>
+                <div class="lf-tab" data-action="mark_inactive" onclick="selectAction(this, 'mark_inactive')">
+                    <div class="lf-tab-icon">⏸️</div>
+                    <div class="lf-tab-title">Inactive করে দিন</div>
+                    <div class="lf-tab-desc">পরে কেউ claim করতে পারবেন</div>
+                </div>
+                <div class="lf-tab" data-action="leave" onclick="selectAction(this, 'leave')">
+                    <div class="lf-tab-icon">🗑️</div>
+                    <div class="lf-tab-title">কিছুই না</div>
+                    <div class="lf-tab-desc">আপনার নতুন family-তে নিয়ে যান</div>
+                </div>
+            </div>
+
+            <input type="hidden" name="action" id="action-input" value="handoff">
+
+            <div class="lf-panel active" id="panel-handoff">
+                <div class="lf-field">
+                    <label>কাকে handover করবেন? <span style="color: #e74c3c;">*</span></label>
+                    <select name="handoff_to" class="lf-select">
+                        <option value="">— নির্বাচন করুন —</option>
+                        {% for fgm in handoff_candidates %}
+                        <option value="{{ fgm.user.id }}">
+                            {{ fgm.user.get_full_name|default:fgm.user.username }} ({{ fgm.role }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="lf-panel" id="panel-mark_inactive">
+                <div class="lf-helper">
+                    <i class="fa fa-info-circle" style="color: #f39c12;"></i>
+                    এই profile গুলো inactive হয়ে যাবে। Family-র Admin notification পাবেন এবং
+                    যেকোনো family member 'Claimable Profiles' page থেকে এগুলো claim করতে পারবেন।
+                </div>
+            </div>
+
+            <div class="lf-panel" id="panel-leave">
+                <div class="lf-helper">
+                    <i class="fa fa-info-circle" style="color: #3498db;"></i>
+                    আপনার সব managed profile আপনার নতুন family-তে চলে যাবে।
+                </div>
+            </div>
+
+            <div class="lf-field" id="note-field">
+                <label>📝 নোট (ঐচ্ছিক)</label>
+                <textarea name="handoff_note" class="lf-textarea"
+                          placeholder="কেন family ছাড়ছেন? বা handover সম্পর্কে কিছু লিখুন..."></textarea>
+            </div>
+            {% else %}
+            <div class="lf-alert" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-left-color: #2ecc71;">
+                <div class="lf-alert-title" style="color: #1e7e34;">
+                    <i class="fa fa-check-circle"></i> কোনো profile manage করছেন না
+                </div>
+                <p style="margin: 4px 0 0; font-size: 13px;">
+                    আপনি নিরাপদে family ছাড়তে পারেন।
+                </p>
+            </div>
+            <input type="hidden" name="action" value="leave">
+            {% endif %}
+
+            <div class="lf-actions">
+                <a href="{% url 'familymembers' %}" class="lf-btn lf-btn-cancel">
+                    <i class="fa fa-arrow-left"></i> বাতিল
+                </a>
+                <button type="submit" class="lf-btn lf-btn-leave"
+                        onclick="return confirm('আপনি কি নিশ্চিত? এই কাজ undo করা যাবে না।');">
+                    <i class="fa fa-door-open"></i> Family ছাড়ুন
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function selectAction(tab, action) {
+        document.querySelectorAll('.lf-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.lf-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        const panel = document.getElementById('panel-' + action);
+        if (panel) panel.classList.add('active');
+        document.getElementById('action-input').value = action;
+    }
+</script>
+{% endblock %}

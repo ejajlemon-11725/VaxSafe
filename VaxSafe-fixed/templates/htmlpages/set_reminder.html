@@ -1,0 +1,328 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-set_reminder{% endblock %}
+{% block title %}Admin — Reminder সেট করুন{% endblock %}
+{% load static %}
+{% block content %}
+
+{% if not user.is_staff and not user.is_superuser %}
+  <div style="padding:60px;text-align:center;">
+    <h2>❌ Access Denied</h2>
+    <p>শুধুমাত্র Admin এই পাতায় প্রবেশ করতে পারবেন।</p>
+    <a href="{% url 'reminder_list' %}">← ফিরে যান</a>
+  </div>
+{% else %}
+
+<div class="sr-page">
+  <div class="sr-card">
+
+    <div class="sr-header">
+      <h2>⏰ Admin — Reminder সেট করুন</h2>
+      <p>যেকোনো User বা তার Family Member এর জন্য Vaccine Reminder সেট করুন।<br>
+         সেট হওয়ার সাথে সাথে <strong>App Notification</strong> ও <strong>Email</strong> পাঠানো হবে।</p>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST" class="sr-form" id="reminderForm">
+      {% csrf_token %}
+
+      <!-- ════════════════════════════════════════
+           STEP 1: User সিলেক্ট করুন
+      ════════════════════════════════════════ -->
+      <div class="form-group">
+        <label for="target_user">
+          👤 <strong>ধাপ ১:</strong> কোন User এর জন্য?
+        </label>
+        <select name="target_user" id="target_user" class="form-control" required
+                onchange="loadFamilyMembers(this.value)">
+          <option value="">— User সিলেক্ট করুন —</option>
+          {% for u in all_users %}
+            <option value="{{ u.id }}">
+              {{ u.get_full_name|default:u.username }}
+              {% if u.email %}({{ u.email }}){% endif %}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           STEP 2: Family Member সিলেক্ট (Dynamic)
+      ════════════════════════════════════════ -->
+      <div class="form-group" id="familyMemberSection" style="display:none;">
+        <label for="family_member_id">
+          👨‍👩‍👧 <strong>ধাপ ২:</strong> কার জন্য Reminder?
+        </label>
+        <select name="family_member_id" id="family_member_id" class="form-control">
+          <option value="">— নিজের জন্য (Self) —</option>
+        </select>
+        <small class="hint-text">
+          ℹ️ User নিজের জন্য হলে ফাঁকা রাখুন। পরিবারের সদস্যের জন্য সিলেক্ট করুন।
+        </small>
+      </div>
+
+      <!-- No family members notice -->
+      <div id="noFamilyNotice" class="info-box" style="display:none;">
+        ℹ️ এই User এর কোনো Family Member যোগ করা নেই।
+        Reminder শুধু User নিজের জন্য সেট হবে।
+      </div>
+
+      <!-- ════════════════════════════════════════
+           STEP 3: Vaccine Name
+      ════════════════════════════════════════ -->
+      <div class="form-group">
+        <label>💉 <strong>ধাপ ৩:</strong> ভ্যাকসিনের নাম</label>
+        {{ form.vaccine_name }}
+        {% if form.vaccine_name.errors %}
+          <span class="err">{{ form.vaccine_name.errors }}</span>
+        {% endif %}
+      </div>
+
+      <!-- ════════════════════════════════════════
+           STEP 4: Date + Time
+      ════════════════════════════════════════ -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>📅 তারিখ</label>
+          {{ form.reminder_date }}
+          {% if form.reminder_date.errors %}
+            <span class="err">{{ form.reminder_date.errors }}</span>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label>⏰ সময়</label>
+          {{ form.reminder_time }}
+          {% if form.reminder_time.errors %}
+            <span class="err">{{ form.reminder_time.errors }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Note -->
+      <div class="form-group">
+        <label>📝 নোট (ঐচ্ছিক)</label>
+        {{ form.note }}
+      </div>
+
+      <!-- Live Preview -->
+      <div id="reminderPreview" class="preview-box" style="display:none;">
+        <strong>📋 Reminder Summary:</strong><br>
+        👤 প্রাপক: <strong id="previewRecipient">—</strong><br>
+        <small>✅ সেট হলে App Notification ও Email যাবে।</small>
+      </div>
+
+      <div class="sr-actions">
+        <button type="submit" class="btn-save">
+          ✅ Reminder সেট করুন ও Notify করুন
+        </button>
+        <a href="{% url 'reminder_list' %}" class="btn-cancel">বাতিল</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     JavaScript — Dynamic Family Member Loader
+════════════════════════════════════════ -->
+<script>
+// Django থেকে পাওয়া প্রতিটি user এর family members (JSON)
+const userFamilyData = {{ user_family_members_json|safe }};
+
+function loadFamilyMembers(userId) {
+  const section   = document.getElementById('familyMemberSection');
+  const notice    = document.getElementById('noFamilyNotice');
+  const select    = document.getElementById('family_member_id');
+  const preview   = document.getElementById('reminderPreview');
+  const recipient = document.getElementById('previewRecipient');
+
+  // সব reset
+  select.innerHTML = '<option value="">— নিজের জন্য (Self) —</option>';
+  section.style.display  = 'none';
+  notice.style.display   = 'none';
+  preview.style.display  = 'none';
+
+  if (!userId) return;
+
+  // User এর নাম
+  const userOpt  = document.querySelector(`#target_user option[value="${userId}"]`);
+  const userName = userOpt ? userOpt.textContent.trim() : 'এই User';
+
+  // Family members data
+  const members = userFamilyData[userId] || [];
+
+  // Preview সবসময় দেখাও (user selected)
+  preview.style.display  = 'block';
+  recipient.textContent  = userName + ' (Self)';
+
+  if (members.length === 0) {
+    // কোনো family member নেই
+    notice.style.display = 'block';
+  } else {
+    // Family members আছে → dropdown show করো
+    members.forEach(function(m) {
+      const opt       = document.createElement('option');
+      opt.value       = m.id;
+      opt.textContent = m.name;
+      select.appendChild(opt);
+    });
+    section.style.display = 'block';
+
+    // Family member সিলেক্ট হলে preview update
+    select.onchange = function() {
+      if (this.value) {
+        const selected = members.find(function(m) { return String(m.id) === select.value; });
+        recipient.textContent = selected ? selected.name : userName;
+      } else {
+        recipient.textContent = userName + ' (Self)';
+      }
+    };
+  }
+}
+</script>
+
+<!-- ════════════════════════════  STYLES  ════════════════════════════ -->
+<style>
+.sr-page {
+  padding: 50px 60px;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+.sr-card {
+  background: white;
+  border-radius: 24px;
+  padding: 45px 50px;
+  width: 100%;
+  max-width: 660px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.12);
+}
+.sr-header { margin-bottom: 30px; text-align: center; }
+.sr-header h2 { font-size: 26px; color: #2d3436; margin-bottom: 8px; }
+.sr-header p  { color: #636e72; font-size: 14px; line-height: 1.6; }
+
+.form-group { margin-bottom: 22px; }
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #2d3436;
+  margin-bottom: 7px;
+  font-size: 14px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.form-control,
+.sr-form input[type="text"],
+.sr-form input[type="date"],
+.sr-form input[type="time"],
+.sr-form select,
+.sr-form textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1.5px solid #dfe6e9;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #2d3436;
+  transition: border-color .2s;
+  box-sizing: border-box;
+  background: #fff;
+}
+.sr-form input:focus,
+.sr-form select:focus,
+.sr-form textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102,126,234,.15);
+}
+
+/* Family member dropdown highlight */
+#familyMemberSection .form-control {
+  border-color: #00b894;
+  background: #f0faf7;
+}
+#familyMemberSection .form-control:focus {
+  border-color: #00b894;
+  box-shadow: 0 0 0 3px rgba(0,184,148,.15);
+}
+
+.hint-text {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #636e72;
+}
+
+/* Info box */
+.info-box {
+  background: #e8f4fd;
+  border: 1px solid #bee5eb;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #31708f;
+  margin-bottom: 18px;
+}
+
+/* Preview box */
+.preview-box {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  border: 1px solid #b1dfbb;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #155724;
+  margin-bottom: 22px;
+  line-height: 1.9;
+}
+
+.err { color: #d63031; font-size: 12px; margin-top: 4px; display: block; }
+
+.alert { padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; }
+.alert-success { background: #d4edda; color: #155724; }
+.alert-error   { background: #f8d7da; color: #721c24; }
+
+.sr-actions { display: flex; gap: 15px; margin-top: 30px; }
+.btn-save {
+  flex: 1;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102,126,234,.4);
+}
+.btn-cancel {
+  padding: 14px 24px;
+  background: #f0f0f0;
+  color: #636e72;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  transition: background .2s;
+}
+.btn-cancel:hover { background: #dfe6e9; }
+
+@media (max-width: 600px) {
+  .sr-page { padding: 20px 15px; }
+  .sr-card { padding: 30px 20px; }
+  .form-row { grid-template-columns: 1fr; }
+  .sr-actions { flex-direction: column; }
+}
+</style>
+{% endif %}
+{% endblock %}

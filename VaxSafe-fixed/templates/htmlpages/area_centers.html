@@ -1,0 +1,522 @@
+{% extends 'base_log.html' %}
+{% load static %}
+{% block body_class %}page-area-centers{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================================
+       UNIQUE STYLES — AREA CENTERS PAGE  (Task 1)
+       prefix: ac- (area-centers)  → অন্য কোনো page এর সাথে conflict হবে না
+       ============================================================ */
+
+    .ac-wrapper {
+        padding: 32px 20px 60px;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    /* ---------- Hero Banner ---------- */
+    .ac-hero {
+        background: linear-gradient(135deg, #0077b6 0%, #00b4d8 50%, #48cae4 100%);
+        border-radius: 24px;
+        padding: 36px 40px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(0, 119, 182, 0.25);
+        margin-bottom: 32px;
+    }
+    .ac-hero::before {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 240px;
+        height: 240px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    .ac-hero::after {
+        content: "";
+        position: absolute;
+        bottom: -80px;
+        left: -80px;
+        width: 220px;
+        height: 220px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+    }
+    .ac-hero-content { position: relative; z-index: 2; }
+    .ac-area-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.22);
+        backdrop-filter: blur(8px);
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+    }
+    .ac-hero h1 {
+        font-size: 36px;
+        margin: 0 0 10px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+    .ac-hero p {
+        margin: 0;
+        font-size: 16px;
+        opacity: 0.95;
+    }
+
+    /* ---------- Stats Row ---------- */
+    .ac-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        margin-bottom: 28px;
+    }
+    .ac-stat-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 22px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        border-left: 5px solid #0077b6;
+        transition: transform .25s, box-shadow .25s;
+    }
+    .ac-stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0, 119, 182, 0.15);
+    }
+    .ac-stat-card.verified { border-left-color: #2ecc71; }
+    .ac-stat-card.admin    { border-left-color: #f39c12; }
+    .ac-stat-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: #e8f4fd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #0077b6;
+        flex-shrink: 0;
+    }
+    .ac-stat-card.verified .ac-stat-icon { background: #e8f8ef; color: #2ecc71; }
+    .ac-stat-card.admin    .ac-stat-icon { background: #fff4e1; color: #f39c12; }
+    .ac-stat-num {
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+        color: #2c3e50;
+    }
+    .ac-stat-label {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+
+    /* ---------- Toolbar (Search + Switch + Add) ---------- */
+    .ac-toolbar {
+        background: #fff;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 26px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        align-items: center;
+    }
+    .ac-toolbar form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        flex: 1;
+        min-width: 320px;
+    }
+    .ac-input, .ac-select {
+        padding: 11px 16px;
+        border: 2px solid #e1e8ed;
+        border-radius: 12px;
+        font-size: 14px;
+        font-family: inherit;
+        background: #f8fafc;
+        transition: border-color .2s, background .2s;
+        flex: 1;
+        min-width: 160px;
+    }
+    .ac-input:focus, .ac-select:focus {
+        outline: none;
+        border-color: #00b4d8;
+        background: #fff;
+    }
+    .ac-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 11px 22px;
+        border: none;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform .15s, box-shadow .2s;
+    }
+    .ac-btn-primary {
+        background: linear-gradient(135deg, #0077b6, #00b4d8);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(0, 119, 182, 0.3);
+    }
+    .ac-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 119, 182, 0.4); }
+    .ac-btn-add {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(243, 156, 18, 0.3);
+    }
+    .ac-btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(243, 156, 18, 0.4); }
+    .ac-btn-danger {
+        background: #fff0f0;
+        color: #c0392b;
+        border: 1.5px solid #e74c3c;
+    }
+    .ac-btn-danger:hover { background: #e74c3c; color: #fff; }
+    .ac-btn-outline {
+        background: #fff;
+        color: #0077b6;
+        border: 1.5px solid #0077b6;
+    }
+    .ac-btn-outline:hover { background: #0077b6; color: #fff; }
+
+    /* ---------- Centers Grid ---------- */
+    .ac-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 22px;
+    }
+    .ac-card {
+        background: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        transition: transform .3s, box-shadow .3s;
+        position: relative;
+        border: 2px solid transparent;
+    }
+    .ac-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 38px rgba(0, 119, 182, 0.18);
+        border-color: #00b4d8;
+    }
+    .ac-card-top {
+        background: linear-gradient(135deg, #f8fafc, #e8f4fd);
+        padding: 20px 22px 16px;
+        position: relative;
+    }
+    .ac-verified {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: #2ecc71;
+        color: #fff;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .ac-card h3 {
+        margin: 0 0 6px;
+        font-size: 19px;
+        font-weight: 700;
+        color: #2c3e50;
+        padding-right: 80px;
+        line-height: 1.3;
+    }
+    .ac-area-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(0, 119, 182, 0.1);
+        color: #0077b6;
+        padding: 3px 11px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .ac-card-body {
+        padding: 18px 22px 20px;
+    }
+    .ac-info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 9px;
+        font-size: 14px;
+        color: #5d6d7e;
+        line-height: 1.5;
+    }
+    .ac-info-row i {
+        color: #0077b6;
+        width: 18px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    .ac-vaccines {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 14px 0 14px;
+    }
+    .ac-vaccine-chip {
+        background: #e8f4fd;
+        color: #0077b6;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .ac-actions {
+        display: flex;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 1px solid #f0f3f7;
+    }
+    .ac-actions .ac-btn { flex: 1; justify-content: center; padding: 9px 14px; font-size: 13px; }
+
+    /* ---------- Empty State ---------- */
+    .ac-empty {
+        background: #fff;
+        border-radius: 20px;
+        padding: 80px 30px;
+        text-align: center;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    }
+    .ac-empty-icon {
+        font-size: 72px;
+        color: #cdd5db;
+        margin-bottom: 18px;
+    }
+    .ac-empty h3 {
+        color: #2c3e50;
+        font-size: 22px;
+        margin: 0 0 8px;
+    }
+    .ac-empty p {
+        color: #7f8c8d;
+        font-size: 15px;
+        margin: 0 0 20px;
+    }
+
+    /* ---------- Area Switcher (Superuser only) ---------- */
+    .ac-area-switch {
+        background: linear-gradient(135deg, #fff4e1, #ffe8c4);
+        border-radius: 16px;
+        padding: 16px 20px;
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        border-left: 4px solid #f39c12;
+    }
+    .ac-area-switch strong { color: #b9770e; }
+    .ac-area-switch .ac-select { max-width: 220px; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 700px) {
+        .ac-hero { padding: 26px 22px; }
+        .ac-hero h1 { font-size: 26px; }
+        .ac-stats { grid-template-columns: 1fr; }
+        .ac-toolbar { padding: 16px; }
+        .ac-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ac-wrapper">
+
+    {# ---------- HERO ---------- #}
+    <div class="ac-hero">
+        <div class="ac-hero-content">
+            <span class="ac-area-badge">
+                <i class="fa fa-map-marker-alt"></i>
+                {% if user_role == 'area_admin' %}Area Admin View
+                {% elif user_role == 'superuser' %}Super Admin View
+                {% else %}Your Area{% endif %}
+            </span>
+            <h1>🏥 {{ user_area }} এলাকার Vaccination Centers</h1>
+            <p>
+                {% if user_role == 'area_admin' %}
+                    আপনি <strong>{{ user_area }}</strong> এলাকার Area Admin — এখানে আপনার এলাকার সব কেন্দ্র দেখাচ্ছে।
+                {% elif user_role == 'superuser' %}
+                    Super Admin হিসেবে আপনি যেকোনো এলাকা পরিবর্তন করে কেন্দ্রগুলো দেখতে পারেন।
+                {% else %}
+                    আপনার এলাকায় ({{ user_area }}) উপলব্ধ টিকা কেন্দ্রগুলোর তথ্য।
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    {# ---------- AREA SWITCHER (Superuser only) ---------- #}
+    {% if can_pick_any_area %}
+    <div class="ac-area-switch">
+        <i class="fa fa-shield-alt" style="font-size: 22px; color: #f39c12;"></i>
+        <strong>Super Admin:</strong>
+        <span>অন্য এলাকার কেন্দ্র দেখতে চান?</span>
+        <form method="get" style="display: flex; gap: 8px; align-items: center;">
+            <select name="area" class="ac-select" onchange="this.form.submit()">
+                {% for a in all_areas %}
+                <option value="{{ a }}" {% if a == user_area %}selected{% endif %}>{{ a }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+    {% endif %}
+
+    {# ---------- STATS ---------- #}
+    <div class="ac-stats">
+        <div class="ac-stat-card">
+            <div class="ac-stat-icon"><i class="fa fa-hospital"></i></div>
+            <div>
+                <div class="ac-stat-num">{{ total_centers }}</div>
+                <div class="ac-stat-label">মোট কেন্দ্র — {{ user_area }}</div>
+            </div>
+        </div>
+        <div class="ac-stat-card verified">
+            <div class="ac-stat-icon"><i class="fa fa-check-circle"></i></div>
+            <div>
+                <div class="ac-stat-num">{{ verified_centers }}</div>
+                <div class="ac-stat-label">যাচাইকৃত কেন্দ্র</div>
+            </div>
+        </div>
+        {% if can_add_center %}
+        <div class="ac-stat-card admin">
+            <div class="ac-stat-icon"><i class="fa fa-user-shield"></i></div>
+            <div>
+                <div class="ac-stat-num">Admin</div>
+                <div class="ac-stat-label">আপনি কেন্দ্র যোগ/মুছতে পারেন</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ---------- TOOLBAR ---------- #}
+    <div class="ac-toolbar">
+        <form method="get">
+            {% if can_pick_any_area %}<input type="hidden" name="area" value="{{ user_area }}">{% endif %}
+            <input type="text" name="q" class="ac-input"
+                   placeholder="🔍 কেন্দ্রের নাম বা ঠিকানা..."
+                   value="{{ search_query }}">
+            <input type="text" name="vaccine" class="ac-input"
+                   placeholder="💉 ভ্যাকসিন (যেমন: COVID-19)"
+                   value="{{ vaccine_filter }}">
+            <button type="submit" class="ac-btn ac-btn-primary">
+                <i class="fa fa-search"></i> খুঁজুন
+            </button>
+        </form>
+        {% if can_add_center %}
+        <a href="{% url 'add_area_center' %}" class="ac-btn ac-btn-add">
+            <i class="fa fa-plus-circle"></i> নতুন কেন্দ্র যোগ করুন
+        </a>
+        {% endif %}
+    </div>
+
+    {# ---------- CENTERS GRID ---------- #}
+    {% if centers %}
+    <div class="ac-grid">
+        {% for center in centers %}
+        <div class="ac-card">
+            <div class="ac-card-top">
+                {% if center.is_verified %}
+                <span class="ac-verified"><i class="fa fa-check"></i> Verified</span>
+                {% endif %}
+                <h3>{{ center.name }}</h3>
+                <span class="ac-area-tag">
+                    <i class="fa fa-map-pin"></i> {{ center.area }}
+                </span>
+            </div>
+
+            <div class="ac-card-body">
+                <div class="ac-info-row">
+                    <i class="fa fa-location-dot"></i>
+                    <span>{{ center.address }}, {{ center.city }}</span>
+                </div>
+                {% if center.phone %}
+                <div class="ac-info-row">
+                    <i class="fa fa-phone"></i>
+                    <span>{{ center.phone }}</span>
+                </div>
+                {% endif %}
+                {% if center.opening_time and center.closing_time %}
+                <div class="ac-info-row">
+                    <i class="fa fa-clock"></i>
+                    <span>{{ center.opening_time|time:"g:i A" }} — {{ center.closing_time|time:"g:i A" }}</span>
+                </div>
+                {% endif %}
+                {% if center.rating > 0 %}
+                <div class="ac-info-row">
+                    <i class="fa fa-star" style="color: #f39c12;"></i>
+                    <span><strong>{{ center.rating }}</strong> / 5.0</span>
+                </div>
+                {% endif %}
+
+                {% with vaccines=center.get_vaccines_list %}
+                {% if vaccines %}
+                <div class="ac-vaccines">
+                    {% for v in vaccines %}
+                    <span class="ac-vaccine-chip">{{ v }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <div class="ac-actions">
+                    <a href="{% url 'center_detail' center.id %}" class="ac-btn ac-btn-outline">
+                        <i class="fa fa-info-circle"></i> বিস্তারিত
+                    </a>
+                    {% if can_add_center %}
+                    <a href="{% url 'delete_area_center' center.id %}" class="ac-btn ac-btn-danger">
+                        <i class="fa fa-trash"></i> মুছুন
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="ac-empty">
+        <div class="ac-empty-icon"><i class="fa fa-map-marked-alt"></i></div>
+        <h3>{{ user_area }} এলাকায় কোনো কেন্দ্র পাওয়া যায়নি</h3>
+        <p>
+            {% if can_add_center %}
+                Admin হিসেবে আপনি এখনই কেন্দ্র যোগ করতে পারেন।
+            {% else %}
+                আপনার এলাকার Admin শীঘ্রই কেন্দ্র যোগ করবেন।
+            {% endif %}
+        </p>
+        {% if can_add_center %}
+        <a href="{% url 'add_area_center' %}" class="ac-btn ac-btn-add">
+            <i class="fa fa-plus-circle"></i> প্রথম কেন্দ্র যোগ করুন
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

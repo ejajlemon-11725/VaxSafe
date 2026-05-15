@@ -1,0 +1,716 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-news_detail{% endblock %}
+{% load static %}
+
+{% block title %}{{ news.title }} - VaxSafe{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ========================================
+   NEWS DETAIL PAGE STYLES
+   ======================================== */
+
+.news-detail-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #0077b6;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb a:hover {
+    color: #00b4d8;
+}
+
+.breadcrumb span {
+    color: #999;
+}
+
+/* Article Header */
+.article-header {
+    margin-bottom: 40px;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+    color: white;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.article-header h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    line-height: 1.3;
+    margin-bottom: 20px;
+}
+
+.article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    padding: 20px 0;
+    border-top: 2px solid #e0e0e0;
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 30px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 14px;
+}
+
+.meta-item i {
+    color: #0077b6;
+    font-size: 16px;
+}
+
+/* Featured Image */
+.featured-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Article Summary */
+.article-summary {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 5px solid #0077b6;
+    margin-bottom: 40px;
+}
+
+.article-summary h2 {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.article-summary p {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* Article Content */
+.article-content {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+.article-content h2,
+.article-content h3,
+.article-content h4 {
+    color: #2c3e50;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.article-content h2 {
+    font-size: 1.8rem;
+    border-bottom: 2px solid #0077b6;
+    padding-bottom: 10px;
+}
+
+.article-content h3 {
+    font-size: 1.5rem;
+}
+
+.article-content p {
+    margin-bottom: 20px;
+}
+
+.article-content ul,
+.article-content ol {
+    margin: 20px 0;
+    padding-left: 30px;
+}
+
+.article-content li {
+    margin-bottom: 10px;
+}
+
+.article-content blockquote {
+    border-left: 4px solid #0077b6;
+    padding: 15px 25px;
+    margin: 25px 0;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-style: italic;
+    color: #555;
+}
+
+/* Source Attribution */
+.article-source {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    margin-bottom: 40px;
+}
+
+.article-source h3 {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.article-source a {
+    color: #0077b6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.article-source a:hover {
+    text-decoration: underline;
+}
+
+/* Engagement Stats */
+.engagement-stats {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    padding: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+}
+
+.stat-box {
+    text-align: center;
+}
+
+.stat-box i {
+    font-size: 2rem;
+    color: #0077b6;
+    margin-bottom: 10px;
+}
+
+.stat-box .number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.stat-box .label {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Related News */
+.related-news {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 3px solid #e0e0e0;
+}
+
+.related-news h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.related-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.related-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.related-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.related-card .content {
+    padding: 15px;
+}
+
+.related-card .category {
+    display: inline-block;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+    color: white;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.related-card h3 {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.related-card .date {
+    font-size: 12px;
+    color: #999;
+}
+
+.related-card a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Back Button */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+    color: white;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 119, 182, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .news-detail-container {
+        padding: 20px 15px;
+    }
+
+    .article-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .featured-image {
+        height: 250px;
+    }
+
+    .article-meta {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .engagement-stats {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .related-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="news-detail-container">
+    <!-- Back Button -->
+    <a href="{% url 'news_list' %}" class="back-button">
+        <i class="fa fa-arrow-left"></i> Back to News
+    </a>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="{% url 'dashboard' %}"><i class="fa fa-home"></i> Home</a>
+        <span>/</span>
+        <a href="{% url 'news_list' %}">News</a>
+        <span>/</span>
+        <span>{{ news.category }}</span>
+    </div>
+
+    <!-- Article Header -->
+    <div class="article-header">
+        <span class="category-badge">{{ news.get_category_display }}</span>
+        <h1>{{ news.title }}</h1>
+
+        <div class="article-meta">
+            {% if news.author %}
+            <div class="meta-item">
+                <i class="fa fa-user"></i>
+                <span>{{ news.author.get_full_name|default:news.author.username }}</span>
+            </div>
+            {% endif %}
+
+            <div class="meta-item">
+                <i class="fa fa-calendar"></i>
+                <span>{{ news.published_date|date:"F d, Y" }}</span>
+            </div>
+
+            <div class="meta-item">
+                <i class="fa fa-clock"></i>
+                <span>{{ reading_time }}</span>
+            </div>
+
+            <div class="meta-item">
+                <i class="fa fa-eye"></i>
+                <span>{{ news.views }} views</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Image -->
+    {% if news.image %}
+    <img src="{{ news.image.url }}" alt="{{ news.title }}" class="featured-image">
+    {% endif %}
+
+    <!-- Article Summary -->
+    <div class="article-summary">
+        <h2>Summary</h2>
+        <p>{{ news.summary }}</p>
+    </div>
+
+    <!-- Article Content -->
+    <div class="article-content">
+        {{ news.content|linebreaks }}
+    </div>
+
+    <!-- Source Attribution -->
+    {% if news.source or news.source_url %}
+    <div class="article-source">
+        <h3><i class="fa fa-link"></i> Source</h3>
+        <p>
+            {% if news.source %}{{ news.source }}{% endif %}
+            {% if news.source_url %}
+                - <a href="{{ news.source_url }}" target="_blank" rel="noopener">
+                    Read original article <i class="fa fa-external-link"></i>
+                </a>
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Engagement Stats -->
+    <div class="engagement-stats">
+        <div class="stat-box">
+            <i class="fa fa-eye"></i>
+            <div class="number">{{ news.views }}</div>
+            <div class="label">Views</div>
+        </div>
+        <div class="stat-box">
+            <i class="fa fa-calendar"></i>
+            <div class="number">{{ news.published_date|date:"M d" }}</div>
+            <div class="label">Published</div>
+        </div>
+        <div class="stat-box">
+            <i class="fa fa-bookmark"></i>
+            <div class="number">{{ news.get_category_display }}</div>
+            <div class="label">Category</div>
+        </div>
+    </div>
+
+    <!-- Related News -->
+    {% if related_news %}
+    <div class="related-news">
+        <h2>Related Articles</h2>
+        <div class="related-grid">
+            {% for related in related_news %}
+            <div class="related-card">
+                <a href="{% url 'news_detail' related.slug %}">
+                    {% if related.image %}
+                        <img src="{{ related.image.url }}" alt="{{ related.title }}">
+                    {% else %}
+                        <img src="{% static 'images/default-news.jpg' %}" alt="{{ related.title }}">
+                    {% endif %}
+
+                    <div class="content">
+                        <span class="category">{{ related.get_category_display }}</span>
+                        <h3>{{ related.title }}</h3>
+                        <p class="date">
+                            <i class="fa fa-calendar"></i> {{ related.published_date|date:"M d, Y" }}
+                        </p>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+<script>
+// ============================================================
+//  VaxSafe — Language Toggle  (English ↔ বাংলা)
+// ============================================================
+(function () {
+  const LANG_KEY = 'vaxsafe_lang';
+  const translations = {
+    "Home": "হোম",
+    "Features": "বৈশিষ্ট্যসমূহ",
+    "About Us": "আমাদের সম্পর্কে",
+    "Contact Us": "যোগাযোগ করুন",
+    "Register": "নিবন্ধন",
+    "Log In": "লগ ইন",
+    "Logout": "লগআউট",
+    "Dashboard": "ড্যাশবোর্ড",
+    "Schedule": "সময়সূচি",
+    "Centers": "কেন্দ্রসমূহ",
+    "News": "সংবাদ",
+    "Profile": "প্রোফাইল",
+    "Your Health, Future-Proofed.": "আপনার স্বাস্থ্য, ভবিষ্যতের জন্য নিরাপদ।",
+    "The intelligent vaccination ecosystem keeping your family safe, one dose at a time.": "পরিবারের সুরক্ষায় বুদ্ধিমান টিকা ব্যবস্থাপনা — একটি ডোজ একটি সময়ে।",
+    "Get started": "শুরু করুন",
+    "Learn More": "আরও জানুন",
+    "Smart Reminders": "স্মার্ট অনুস্মারক",
+    "Never miss your next Vaccine": "পরবর্তী টিকার কথা কখনো ভুলবেন না",
+    "Family Tracking": "পারিবারিক ট্র্যাকিং",
+    "Manage Vaccinations for your loved ones": "প্রিয়জনদের টিকাদান পরিচালনা করুন",
+    "Center Finder": "কেন্দ্র খুঁজুন",
+    "Locate nearby vaccination centers": "কাছের টিকাদান কেন্দ্র খুঁজুন",
+    "Latest Updates": "সর্বশেষ আপডেট",
+    "Stay informed with the newest vaccine-related news.": "টিকা সংক্রান্ত সর্বশেষ খবর জানুন।",
+    "Get health alerts and vaccine updates": "স্বাস্থ্য সতর্কতা ও টিকা আপডেট পান",
+    "Secure & Private": "নিরাপদ ও গোপনীয়",
+    "Always Available": "সর্বদা উপলব্ধ",
+    "For All Users": "সকল ব্যবহারকারীর জন্য",
+    "VaxSafe is a student-developed web platform dedicated to empowering Bangladeshi families with accessible vaccination management tools.": "VaxSafe একটি শিক্ষার্থী-নির্মিত প্ল্যাটফর্ম যা বাংলাদেশের পরিবারগুলোকে সহজলভ্য টিকা ব্যবস্থাপনার সুবিধা দেয়।",
+    "Our system simplifies healthcare by offering intelligent scheduling, real-time reminders, and secure tracking for family members of all ages.": "আমাদের সিস্টেম বুদ্ধিমান সময়সূচি ও রিয়েল-টাইম অনুস্মারকের মাধ্যমে স্বাস্থ্যসেবা সহজ করে।",
+    "Deeply integrated with Bangladesh's national immunization calendar, VaxSafe connects you to local health centers to ensure no critical dose is missed.": "জাতীয় টিকাদান ক্যালেন্ডারের সাথে সংযুক্ত, VaxSafe আপনাকে স্থানীয় স্বাস্থ্যকেন্দ্রের সাথে যুক্ত করে।",
+    "We make staying protected as easy as checking your email, contributing to a safer, healthier nation.": "সুরক্ষিত থাকাকে আমরা ইমেইল চেক করার মতোই সহজ করে তুলি।",
+    "We\'d love to hear from you! Send us a message.": "আপনার কাছ থেকে শুনতে চাই! আমাদের বার্তা পাঠান।",
+    "Send Message": "বার্তা পাঠান",
+    "Send": "পাঠান",
+    "Sign In": "প্রবেশ করুন",
+    "Back": "পেছনে যান",
+    "Forgot Password?": "পাসওয়ার্ড ভুলে গেছেন?",
+    "Don\'t have an account?": "অ্যাকাউন্ট নেই?",
+    "Or log in with": "অথবা লগ ইন করুন",
+    "Continue with Google": "Google দিয়ে চালিয়ে যান",
+    "Continue with Facebook": "Facebook দিয়ে চালিয়ে যান",
+    "Create Account": "অ্যাকাউন্ট তৈরি করুন",
+    "Join VaxSafe and protect your family\'s health": "VaxSafe-এ যোগ দিন এবং পরিবারের স্বাস্থ্য রক্ষা করুন",
+    "Back to Home": "হোমে ফিরুন",
+    "Already have an account?": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
+    "Welcome back! Here\'s your health overview": "স্বাগতম! এখানে আপনার স্বাস্থ্য সারসংক্ষেপ",
+    "Upcoming Vaccinations": "আসন্ন টিকাদান",
+    "Reminders Active": "সক্রিয় অনুস্মারক",
+    "Family Members": "পরিবারের সদস্য",
+    "No updates available at the moment.": "এই মুহূর্তে কোনো আপডেট নেই।",
+    "Add Vaccine": "টিকা যোগ করুন",
+    "Add Family Member": "সদস্য যোগ করুন",
+    "Member Name": "সদস্যের নাম",
+    "Notification": "বিজ্ঞপ্তি",
+    "No family members added yet.": "এখনো কোনো সদস্য যোগ করা হয়নি।",
+    "Keep track of your family\'s health together": "একসাথে পরিবারের স্বাস্থ্য ট্র্যাক করুন",
+    "Save Member": "সদস্য সংরক্ষণ",
+    "Cancel": "বাতিল",
+    "Add Vaccine Record": "টিকার রেকর্ড যোগ করুন",
+    "Add a new vaccination record for a family member": "পরিবারের সদস্যের জন্য নতুন টিকার রেকর্ড যোগ করুন",
+    "Basic Information": "মৌলিক তথ্য",
+    "Vaccine Type": "টিকার ধরন",
+    "Dose Number": "ডোজ নম্বর",
+    "Date Information": "তারিখের তথ্য",
+    "Date Administered/Scheduled": "প্রদান/নির্ধারিত তারিখ",
+    "Next Dose Date": "পরবর্তী ডোজের তারিখ",
+    "Healthcare Provider": "স্বাস্থ্যসেবা প্রদানকারী",
+    "Additional Details": "অতিরিক্ত বিবরণ",
+    "Vaccination Center/Hospital": "টিকাদান কেন্দ্র/হাসপাতাল",
+    "Batch/Lot Number": "ব্যাচ/লট নম্বর",
+    "Manufacturer": "প্রস্তুতকারক",
+    "Side Effects": "পার্শ্বপ্রতিক্রিয়া",
+    "💾 Save Vaccine Record": "💾 রেকর্ড সংরক্ষণ",
+    "🏥 Vaccination Centers": "🏥 টিকাদান কেন্দ্রসমূহ",
+    "Find nearby vaccination centers in your area": "আপনার এলাকার কাছের টিকাদান কেন্দ্র খুঁজুন",
+    "Centers Available": "টি কেন্দ্র উপলব্ধ",
+    "All Cities": "সকল শহর",
+    "All Vaccines": "সকল টিকা",
+    "Apply Filters": "ফিল্টার প্রয়োগ",
+    "Find Nearest": "নিকটতম খুঁজুন",
+    "Map View": "মানচিত্র দেখুন",
+    "Export List": "তালিকা রপ্তানি",
+    "Verified": "যাচাইকৃত",
+    "View Details": "বিস্তারিত দেখুন",
+    "Get Directions": "দিকনির্দেশনা পান",
+    "No Vaccination Centers Found": "কোনো টিকাদান কেন্দ্র পাওয়া যায়নি",
+    "Reset Filters": "ফিল্টার রিসেট",
+    "24 Hours Open": "২৪ ঘণ্টা খোলা",
+    "My Profile": "আমার প্রোফাইল",
+    "Profile Information": "প্রোফাইল তথ্য",
+    "Not provided": "প্রদান করা হয়নি",
+    "Choose File": "ফাইল বেছে নিন",
+    "No file chosen": "কোনো ফাইল নেই",
+    "Save Changes": "পরিবর্তন সংরক্ষণ",
+    "Delete Photo": "ছবি মুছুন",
+    "📅 Vaccination Schedule": "📅 টিকাদান সময়সূচি",
+    "Manage upcoming doses and health records for your family.": "পরিবারের আসন্ন ডোজ ও স্বাস্থ্য রেকর্ড পরিচালনা করুন।",
+    "Edit List": "তালিকা সম্পাদনা",
+    "Add Reminder": "অনুস্মারক যোগ করুন",
+    "No Records Found": "কোনো রেকর্ড নেই",
+    "Your scheduled vaccinations will appear here.": "নির্ধারিত টিকাদান এখানে দেখাবে।",
+    "New Appointment": "নতুন অ্যাপয়েন্টমেন্ট",
+    "Set a new vaccination reminder": "নতুন টিকাদান অনুস্মারক সেট করুন",
+    "Vaccine Name": "টিকার নাম",
+    "Notify Via": "বিজ্ঞপ্তি মাধ্যম",
+    "Save Schedule": "সময়সূচি সংরক্ষণ",
+    "Completed": "সম্পন্ন",
+    "Pending": "অপেক্ষমাণ",
+    "💉 Vaccination Schedule": "💉 টিকাদান সময়সূচি",
+    "Track and manage your family\'s vaccine records": "পরিবারের টিকার রেকর্ড ট্র্যাক ও পরিচালনা করুন",
+    "Add New Vaccine": "নতুন টিকা যোগ করুন",
+    "All Status": "সকল অবস্থা",
+    "Scheduled": "নির্ধারিত",
+    "Overdue": "বিলম্বিত",
+    "All Members": "সকল সদস্য",
+    "Upcoming": "আসন্ন",
+    "Total Records": "মোট রেকর্ড",
+    "Upcoming Vaccines": "আসন্ন টিকাসমূহ",
+    "Past Vaccines": "পূর্ববর্তী টিকাসমূহ",
+    "days until": "দিন বাকি",
+    "No Vaccine Records Yet": "এখনো কোনো রেকর্ড নেই",
+    "Add First Vaccine": "প্রথম টিকা যোগ করুন",
+    "📰 Health News & Updates": "📰 স্বাস্থ্য সংবাদ ও আপডেট",
+    "Stay informed with the latest health and vaccination news": "সর্বশেষ স্বাস্থ্য ও টিকাদান সংবাদ থেকে আপডেট থাকুন",
+    "Total Articles": "মোট নিবন্ধ",
+    "Featured News": "বৈশিষ্ট্যযুক্ত সংবাদ",
+    "Search articles...": "নিবন্ধ খুঁজুন...",
+    "All Categories": "সকল বিভাগ",
+    "Clear Filters": "ফিল্টার মুছুন",
+    "Featured Articles": "বৈশিষ্ট্যযুক্ত নিবন্ধ",
+    "Read More": "আরও পড়ুন",
+    "All Articles": "সকল নিবন্ধ",
+    "No articles found": "কোনো নিবন্ধ নেই",
+    "Back to News": "সংবাদে ফিরুন",
+    "Summary": "সারসংক্ষেপ",
+    "Related Articles": "সম্পর্কিত নিবন্ধ",
+    "Latest Vaccine Updates": "সর্বশেষ টিকা আপডেট",
+    "All News": "সকল সংবাদ",
+    "Add New Update": "নতুন আপডেট",
+    "Search updates...": "আপডেট খুঁজুন...",
+    "No updates found": "কোনো আপডেট নেই",
+    "Back to Updates": "আপডেটে ফিরুন",
+    "Edit Update": "আপডেট সম্পাদনা",
+    "Verify your Email": "ইমেইল যাচাই করুন",
+    "Please enter the OTP sent to your email:": "আপনার ইমেইলে পাঠানো OTP লিখুন:",
+    "Enter OTP": "OTP লিখুন",
+    "Submit": "জমা দিন",
+    "Resend OTP": "OTP পুনরায় পাঠান",
+    "All rights reserved.": "সর্বস্বত্ব সংরক্ষিত।",
+    "Filter": "ফিল্টার",
+    "Export": "রপ্তানি",
+    "Apply": "প্রয়োগ",
+    "Status": "অবস্থা",
+    "Location": "অবস্থান",
+    "Notes": "নোট",
+    "Age": "বয়স",
+    "Date & Time": "তারিখ ও সময়",
+    "📋 Vaccination Schedule": "📋 টিকাদান সময়সূচি",
+    "Manage and track all vaccination records": "সকল টিকাদান রেকর্ড পরিচালনা ও ট্র্যাক করুন",
+    "Scheduled Date": "নির্ধারিত তারিখ",
+    "Administered Date": "প্রদানের তারিখ",
+    "Next Dose": "পরবর্তী ডোজ",
+    "No Vaccine Records Found": "কোনো রেকর্ড পাওয়া যায়নি",
+    "Stay informed about vaccination programs, campaigns and new programmes": "টিকাদান কর্মসূচি সম্পর্কে আপডেট থাকুন",
+    "General Vaccine News": "সাধারণ টিকা সংবাদ",
+    "VaxSafe combines modern technology with local expertise to make family health protection as simple and reliable as checking your email.": "VaxSafe আধুনিক প্রযুক্তি মিলিয়ে পারিবারিক স্বাস্থ্য সুরক্ষা সহজ করে।",
+    "📌 Important Information": "📌 গুরুত্বপূর্ণ তথ্য",
+    "Please ensure all required fields are filled accurately": "অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য সঠিকভাবে পূরণ করুন",
+  };
+
+  // Build reverse map (bn → en)
+  const reverseMap = {};
+  for (const [en, bn] of Object.entries(translations)) {
+    reverseMap[bn] = en;
+  }
+
+  function translateNode(node, toBangla) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent.trim();
+      if (!text) return;
+      if (toBangla) {
+        const bn = translations[text];
+        if (bn) node.textContent = node.textContent.replace(text, bn);
+      } else {
+        const en = reverseMap[text];
+        if (en) node.textContent = node.textContent.replace(text, en);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Skip script, style, input value, select
+      const tag = node.tagName.toLowerCase();
+      if (['script','style','select'].includes(tag)) return;
+      // Translate placeholder
+      if (node.hasAttribute && node.hasAttribute('placeholder')) {
+        const ph = node.getAttribute('placeholder');
+        if (toBangla && translations[ph]) node.setAttribute('placeholder', translations[ph]);
+        else if (!toBangla && reverseMap[ph]) node.setAttribute('placeholder', reverseMap[ph]);
+      }
+      node.childNodes.forEach(child => translateNode(child, toBangla));
+    }
+  }
+
+  function applyLanguage(lang) {
+    localStorage.setItem(LANG_KEY, lang);
+    const toBangla = (lang === 'bn');
+    document.body.childNodes.forEach(n => translateNode(n, toBangla));
+    // Update all lang buttons label
+    document.querySelectorAll('#lang-btn').forEach(btn => {
+      const arrow = btn.querySelector('.dropdown-arrow') ? ' <span class="dropdown-arrow">▼</span>' : '';
+      btn.innerHTML = (lang === 'bn' ? 'বাংলা' : 'English') + ' <span class="dropdown-arrow">▼</span>';
+    });
+    // highlight active
+    document.querySelectorAll('#lang-dropdown li').forEach(li => {
+      li.style.fontWeight = '';
+    });
+  }
+
+  // Override setLanguage globally
+  window.setLanguage = function(lang) {
+    const code = (lang === 'Bangla' || lang === 'bn') ? 'bn' : 'en';
+    applyLanguage(code);
+    document.getElementById('lang-dropdown').classList.remove('show');
+    const btn = document.getElementById('lang-btn');
+    if (btn) {
+      const arrow = btn.querySelector('.dropdown-arrow');
+      if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+  };
+
+  // Apply saved language on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'bn') applyLanguage('bn');
+  });
+})();
+</script>

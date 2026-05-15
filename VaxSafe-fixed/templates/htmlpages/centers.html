@@ -1,0 +1,317 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-centers{% endblock %}
+{% load i18n %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .centers-page { padding: 40px 0; }
+    .page-header { text-align: center; margin-bottom: 40px; }
+    .page-header h1 { font-size: 36px; color: var(--primary-blue); margin-bottom: 10px; }
+    .search-section { background: white; padding: 30px; border-radius: 16px; box-shadow: var(--shadow-md); margin-bottom: 30px; }
+    .search-form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { margin-bottom: 8px; font-weight: 600; }
+    .form-group input, .form-group select { padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 14px; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #00b4d8; }
+    .map-container { background: white; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 30px; }
+    #map { width: 100%; height: 500px; }
+    .centers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .center-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: all 0.3s; border: 2px solid transparent; }
+    .center-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,119,182,0.2); border-color: var(--primary-blue); }
+    .center-name { font-size: 20px; font-weight: 700; color: #2c3e50; margin-bottom: 5px; }
+    .verified-badge { background: #28a745; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .center-info { color: #636e72; font-size: 14px; line-height: 1.8; margin-bottom: 15px; }
+    .center-info i { width: 20px; color: var(--primary-blue); }
+    .center-vaccines { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .vaccine-badge { background: #e3f2fd; color: #0077b6; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+    .center-actions { display: flex; gap: 10px; margin-top: 15px; }
+    .btn-sm { padding: 8px 16px; font-size: 13px; }
+    .no-results { text-align: center; padding: 60px 20px; color: #636e72; }
+    .distance { color: #28a745; font-weight: 600; font-size: 13px; }
+    .pac-container { border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: none; margin-top: 5px; }
+    .pac-item { padding: 10px 15px; font-size: 14px; cursor: pointer; }
+    .pac-item:hover { background: #e3f2fd; }
+    @media (max-width: 768px) {
+        .search-form { grid-template-columns: 1fr; }
+        #map { height: 400px; }
+        .centers-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="centers-page">
+    <div class="container">
+
+        <div class="page-header">
+            <h1>🏥 Vaccination Centers</h1>
+            <p>Find nearby vaccination centers in your area</p>
+        </div>
+
+        <!-- Search -->
+        <div class="search-section">
+            <form class="search-form" method="get">
+                <div class="form-group">
+                    <label>🔍 Search Center</label>
+                    <input type="text" id="searchInput" name="q"
+                           placeholder="Enter hospital or center name..."
+                           value="{{ request.GET.q }}"
+                           autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>🏙️ City</label>
+                    <select name="city">
+                        <option value="">All Cities</option>
+                        <option value="Dhaka" {% if request.GET.city == 'Dhaka' %}selected{% endif %}>Dhaka</option>
+                        <option value="Chittagong" {% if request.GET.city == 'Chittagong' %}selected{% endif %}>Chittagong</option>
+                        <option value="Sylhet" {% if request.GET.city == 'Sylhet' %}selected{% endif %}>Sylhet</option>
+                        <option value="Rajshahi" {% if request.GET.city == 'Rajshahi' %}selected{% endif %}>Rajshahi</option>
+                        <option value="Khulna" {% if request.GET.city == 'Khulna' %}selected{% endif %}>Khulna</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>💉 Vaccine Type</label>
+                    <select name="vaccine">
+                        <option value="">All Vaccines</option>
+                        <option value="COVID-19">COVID-19</option>
+                        <option value="Influenza">Influenza</option>
+                        <option value="Hepatitis B">Hepatitis B</option>
+                        <option value="MMR">MMR</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">🔍 Search</button>
+            </form>
+        </div>
+
+        <!-- Map -->
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+
+        <!-- Results -->
+        <div style="margin-bottom: 20px; text-align: center; color: #636e72;">
+            Showing <strong>{{ centers.count }}</strong> centers
+        </div>
+
+        {% if centers %}
+        <div class="centers-grid">
+            {% for center in centers %}
+            <div class="center-card" data-lat="{{ center.latitude }}" data-lng="{{ center.longitude }}">
+                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px;">
+                    <div>
+                        <h3 class="center-name">{{ center.name }}</h3>
+                        {% if center.is_verified %}
+                        <span class="verified-badge">✓ Verified</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="center-info">
+                    <div><i class="fas fa-map-marker-alt"></i> {{ center.address }}</div>
+                    <div><i class="fas fa-city"></i> {{ center.city }}</div>
+                    {% if center.phone %}<div><i class="fas fa-phone"></i> {{ center.phone }}</div>{% endif %}
+                    <div><i class="fas fa-clock"></i> {{ center.opening_time|time:"g:i A" }} - {{ center.closing_time|time:"g:i A" }}</div>
+                </div>
+
+                <div class="center-vaccines">
+                    {% for vaccine in center.get_available_vaccines_list %}
+                    <span class="vaccine-badge">{{ vaccine }}</span>
+                    {% endfor %}
+                </div>
+
+                {% if center.rating > 0 %}
+                <div style="margin-bottom:10px;">⭐ {{ center.rating }}</div>
+                {% endif %}
+
+                <div class="distance" id="distance-{{ center.id }}"></div>
+
+                <div class="center-actions">
+                    <a href="{% url 'center_detail' center.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-info-circle"></i> Details
+                    </a>
+                    <a href="{{ center.get_google_maps_url }}" target="_blank" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-directions"></i> Directions
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results">
+            <i class="fas fa-map-marked-alt" style="font-size:64px; opacity:0.3; display:block; margin-bottom:20px;"></i>
+            <h3>No centers found</h3>
+            <p>Try adjusting your search filters</p>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let map;
+    let userLocation = null;
+    let searchMarker = null;
+    let nearbyMarkers = [];
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: { lat: 23.8103, lng: 90.4125 },
+        });
+
+        // =====================
+        // Places Autocomplete
+        // =====================
+        const searchInput = document.getElementById('searchInput');
+        const autocomplete = new google.maps.places.Autocomplete(searchInput, {
+            componentRestrictions: { country: 'bd' },
+            fields: ['geometry', 'name', 'formatted_address'],
+            types: ['establishment'],
+        });
+
+        autocomplete.addListener('place_changed', function () {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) {
+                // suggestion select না করে Enter চাপলে Places Search করো
+                searchNearbyHospitals(map.getCenter());
+                return;
+            }
+
+            if (searchMarker) searchMarker.setMap(null);
+            nearbyMarkers.forEach(m => m.setMap(null));
+            nearbyMarkers = [];
+
+            map.setCenter(place.geometry.location);
+            map.setZoom(15);
+
+            searchMarker = new google.maps.Marker({
+                position: place.geometry.location,
+                map: map,
+                title: place.name,
+                icon: { url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' }
+            });
+
+            const iw = new google.maps.InfoWindow({
+                content: `
+                    <div style="padding:10px; max-width:220px;">
+                        <b style="color:#0077b6;">${place.name}</b><br>
+                        <span style="font-size:13px;color:#636e72;">${place.formatted_address}</span>
+                    </div>
+                `
+            });
+            iw.open(map, searchMarker);
+
+            // আশেপাশের hospitals খোঁজো
+            searchNearbyHospitals(place.geometry.location);
+        });
+
+        // =====================
+        // Nearby Hospital Search
+        // =====================
+        function searchNearbyHospitals(location) {
+            const service = new google.maps.places.PlacesService(map);
+            service.nearbySearch({
+                location: location,
+                radius: 5000,  // 5km radius
+                type: 'hospital',
+            }, function(results, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    results.forEach(function(place) {
+                        const marker = new google.maps.Marker({
+                            position: place.geometry.location,
+                            map: map,
+                            title: place.name,
+                            icon: { url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png' }
+                        });
+
+                        const iw = new google.maps.InfoWindow({
+                            content: `
+                                <div style="padding:10px; max-width:220px;">
+                                    <b style="color:#e74c3c;">🏥 ${place.name}</b><br>
+                                    <span style="font-size:13px;color:#636e72;">${place.vicinity}</span>
+                                </div>
+                            `
+                        });
+
+                        marker.addListener('click', () => iw.open(map, marker));
+                        nearbyMarkers.push(marker);
+                    });
+                }
+            });
+        }
+
+        // =====================
+        // User Location
+        // =====================
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                map.setCenter(userLocation);
+                new google.maps.Marker({
+                    position: userLocation,
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 10,
+                        fillColor: '#4285F4',
+                        fillOpacity: 1,
+                        strokeColor: '#fff',
+                        strokeWeight: 2
+                    },
+                    title: 'Your Location'
+                });
+                calculateDistances();
+                // User location এর আশেপাশে hospitals খোঁজো
+                searchNearbyHospitals(userLocation);
+            }, () => {});
+        }
+
+        // =====================
+        // Database Centers
+        // =====================
+        document.querySelectorAll('.center-card').forEach(card => {
+            const lat = parseFloat(card.dataset.lat);
+            const lng = parseFloat(card.dataset.lng);
+            if (lat && lng) {
+                const marker = new google.maps.Marker({
+                    position: { lat, lng },
+                    map: map,
+                    title: card.querySelector('.center-name').textContent,
+                    icon: { url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png' }
+                });
+                const iw = new google.maps.InfoWindow({
+                    content: `<b>${card.querySelector('.center-name').textContent}</b>`
+                });
+                marker.addListener('click', () => iw.open(map, marker));
+            }
+        });
+    }
+
+    function calculateDistances() {
+        if (!userLocation) return;
+        document.querySelectorAll('.center-card').forEach(card => {
+            const lat = parseFloat(card.dataset.lat);
+            const lng = parseFloat(card.dataset.lng);
+            if (lat && lng) {
+                const R = 6371;
+                const dLat = (lat - userLocation.lat) * Math.PI / 180;
+                const dLon = (lng - userLocation.lng) * Math.PI / 180;
+                const a = Math.sin(dLat/2)**2 +
+                          Math.cos(userLocation.lat * Math.PI/180) *
+                          Math.cos(lat * Math.PI/180) *
+                          Math.sin(dLon/2)**2;
+                const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                const el = card.querySelector('[id^="distance-"]');
+                if (el) el.innerHTML = `📍 ${dist.toFixed(1)} km away`;
+            }
+        });
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_key }}&libraries=places&callback=initMap" async defer></script>
+{% endblock %}

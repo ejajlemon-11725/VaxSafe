@@ -1,0 +1,525 @@
+{% load static %}
+<nav class="nav_two">
+  <div class="logo">
+    <a href="{% url 'dashboard' %}">
+      <img src="{% static 'images/logo.png' %}" alt="VaxSafe Logo">
+    </a>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'dashboard' %}"       class="nav-btn nav-btn-1">Dashboard</a></li>
+    <li><a href="{% url 'vaccine_schedule' %}" class="nav-btn nav-btn-2">Schedule</a></li>
+    <li><a href="{% url 'area_centers' %}"     class="nav-btn nav-btn-3">🏥 My Area Centers</a></li>
+    <li><a href="{% url 'news_list' %}"         class="nav-btn nav-btn-4">News</a></li>
+
+    <!-- ✅ নতুন: Vaccine Request (User দেখবে) -->
+    {% if not request.user.is_staff and not request.user.is_superuser %}
+    <li>
+      <a href="{% url 'submit_vaccine_request' %}" class="nav-btn nav-btn-req"
+         title="টিকার জন্য Request করুন">
+        💉 Request
+      </a>
+    </li>
+    {% endif %}
+
+    <!-- ✅ নতুন (Task 3): Claimable Profiles link with badge -->
+    {% if claimable_count_nav > 0 %}
+    <li>
+      <a href="{% url 'claimable_profiles' %}" class="nav-btn nav-btn-claim"
+         style="position:relative; background: linear-gradient(135deg, #16a085, #1abc9c); color: #fff;"
+         title="Claimable Profiles">
+        🪪 Claim
+        <span style="
+          position: absolute; top: -6px; right: -6px;
+          background: #e67e22; color: white;
+          border-radius: 50%; font-size: 10px; font-weight: 700;
+          width: 18px; height: 18px;
+          display: flex; align-items: center; justify-content: center;
+        ">{{ claimable_count_nav }}</span>
+      </a>
+    </li>
+    {% endif %}
+
+    <!-- ✅ নতুন: Vaccine Requests (Admin দেখবে) -->
+    {% if request.user.is_staff or request.user.is_superuser %}
+    <li>
+      <a href="{% url 'admin_vaccine_requests' %}" class="nav-btn nav-btn-req"
+         style="position:relative;" title="Pending Vaccine Requests">
+        📋 Requests
+        {% if pending_request_count > 0 %}
+          <span style="
+            position: absolute; top: -6px; right: -6px;
+            background: #e53935; color: white;
+            border-radius: 50%; font-size: 10px; font-weight: 700;
+            width: 18px; height: 18px;
+            display: flex; align-items: center; justify-content: center;
+          ">{{ pending_request_count }}</span>
+        {% endif %}
+      </a>
+    </li>
+    {% endif %}
+
+    <!-- ✅ NOTIFICATION BELL (nav_two তে যোগ করা হয়েছে) -->
+    <li class="notif-menu" style="position:relative; display:inline-block;">
+      <button class="nav-btn nav-btn-bell" id="notifToggle2"
+              onclick="toggleNotifDropdown2(event)" style="position:relative;">
+        🔔
+        {% if unread_notif_count > 0 %}
+          <span style="
+            position: absolute; top: -5px; right: -5px;
+            background: #e53935; color: white;
+            border-radius: 50%; font-size: 10px; font-weight: 700;
+            width: 18px; height: 18px;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+          ">{{ unread_notif_count }}</span>
+        {% endif %}
+      </button>
+
+      <!-- Notification Dropdown -->
+      <div id="notifDropdown2" style="
+        display: none;
+        position: absolute;
+        right: 0; top: 110%;
+        width: 300px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+        z-index: 9999;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+      ">
+        <!-- Header -->
+        <div style="
+          background: linear-gradient(135deg, #00b4d8, #0077b6);
+          color: white; padding: 12px 16px;
+          font-weight: 600; font-size: 14px;
+          display: flex; justify-content: space-between; align-items: center;
+        ">
+          <span>🔔 নোটিফিকেশন</span>
+          {% if unread_notif_count > 0 %}
+            <span style="
+              background: #e53935; border-radius: 12px;
+              padding: 2px 8px; font-size: 11px;
+            ">{{ unread_notif_count }} নতুন</span>
+          {% endif %}
+        </div>
+
+        <!-- Items -->
+        <div style="max-height: 260px; overflow-y: auto;">
+          {% if latest_notifications %}
+            {% for notif in latest_notifications %}
+              <a href="{% url 'notification_list' %}" style="
+                display: block; padding: 12px 16px;
+                border-bottom: 1px solid #f5f5f5;
+                text-decoration: none; color: #263238;
+                background: {% if not notif.is_read %}#f0f9ff{% else %}white{% endif %};
+                transition: background 0.15s;
+              " onmouseover="this.style.background='#e0f7fa'"
+                 onmouseout="this.style.background='{% if not notif.is_read %}#f0f9ff{% else %}white{% endif %}'">
+                <div style="font-size: 13px; font-weight: 600;">
+                  {% if notif.notif_type == 'reminder' %}⏰
+                  {% elif notif.notif_type == 'update' %}✅
+                  {% else %}🔔{% endif %}
+                  {{ notif.title|truncatechars:40 }}
+                </div>
+                <div style="font-size: 12px; color: #78909c; margin-top: 3px;">
+                  {{ notif.message|truncatechars:55 }}
+                </div>
+                <div style="font-size: 11px; color: #b0bec5; margin-top: 4px;">
+                  {{ notif.created_at|timesince }} আগে
+                </div>
+              </a>
+            {% endfor %}
+          {% else %}
+            <div style="padding: 24px 16px; text-align: center; color: #90a4ae; font-size: 13px;">
+              <div style="font-size: 28px; margin-bottom: 8px;">🔕</div>
+              কোনো নতুন নোটিফিকেশন নেই
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <a href="{% url 'notification_list' %}" style="
+          display: block; text-align: center; padding: 10px;
+          font-size: 13px; font-weight: 600; color: #0077b6;
+          border-top: 1px solid #e0e0e0; background: #f9f9f9;
+          text-decoration: none;
+        " onmouseover="this.style.background='#e0f2f1'"
+           onmouseout="this.style.background='#f9f9f9'">
+          সব নোটিফিকেশন দেখুন →
+        </a>
+      </div>
+    </li>
+    <!-- ✅ BELL শেষ -->
+
+    <!-- Profile Dropdown -->
+    <li class="profile-menu">
+      <button class="nav-btn nav-btn-profile" id="profile-btn"
+              onclick="toggleDropdown(event, 'profile-dropdown')">
+        <i class="fa fa-user-circle"></i>
+        {{ request.user.first_name|default:request.user.username }}
+        <span class="dropdown-arrow">▼</span>
+      </button>
+      <ul class="dropdown" id="profile-dropdown">
+        <li><a href="{% url 'profile' %}">My Profile</a></li>
+        <li><a href="{% url 'vaccine_history_self' %}">My Vaccine History</a></li>
+        <li><a href="{% url 'my_vaccine_requests' %}">My Requests</a></li>
+        <li><a href="{% url 'reminder_list' %}">Reminders</a></li>
+        {% if request.user.is_staff or request.user.is_superuser %}
+        <li><a href="{% url 'admin_vaccine_requests' %}">📋 Manage Requests</a></li>
+        {% endif %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    </li>
+
+    <!-- Language -->
+<li class="lang-menu">
+  <button class="nav-btn nav-btn-lang" id="lang-btn"
+          onclick="toggleDropdown(event, 'lang-dropdown')">
+    <span class="lang-globe">🌐</span>
+    <span id="lang-current">Language</span>
+    <span class="dropdown-arrow">▼</span>
+  </button>
+  <ul class="dropdown" id="lang-dropdown">
+    <li onclick="setLanguage('English')" class="lang-option active">
+      <span class="lang-flag"></span> English
+    </li>
+    <li onclick="setLanguage('Bangla')" class="lang-option">
+      <span class="lang-flag"></span> বাংলা
+    </li>
+  </ul>
+</li>
+  </ul>
+</nav>
+
+<style>
+/* ========================================
+   MODERN HORIZONTAL NAVIGATION
+   ======================================== */
+.nav_two {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 40px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 4px 15px rgba(0, 119, 182, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+.nav_two .logo img {
+  height: 50px; width: auto; transition: transform 0.3s ease;
+}
+.nav_two .logo img:hover { transform: scale(1.05); }
+.nav_two .nav-links {
+  display: flex; align-items: center; list-style: none;
+  gap: 15px; margin: 0; padding: 0;
+}
+.nav_two .nav-links > li {
+  position: relative; display: inline-block;
+}
+
+/* Base Button */
+.nav-btn {
+  padding: 12px 24px; font-size: 15px; font-weight: 600;
+  text-decoration: none; border: none; border-radius: 25px;
+  cursor: pointer; transition: box-shadow 0.3s ease, filter 0.3s ease;
+  position: relative; overflow: visible;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: white; color: #2c3e50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.nav-btn::before {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 0; height: 0; border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+.nav-btn:active::before { width: 200px; height: 200px; }
+
+/* Dashboard */
+.nav-btn-1 {
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  color: white; box-shadow: 0 4px 12px rgba(0,180,216,0.3);
+}
+.nav-btn-1:hover { box-shadow: 0 6px 20px rgba(0,180,216,0.5); filter: brightness(1.08); }
+
+/* Schedule */
+.nav-btn-2 {
+  background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+  color: white; box-shadow: 0 4px 12px rgba(72,198,239,0.3);
+}
+.nav-btn-2:hover { box-shadow: 0 6px 20px rgba(72,198,239,0.5); filter: brightness(1.08); }
+
+/* Centers */
+.nav-btn-3 {
+  background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+  color: white; box-shadow: 0 4px 12px rgba(11,163,96,0.3);
+}
+.nav-btn-3:hover { box-shadow: 0 6px 20px rgba(11,163,96,0.5); filter: brightness(1.08); }
+
+/* News */
+.nav-btn-4 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white; box-shadow: 0 4px 12px rgba(250,112,154,0.3);
+}
+.nav-btn-4:hover { box-shadow: 0 6px 20px rgba(250,112,154,0.5); filter: brightness(1.08); }
+
+/* Request button */
+.nav-btn-req {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white; box-shadow: 0 4px 12px rgba(17,153,142,0.3);
+}
+.nav-btn-req:hover { box-shadow: 0 6px 20px rgba(17,153,142,0.5); filter: brightness(1.08); }
+
+/* Bell */
+.nav-btn-bell {
+  background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  color: white; box-shadow: 0 4px 12px rgba(247,151,30,0.3);
+  min-width: 50px; justify-content: center;
+}
+.nav-btn-bell:hover { box-shadow: 0 6px 20px rgba(247,151,30,0.5); filter: brightness(1.08); }
+
+/* Profile */
+.nav-btn-profile {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+}
+.nav-btn-profile:hover { box-shadow: 0 6px 20px rgba(102,126,234,0.5); filter: brightness(1.08); }
+.nav-btn-profile i { font-size: 18px; }
+
+/* Language */
+.nav-btn-lang {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white; box-shadow: 0 4px 12px rgba(240,147,251,0.3);
+}
+.nav-btn-lang:hover { box-shadow: 0 6px 20px rgba(240,147,251,0.5); filter: brightness(1.08); }
+
+.dropdown-arrow { display: inline-block; margin-left: 5px; transition: transform 0.3s ease; }
+.nav-btn.active { box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important; filter: brightness(1.15); }
+
+/* ======== DROPDOWN ======== */
+.dropdown {
+  position: absolute; top: 100%; right: 0;
+  margin-top: 0; padding-top: 12px; padding-bottom: 8px;
+  background: white; border-radius: 0 0 12px 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  list-style: none; min-width: 180px;
+  opacity: 0; visibility: hidden;
+  transform: translateY(-5px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  z-index: 9999; pointer-events: none;
+}
+.dropdown::before {
+  content: ''; position: absolute; top: -10px;
+  left: 0; right: 0; height: 10px; background: transparent;
+}
+.dropdown.show {
+  opacity: 1; visibility: visible;
+  transform: translateY(0); pointer-events: auto;
+}
+.dropdown li { padding: 0; margin: 0; list-style: none; cursor: pointer; }
+.dropdown li a {
+  display: block; padding: 12px 20px;
+  color: #2c3e50 !important; text-decoration: none;
+  font-size: 14px; font-weight: 500;
+  transition: background 0.2s ease;
+}
+.dropdown li:hover { background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%); }
+.dropdown li:hover a { color: white !important; }
+.dropdown li:last-child:hover { border-radius: 0 0 12px 12px; }
+.dropdown li:not(:has(a)) {
+  padding: 12px 20px; color: #2c3e50; font-size: 14px; font-weight: 500;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 1024px) {
+  .nav_two { padding: 12px 20px; }
+  .nav-links { gap: 8px; }
+  .nav-btn { padding: 10px 16px; font-size: 13px; }
+}
+@media (max-width: 768px) {
+  .nav_two { flex-direction: column; gap: 15px; padding: 15px; }
+  .nav-links { flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .nav-btn { padding: 10px 18px; font-size: 13px; }
+  .dropdown { left: 50%; right: auto; transform: translateX(-50%) translateY(-5px); }
+  .dropdown.show { transform: translateX(-50%) translateY(0); }
+  #notifDropdown2 { right: auto; left: 50%; transform: translateX(-50%); }
+}
+</style>
+
+<script>
+// ── Active nav link ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+  const currentPath = window.location.pathname;
+  document.querySelectorAll('.nav-btn').forEach(link => {
+    if (link.getAttribute && link.getAttribute('href') === currentPath) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// ── Dropdown toggle ──────────────────────────────────────────
+function toggleDropdown(event, dropdownId) {
+  event.preventDefault(); event.stopPropagation();
+  const dropdown = document.getElementById(dropdownId);
+  const button   = event.currentTarget;
+  const arrow    = button.querySelector('.dropdown-arrow');
+  const isOpen   = dropdown.classList.contains('show');
+  closeAllDropdowns();
+  if (!isOpen) {
+    dropdown.classList.add('show');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+  }
+}
+
+function closeAllDropdowns() {
+  document.querySelectorAll('.dropdown').forEach(dd => dd.classList.remove('show'));
+  document.querySelectorAll('.dropdown-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  const nd = document.getElementById('notifDropdown2');
+  if (nd) nd.style.display = 'none';
+}
+
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('.profile-menu') &&
+      !e.target.closest('.lang-menu') &&
+      !e.target.closest('.notif-menu')) {
+    closeAllDropdowns();
+  }
+});
+
+// ── Notification bell toggle ─────────────────────────────────
+function toggleNotifDropdown2(event) {
+  event.preventDefault(); event.stopPropagation();
+  const dropdown = document.getElementById('notifDropdown2');
+  // অন্য সব বন্ধ করো
+  document.querySelectorAll('.dropdown').forEach(dd => dd.classList.remove('show'));
+  document.querySelectorAll('.dropdown-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  // toggle
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+function setLanguage(lang) {
+  const code = (lang === 'Bangla' || lang === 'bn') ? 'bn' : 'en';
+
+  // Button text update
+  const langCurrent = document.getElementById('lang-current');
+  if (langCurrent) {
+    langCurrent.textContent = code === 'bn' ? 'বাংলা' : 'Language';
+  }
+
+  // Active class update
+  document.querySelectorAll('.lang-option').forEach(li => li.classList.remove('active'));
+  const selected = document.querySelector(`.lang-option[onclick*="${lang}"]`);
+  if (selected) selected.classList.add('active');
+
+  window._applyLanguage && window._applyLanguage(code);
+  closeAllDropdowns();
+}
+</script>
+
+<script>
+// ============================================================
+//  VaxSafe — Language Toggle (English ↔ বাংলা)
+//  data-original-text দিয়ে loop সমস্যা ঠিক করা হয়েছে
+// ============================================================
+(function () {
+  const LANG_KEY = 'vaxsafe_lang';
+  const translations = {
+    "Home": "হোম", "Features": "বৈশিষ্ট্যসমূহ", "About Us": "আমাদের সম্পর্কে",
+    "Contact Us": "যোগাযোগ করুন", "Register": "নিবন্ধন", "Log In": "লগ ইন",
+    "Logout": "লগআউট", "Dashboard": "ড্যাশবোর্ড", "Schedule": "সময়সূচি",
+    "Centers": "কেন্দ্রসমূহ", "News": "সংবাদ", "Profile": "প্রোফাইল",
+    "My Profile": "আমার প্রোফাইল", "Language": "ভাষা",
+    "Upcoming Vaccinations": "আসন্ন টিকাদান", "Reminders Active": "সক্রিয় অনুস্মারক",
+    "Family Members": "পরিবারের সদস্য", "Add Vaccine": "টিকা যোগ করুন",
+    "Add Family Member": "সদস্য যোগ করুন", "Cancel": "বাতিল",
+    "Save Changes": "পরিবর্তন সংরক্ষণ", "Completed": "সম্পন্ন",
+    "Pending": "অপেক্ষমাণ", "Scheduled": "নির্ধারিত", "Overdue": "বিলম্বিত",
+    "Submit": "জমা দিন", "Resend OTP": "OTP পুনরায় পাঠান",
+    "All rights reserved.": "সর্বস্বত্ব সংরক্ষিত.",
+    "Vaccine Name": "টিকার নাম", "Status": "অবস্থা",
+    "Location": "অবস্থান", "Notes": "নোট", "Age": "বয়স",
+    "My Requests": "আমার অনুরোধ", "Reminders": "রিমাইন্ডার",
+  };
+
+  const reverseMap = {};
+  for (const [en, bn] of Object.entries(translations)) reverseMap[bn] = en;
+
+  function cacheOriginalText(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        const tag = parent.tagName.toLowerCase();
+        if (['script','style','select','option'].includes(tag)) return NodeFilter.FILTER_REJECT;
+        if (node.textContent.trim() === '') return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (!node._originalText) node._originalText = node.textContent;
+    }
+  }
+
+  function applyTranslation(root, toBangla) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        const tag = parent.tagName.toLowerCase();
+        if (['script','style','select','option'].includes(tag)) return NodeFilter.FILTER_REJECT;
+        if (!node._originalText) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const original = node._originalText.trim();
+      if (toBangla) {
+        if (translations[original]) node.textContent = node._originalText.replace(original, translations[original]);
+      } else {
+        node.textContent = node._originalText;
+      }
+    }
+  }
+
+  function applyPlaceholders(toBangla) {
+    document.querySelectorAll('[placeholder]').forEach(el => {
+      if (!el._originalPlaceholder) el._originalPlaceholder = el.getAttribute('placeholder');
+      const orig = el._originalPlaceholder;
+      el.setAttribute('placeholder', toBangla ? (translations[orig] || orig) : orig);
+    });
+  }
+
+function updateLangButton(lang) {
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.innerHTML = (lang === 'bn' ? 'বাংলা' : 'English') + ' <span class="dropdown-arrow">▼</span>';
+}
+
+  window._applyLanguage = function (lang) {
+    localStorage.setItem(LANG_KEY, lang);
+    const toBangla = lang === 'bn';
+    cacheOriginalText(document.body);
+    applyTranslation(document.body, toBangla);
+    applyPlaceholders(toBangla);
+    updateLangButton(lang);
+  };
+
+  window.setLanguage = function (lang) {
+    const code = (lang === 'Bangla' || lang === 'bn') ? 'bn' : 'en';
+    window._applyLanguage(code);
+    closeAllDropdowns && closeAllDropdowns();
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'bn') setTimeout(() => window._applyLanguage('bn'), 100);
+  });
+})();
+</script>

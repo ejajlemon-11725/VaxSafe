@@ -1,0 +1,297 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-claimable-profiles{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================================
+       UNIQUE STYLES — CLAIMABLE PROFILES  (Task 3)
+       prefix: cp- (claimable-profiles)
+       ============================================================ */
+    .cp-wrap {
+        max-width: 1200px;
+        margin: 32px auto 60px;
+        padding: 0 20px;
+    }
+
+    .cp-hero {
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        border-radius: 22px;
+        padding: 32px 36px;
+        color: #fff;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 14px 36px rgba(22, 160, 133, 0.25);
+    }
+    .cp-hero::before {
+        content: ""; position: absolute;
+        top: -70px; right: -70px;
+        width: 260px; height: 260px;
+        background: rgba(255,255,255,0.1); border-radius: 50%;
+    }
+    .cp-hero::after {
+        content: ""; position: absolute;
+        bottom: -90px; left: -90px;
+        width: 240px; height: 240px;
+        background: rgba(255,255,255,0.08); border-radius: 50%;
+    }
+    .cp-hero-content { position: relative; z-index: 2; }
+    .cp-hero h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin: 0 0 10px;
+        letter-spacing: -0.5px;
+    }
+    .cp-hero p {
+        margin: 0;
+        opacity: 0.95;
+        font-size: 15px;
+    }
+    .cp-family-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(8px);
+        padding: 6px 16px;
+        border-radius: 22px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* ---------- Grid ---------- */
+    .cp-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+        gap: 22px;
+    }
+
+    .cp-card {
+        background: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        transition: transform .3s, box-shadow .3s;
+        border: 2px solid transparent;
+        position: relative;
+    }
+    .cp-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 32px rgba(22, 160, 133, 0.15);
+        border-color: #16a085;
+    }
+
+    .cp-card-top {
+        background: linear-gradient(135deg, #f8fafc, #e8f8f5);
+        padding: 22px 22px 16px;
+        position: relative;
+    }
+    .cp-inactive-badge {
+        position: absolute;
+        top: 14px; right: 14px;
+        background: #e67e22;
+        color: #fff;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        display: inline-flex; align-items: center; gap: 5px;
+    }
+    .cp-avatar {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: #fff;
+        font-weight: 800;
+        font-size: 24px;
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 12px;
+    }
+    .cp-name {
+        font-size: 20px;
+        font-weight: 800;
+        color: #2c3e50;
+        margin: 0 0 4px;
+    }
+    .cp-relation {
+        font-size: 13px;
+        color: #16a085;
+        font-weight: 600;
+    }
+
+    .cp-card-body {
+        padding: 18px 22px 20px;
+    }
+    .cp-info-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        font-size: 13px;
+        color: #5d6d7e;
+    }
+    .cp-info-row i {
+        color: #16a085;
+        width: 18px;
+        flex-shrink: 0;
+    }
+    .cp-info-row strong { color: #2c3e50; }
+
+    .cp-note {
+        background: #fff8e1;
+        border-left: 3px solid #f39c12;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #6e6e3a;
+        margin: 10px 0 14px;
+        line-height: 1.5;
+    }
+
+    .cp-claim-btn {
+        display: block;
+        width: 100%;
+        padding: 13px 20px;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: transform .15s, box-shadow .2s;
+    }
+    .cp-claim-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.4);
+    }
+
+    /* ---------- Empty State ---------- */
+    .cp-empty {
+        background: #fff;
+        border-radius: 22px;
+        padding: 80px 30px;
+        text-align: center;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    }
+    .cp-empty-icon {
+        width: 100px; height: 100px;
+        background: #e8f8f5;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 48px;
+        color: #16a085;
+        margin: 0 auto 20px;
+    }
+    .cp-empty h3 {
+        color: #2c3e50;
+        font-size: 22px;
+        margin: 0 0 8px;
+    }
+    .cp-empty p {
+        color: #7f8c8d;
+        font-size: 15px;
+        margin: 0;
+    }
+
+    @media (max-width: 640px) {
+        .cp-hero { padding: 24px 22px; }
+        .cp-hero h1 { font-size: 24px; }
+        .cp-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cp-wrap">
+    <div class="cp-hero">
+        <div class="cp-hero-content">
+            <span class="cp-family-tag">
+                <i class="fa fa-users"></i> {{ family.family_name }}
+            </span>
+            <h1>🪪 Claimable Profiles</h1>
+            <p>
+                আপনার family-তে যাঁরা আগে profile manage করতেন কিন্তু এখন নেই —
+                তাদের profile গুলো এখান থেকে claim করুন।
+            </p>
+        </div>
+    </div>
+
+    {% if claimable %}
+    <div class="cp-grid">
+        {% for fm in claimable %}
+        <div class="cp-card">
+            <div class="cp-card-top">
+                <span class="cp-inactive-badge">
+                    <i class="fa fa-pause"></i> Inactive
+                </span>
+                <div class="cp-avatar">{{ fm.name|first|upper }}</div>
+                <h3 class="cp-name">{{ fm.name }}</h3>
+                <div class="cp-relation">
+                    <i class="fa fa-link"></i> {{ fm.relation }}
+                </div>
+            </div>
+
+            <div class="cp-card-body">
+                {% if fm.display_age != "N/A" %}
+                <div class="cp-info-row">
+                    <i class="fa fa-cake-candles"></i>
+                    <span>Age: <strong>{{ fm.display_age }}</strong></span>
+                </div>
+                {% endif %}
+                {% if fm.gender %}
+                <div class="cp-info-row">
+                    <i class="fa fa-user"></i>
+                    <span>{{ fm.gender }}</span>
+                </div>
+                {% endif %}
+                {% if fm.blood_group %}
+                <div class="cp-info-row">
+                    <i class="fa fa-droplet" style="color: #e74c3c;"></i>
+                    <span>Blood: <strong>{{ fm.blood_group }}</strong></span>
+                </div>
+                {% endif %}
+                {% if fm.previous_caretaker %}
+                <div class="cp-info-row">
+                    <i class="fa fa-user-clock"></i>
+                    <span>আগে handle করতেন:
+                        <strong>{{ fm.previous_caretaker.get_full_name|default:fm.previous_caretaker.username }}</strong>
+                    </span>
+                </div>
+                {% endif %}
+                {% if fm.handoff_date %}
+                <div class="cp-info-row">
+                    <i class="fa fa-calendar-xmark"></i>
+                    <span>Inactive হয়েছে: <strong>{{ fm.handoff_date|date:"d M Y" }}</strong></span>
+                </div>
+                {% endif %}
+
+                {% if fm.handoff_note %}
+                <div class="cp-note">
+                    <i class="fa fa-quote-left"></i> {{ fm.handoff_note }}
+                </div>
+                {% endif %}
+
+                <a href="{% url 'claim_profile' fm.id %}" class="cp-claim-btn">
+                    <i class="fa fa-hand-holding-heart"></i> এই Profile Claim করুন
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="cp-empty">
+        <div class="cp-empty-icon"><i class="fa fa-circle-check"></i></div>
+        <h3>কোনো Claimable Profile নেই</h3>
+        <p>আপনার family-তে এই মুহূর্তে কোনো inactive profile নেই যা claim করা যায়।</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

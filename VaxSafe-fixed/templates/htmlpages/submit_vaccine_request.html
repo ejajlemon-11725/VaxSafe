@@ -1,0 +1,867 @@
+{% extends "base_log.html" %}
+{% block body_class %}page-submit_vaccine_request{% endblock %}
+{% load static %}
+
+{% block title %}Submit Vaccine Request - VaxSafe{% endblock %}
+
+{% block content %}
+<div class="vaccine-request-page">
+
+  <!-- Language Switcher -->
+  <div class="lang-bar">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">English</button>
+    <span class="lang-divider">|</span>
+    <button class="lang-btn" id="btn-bn" onclick="setLang('bn')">বাংলা</button>
+  </div>
+
+  <!-- Page Header -->
+  <div class="request-header">
+    <div class="header-icon">💉</div>
+    <h1 class="t-title">Submit Vaccine Request</h1>
+    <p class="t-subtitle">Fill in the details below to register a vaccination record</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <p class="progress-label" id="progressLabel">0% <span class="t-prog">completed</span></p>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <form method="post" id="vaccineForm" novalidate>
+      {% csrf_token %}
+
+      <!-- ── SECTION 1: Recipient ── -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-dot"></span>
+          <span class="section-title t-s-recipient">Recipient</span>
+        </div>
+
+        <div class="recipient-cards">
+          <label class="recipient-card selected" for="rec_self">
+            <input type="radio" name="recipient_type" id="rec_self" value="self" checked hidden>
+            <span class="rc-emoji">🧑</span>
+            <span class="rc-label t-rec-self">Self</span>
+          </label>
+          <label class="recipient-card" for="rec_child">
+            <input type="radio" name="recipient_type" id="rec_child" value="child" hidden>
+            <span class="rc-emoji">👶</span>
+            <span class="rc-label t-rec-child">Child</span>
+          </label>
+          <label class="recipient-card" for="rec_member">
+            <input type="radio" name="recipient_type" id="rec_member" value="member" hidden>
+            <span class="rc-emoji">👨‍👩‍👧</span>
+            <span class="rc-label t-rec-member">Family Member</span>
+          </label>
+        </div>
+
+        <!-- Family member dropdown (shown if member selected) -->
+        <div class="field-group mt-12" id="memberDropdownWrap" style="display:none">
+          <label class="field-label t-fam-member">Select Family Member</label>
+          <select name="family_member" id="familyMemberSelect">
+            <option value="" class="t-sel-member">— Select Member —</option>
+            {% for member in family_members %}
+              <option value="{{ member.id }}">{{ member.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: Vaccine Details ── -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-dot"></span>
+          <span class="section-title t-s-details">Vaccine Details</span>
+        </div>
+
+        <div class="field-row two-col">
+          <div class="field-group">
+            <label class="field-label" for="id_vaccine_name">
+              <span class="t-vac-name">Vaccine Name</span><span class="req">*</span>
+            </label>
+            <!-- ✅ FIXED: name="vaccine_name" -->
+            <select name="vaccine_name" id="id_vaccine_name" required onchange="trackProgress()">
+              <option value="" class="t-sel-vac">— Select Vaccine —</option>
+              <option value="COVID-19 (Covishield)">COVID-19 (Covishield)</option>
+              <option value="COVID-19 (Moderna)">COVID-19 (Moderna)</option>
+              <option value="COVID-19 (Pfizer)">COVID-19 (Pfizer)</option>
+              <option value="Hepatitis B">Hepatitis B</option>
+              <option value="Influenza">Influenza</option>
+              <option value="MMR">MMR</option>
+              <option value="Polio (OPV)">Polio (OPV)</option>
+              <option value="Typhoid">Typhoid</option>
+              <option value="Varicella">Varicella</option>
+              <option value="Other" class="t-other">Other</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="id_manufacturer">
+              <span class="t-mfr">Manufacturer</span>
+            </label>
+            <input type="text" name="manufacturer" id="id_manufacturer"
+                   placeholder="e.g. AstraZeneca" oninput="trackProgress()">
+          </div>
+        </div>
+
+        <!-- Custom vaccine name field -->
+        <div class="field-group mb-12" id="customVaccineWrap" style="display:none">
+          <label class="field-label" for="id_custom_name">
+            <span class="t-custom-name">Enter Vaccine Name</span><span class="req">*</span>
+          </label>
+          <input type="text" name="custom_name" id="id_custom_name"
+                 placeholder="Type vaccine name..." oninput="trackProgress()">
+        </div>
+
+        <!-- Dose Number Pills -->
+        <div class="field-group mb-12">
+          <label class="field-label">
+            <span class="t-dose">Dose Number</span><span class="req">*</span>
+          </label>
+          <div class="dose-pills">
+            <label class="dose-pill selected" for="dose1">
+              <input type="radio" name="dose_number" id="dose1" value="1" checked hidden>
+              <span class="t-dose-1">1st Dose</span>
+            </label>
+            <label class="dose-pill" for="dose2">
+              <input type="radio" name="dose_number" id="dose2" value="2" hidden>
+              <span class="t-dose-2">2nd Dose</span>
+            </label>
+            <label class="dose-pill" for="dose3">
+              <input type="radio" name="dose_number" id="dose3" value="3" hidden>
+              <span class="t-dose-3">3rd Dose</span>
+            </label>
+            <label class="dose-pill" for="doseB">
+              <input type="radio" name="dose_number" id="doseB" value="Booster" hidden>
+              <span class="t-dose-b">Booster</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-row two-col">
+          <div class="field-group">
+            <label class="field-label" for="id_preferred_date">
+              <span class="t-date">Date</span><span class="req">*</span>
+            </label>
+            <!-- ✅ FIXED: name="preferred_date" -->
+            <input type="date" name="preferred_date" id="id_preferred_date"
+                   required oninput="trackProgress()">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="id_preferred_center">
+              <span class="t-loc">Location / Center</span>
+            </label>
+            <!-- ✅ FIXED: name="preferred_center" -->
+            <input type="text" name="preferred_center" id="id_preferred_center"
+                   placeholder="e.g. Dhaka Medical College" oninput="trackProgress()">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 3: Status ── -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-dot"></span>
+          <span class="section-title t-s-status">Status</span>
+        </div>
+
+        <div class="status-chips">
+          <label class="status-chip active" for="st_sched">
+            <input type="radio" name="status" id="st_sched" value="Scheduled" checked hidden>
+            <span class="sdot sdot-blue"></span>
+            <span class="t-st-sched">Scheduled</span>
+          </label>
+          <label class="status-chip" for="st_comp">
+            <input type="radio" name="status" id="st_comp" value="Completed" hidden>
+            <span class="sdot sdot-green"></span>
+            <span class="t-st-comp">Completed</span>
+          </label>
+          <label class="status-chip" for="st_over">
+            <input type="radio" name="status" id="st_over" value="Overdue" hidden>
+            <span class="sdot sdot-red"></span>
+            <span class="t-st-over">Overdue</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── SECTION 4: Notes ── -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-dot"></span>
+          <span class="section-title t-s-notes">Notes</span>
+        </div>
+        <div class="field-group">
+          <!-- ✅ FIXED: name="note" -->
+          <textarea name="note" id="id_note" rows="4"
+                    class="t-notes-ph"
+                    placeholder="Any side effects, observations, or additional information..."
+                    oninput="trackProgress()"></textarea>
+          <span class="char-count" id="charCount">0 / 500</span>
+        </div>
+      </div>
+
+      <!-- ── SECTION 5: Notifications ── -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-dot"></span>
+          <span class="section-title t-s-notify">Notifications</span>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title t-notify-title">Send Notification</span>
+            <span class="toggle-sub t-notify-sub">Notify user when this record is updated</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" name="send_notification" checked>
+            <span class="toggle-knob"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row mt-12">
+          <div class="toggle-info">
+            <span class="toggle-title t-reminder-title">Set Reminder</span>
+            <span class="toggle-sub t-reminder-sub">Send a reminder 3 days before scheduled date</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" name="set_reminder">
+            <span class="toggle-knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── Form Footer ── -->
+      <div class="form-footer">
+        <a href="{% url 'vaccine_schedule' %}" class="btn-cancel t-cancel">← Cancel</a>
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span class="t-submit">Submit Request</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+    </form>
+  </div>
+  <!-- /form-card -->
+
+</div>
+<!-- /vaccine-request-page -->
+
+
+<!-- ============================================================
+     STYLES
+     ============================================================ -->
+<style>
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Syne:wght@600;800&display=swap');
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.vaccine-request-page {
+  min-height: calc(100vh - 80px);
+  padding: 40px 24px 80px;
+  background: linear-gradient(160deg, #e8f8f2 0%, #ddeeff 60%, #f0eeff 100%);
+  font-family: 'Hind Siliguri', 'Segoe UI', sans-serif;
+}
+
+/* ── Language Bar ── */
+.lang-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  max-width: 680px;
+  margin: 0 auto 24px;
+}
+.lang-btn {
+  background: transparent;
+  border: 1.5px solid #c0d8cc;
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a7a68;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-btn.active {
+  background: #0f6e56;
+  border-color: #0f6e56;
+  color: #fff;
+}
+.lang-btn:hover:not(.active) {
+  background: #e1f5ee;
+}
+.lang-divider { color: #b0cac0; font-size: 16px; }
+
+/* ── Page Header ── */
+.request-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 20px;
+}
+.header-icon {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 14px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+.request-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0f6e56 0%, #185fa5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.request-header p {
+  font-size: 15px;
+  color: #5a7a70;
+}
+
+/* ── Progress ── */
+.progress-track {
+  max-width: 680px;
+  margin: 0 auto 6px;
+  height: 6px;
+  background: rgba(15,110,86,0.12);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #1d9e75 0%, #185fa5 100%);
+  border-radius: 10px;
+  transition: width 0.4s cubic-bezier(.4,0,.2,1);
+}
+.progress-label {
+  text-align: right;
+  max-width: 680px;
+  margin: 0 auto 20px;
+  font-size: 12px;
+  color: #5a7a70;
+  font-weight: 600;
+}
+
+/* ── Form Card ── */
+.form-card {
+  max-width: 680px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(15,110,86,0.10), 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* ── Form Section ── */
+.form-section {
+  padding: 28px 32px;
+  border-bottom: 1px solid #f0f5f3;
+  animation: fadeUp 0.4s ease both;
+}
+.form-section:last-child { border-bottom: none; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.form-section:nth-child(1) { animation-delay: 0.05s; }
+.form-section:nth-child(2) { animation-delay: 0.10s; }
+.form-section:nth-child(3) { animation-delay: 0.15s; }
+.form-section:nth-child(4) { animation-delay: 0.20s; }
+.form-section:nth-child(5) { animation-delay: 0.25s; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.section-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1d9e75, #185fa5);
+  flex-shrink: 0;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0f6e56;
+}
+
+/* ── Fields ── */
+.field-row { display: grid; gap: 16px; margin-bottom: 16px; }
+.field-row.two-col { grid-template-columns: 1fr 1fr; }
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c4a40;
+  font-family: 'Hind Siliguri', sans-serif;
+}
+.req { color: #e24b4a; margin-left: 3px; }
+
+.field-group input[type="text"],
+.field-group input[type="date"],
+.field-group select,
+.field-group textarea {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-family: 'Hind Siliguri', sans-serif;
+  border: 1.5px solid #d4e8df;
+  border-radius: 10px;
+  background: #fafdfc;
+  color: #1a3a30;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: auto;
+}
+.field-group input:focus,
+.field-group select:focus,
+.field-group textarea:focus {
+  border-color: #1d9e75;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(29,158,117,0.12);
+}
+.field-group textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.char-count {
+  font-size: 11px;
+  color: #8aaa9a;
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* ── Recipient Cards ── */
+.recipient-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.recipient-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  border: 1.5px solid #d4e8df;
+  border-radius: 14px;
+  cursor: pointer;
+  background: #fafdfc;
+  transition: all 0.2s;
+  user-select: none;
+}
+.recipient-card:hover {
+  border-color: #1d9e75;
+  background: #f0faf5;
+}
+.recipient-card.selected,
+.recipient-card:has(input:checked) {
+  background: #e1f5ee;
+  border-color: #0f6e56;
+  border-width: 2px;
+  box-shadow: 0 2px 10px rgba(15,110,86,0.12);
+}
+.rc-emoji { font-size: 28px; line-height: 1; }
+.rc-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c4a40;
+  font-family: 'Hind Siliguri', sans-serif;
+}
+.recipient-card:has(input:checked) .rc-label { color: #0f6e56; }
+
+/* ── Dose Pills ── */
+.dose-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+.dose-pill {
+  padding: 9px 20px;
+  border: 1.5px solid #d4e8df;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Hind Siliguri', sans-serif;
+  color: #4a7a68;
+  background: #fafdfc;
+  transition: all 0.2s;
+  user-select: none;
+}
+.dose-pill:hover { border-color: #1d9e75; background: #f0faf5; }
+.dose-pill:has(input:checked) {
+  background: linear-gradient(135deg, #0f6e56 0%, #185fa5 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(15,110,86,0.25);
+}
+
+/* ── Status Chips ── */
+.status-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+.status-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1.5px solid #d4e8df;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Hind Siliguri', sans-serif;
+  color: #4a7a68;
+  background: #fafdfc;
+  transition: all 0.2s;
+  user-select: none;
+}
+.status-chip:hover { border-color: #aac8bc; background: #f0faf5; }
+.sdot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.sdot-blue  { background: #378add; }
+.sdot-green { background: #1d9e75; }
+.sdot-red   { background: #e24b4a; }
+
+.status-chip:has(input[value="Scheduled"]:checked) {
+  background: #e6f1fb; border-color: #185fa5; color: #0c447c;
+}
+.status-chip:has(input[value="Completed"]:checked) {
+  background: #e1f5ee; border-color: #0f6e56; color: #085041;
+}
+.status-chip:has(input[value="Overdue"]:checked) {
+  background: #fcebeb; border-color: #a32d2d; color: #791f1f;
+}
+
+/* ── Toggle Switch ── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #f5fbf8;
+  border: 1px solid #e0f0e8;
+  border-radius: 12px;
+}
+.toggle-row.mt-12 { margin-top: 12px; }
+.toggle-info { display: flex; flex-direction: column; gap: 3px; }
+.toggle-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a3a30;
+  font-family: 'Hind Siliguri', sans-serif;
+}
+.toggle-sub {
+  font-size: 12px;
+  color: #6a9a88;
+  font-family: 'Hind Siliguri', sans-serif;
+}
+.toggle-switch {
+  position: relative;
+  width: 46px; height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-knob {
+  position: absolute;
+  inset: 0;
+  background: #c8ddd6;
+  border-radius: 13px;
+  transition: background 0.25s;
+}
+.toggle-knob::before {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  top: 3px; left: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  transition: transform 0.25s;
+}
+.toggle-switch input:checked + .toggle-knob { background: #0f6e56; }
+.toggle-switch input:checked + .toggle-knob::before { transform: translateX(20px); }
+
+/* ── Footer ── */
+.form-footer {
+  padding: 24px 32px;
+  background: #f5fbf8;
+  border-top: 1px solid #e8f4ef;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.btn-cancel {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-family: 'Hind Siliguri', sans-serif;
+  font-weight: 600;
+  color: #4a7a68;
+  background: transparent;
+  border: 1.5px solid #c0d8cc;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-cancel:hover { background: #e1f5ee; border-color: #0f6e56; color: #0f6e56; }
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 30px;
+  font-size: 14px;
+  font-family: 'Hind Siliguri', sans-serif;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #0f6e56 0%, #185fa5 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(15,110,86,0.25);
+  letter-spacing: 0.02em;
+}
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(15,110,86,0.35);
+}
+.btn-submit:active { transform: translateY(0); }
+
+/* ── Helpers ── */
+.mt-12 { margin-top: 12px; }
+.mb-12 { margin-bottom: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .vaccine-request-page { padding: 24px 14px 60px; }
+  .form-section { padding: 20px 18px; }
+  .form-footer   { padding: 18px; flex-direction: column; }
+  .btn-cancel, .btn-submit { width: 100%; justify-content: center; }
+  .field-row.two-col { grid-template-columns: 1fr; }
+  .recipient-cards { grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .rc-emoji { font-size: 22px; }
+  .rc-label { font-size: 11px; }
+  .request-header h1 { font-size: 22px; }
+}
+</style>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ── Translation Dictionary ──
+const TRANSLATIONS = {
+  en: {
+    title:         'Submit Vaccine Request',
+    subtitle:      'Fill in the details below to register a vaccination record',
+    prog:          'completed',
+    sRecipient:    'Recipient',
+    sDetails:      'Vaccine Details',
+    sStatus:       'Status',
+    sNotes:        'Notes',
+    sNotify:       'Notifications',
+    recSelf:       'Self',
+    recChild:      'Child',
+    recMember:     'Family Member',
+    famMember:     'Select Family Member',
+    selMember:     '— Select Member —',
+    vacName:       'Vaccine Name',
+    selVac:        '— Select Vaccine —',
+    other:         'Other',
+    mfr:           'Manufacturer',
+    customName:    'Enter Vaccine Name',
+    dose:          'Dose Number',
+    dose1:         '1st Dose',
+    dose2:         '2nd Dose',
+    dose3:         '3rd Dose',
+    doseB:         'Booster',
+    date:          'Date',
+    loc:           'Location / Center',
+    stSched:       'Scheduled',
+    stComp:        'Completed',
+    stOver:        'Overdue',
+    notesPh:       'Any side effects, observations, or additional information...',
+    notifyTitle:   'Send Notification',
+    notifySub:     'Notify user when this record is updated',
+    reminderTitle: 'Set Reminder',
+    reminderSub:   'Send a reminder 3 days before scheduled date',
+    cancel:        '← Cancel',
+    submit:        'Submit Request',
+  },
+  bn: {
+    title:         'টিকার অনুরোধ জমা দিন',
+    subtitle:      'একটি টিকা রেকর্ড নিবন্ধন করতে নিচের তথ্য পূরণ করুন',
+    prog:          'সম্পন্ন',
+    sRecipient:    'প্রাপক',
+    sDetails:      'টিকার বিবরণ',
+    sStatus:       'অবস্থা',
+    sNotes:        'নোট',
+    sNotify:       'বিজ্ঞপ্তি',
+    recSelf:       'নিজে',
+    recChild:      'শিশু',
+    recMember:     'পরিবারের সদস্য',
+    famMember:     'পরিবারের সদস্য বেছে নিন',
+    selMember:     '— সদস্য বেছে নিন —',
+    vacName:       'টিকার নাম',
+    selVac:        '— টিকা বেছে নিন —',
+    other:         'অন্যান্য',
+    mfr:           'প্রস্তুতকারক',
+    customName:    'টিকার নাম লিখুন',
+    dose:          'ডোজ নম্বর',
+    dose1:         '১ম ডোজ',
+    dose2:         '২য় ডোজ',
+    dose3:         '৩য় ডোজ',
+    doseB:         'বুস্টার',
+    date:          'তারিখ',
+    loc:           'অবস্থান / কেন্দ্র',
+    stSched:       'নির্ধারিত',
+    stComp:        'সম্পন্ন',
+    stOver:        'বিলম্বিত',
+    notesPh:       'কোনো পার্শ্বপ্রতিক্রিয়া, পর্যবেক্ষণ বা অতিরিক্ত তথ্য...',
+    notifyTitle:   'বিজ্ঞপ্তি পাঠান',
+    notifySub:     'রেকর্ড আপডেট হলে ব্যবহারকারীকে জানান',
+    reminderTitle: 'অনুস্মারক সেট করুন',
+    reminderSub:   'নির্ধারিত তারিখের ৩ দিন আগে অনুস্মারক পাঠান',
+    cancel:        '← বাতিল',
+    submit:        'অনুরোধ জমা দিন',
+  }
+};
+
+let currentLang = localStorage.getItem('vaxsafe_lang') || 'en';
+
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('vaxsafe_lang', lang);
+
+  const t = TRANSLATIONS[lang];
+  const map = {
+    '.t-title':          t.title,
+    '.t-subtitle':       t.subtitle,
+    '.t-prog':           t.prog,
+    '.t-s-recipient':    t.sRecipient,
+    '.t-s-details':      t.sDetails,
+    '.t-s-status':       t.sStatus,
+    '.t-s-notes':        t.sNotes,
+    '.t-s-notify':       t.sNotify,
+    '.t-rec-self':       t.recSelf,
+    '.t-rec-child':      t.recChild,
+    '.t-rec-member':     t.recMember,
+    '.t-fam-member':     t.famMember,
+    '.t-sel-member':     t.selMember,
+    '.t-vac-name':       t.vacName,
+    '.t-sel-vac':        t.selVac,
+    '.t-other':          t.other,
+    '.t-mfr':            t.mfr,
+    '.t-custom-name':    t.customName,
+    '.t-dose':           t.dose,
+    '.t-dose-1':         t.dose1,
+    '.t-dose-2':         t.dose2,
+    '.t-dose-3':         t.dose3,
+    '.t-dose-b':         t.doseB,
+    '.t-date':           t.date,
+    '.t-loc':            t.loc,
+    '.t-st-sched':       t.stSched,
+    '.t-st-comp':        t.stComp,
+    '.t-st-over':        t.stOver,
+    '.t-notify-title':   t.notifyTitle,
+    '.t-notify-sub':     t.notifySub,
+    '.t-reminder-title': t.reminderTitle,
+    '.t-reminder-sub':   t.reminderSub,
+    '.t-cancel':         t.cancel,
+    '.t-submit':         t.submit,
+  };
+
+  for (const [selector, text] of Object.entries(map)) {
+    $$(selector).forEach(el => { el.textContent = text; });
+  }
+
+  // Textarea placeholder
+  const ta = $('#id_note');
+  if (ta) ta.placeholder = t.notesPh;
+
+  // Lang buttons
+  $('#btn-en').classList.toggle('active', lang === 'en');
+  $('#btn-bn').classList.toggle('active', lang === 'bn');
+}
+
+// ── Recipient: show/hide family member dropdown ──
+document.querySelectorAll('input[name="recipient_type"]').forEach(radio => {
+  radio.addEventListener('change', function () {
+    const wrap = $('#memberDropdownWrap');
+    wrap.style.display = (this.value === 'member') ? 'block' : 'none';
+  });
+});
+
+// ── Vaccine Name: show custom field for "Other" ──
+const nameSelect = $('#id_vaccine_name');
+if (nameSelect) {
+  nameSelect.addEventListener('change', function () {
+    const wrap = $('#customVaccineWrap');
+    wrap.style.display = (this.value === 'Other') ? 'block' : 'none';
+  });
+}
+
+// ── Progress Tracker ──
+function trackProgress() {
+  const fields = [
+    $('#id_vaccine_name'),
+    $('#id_preferred_date'),
+  ];
+  let filled = 0;
+  fields.forEach(f => { if (f && f.value.trim()) filled++; });
+
+  // Bonus: notes adds partial credit
+  const notes = $('#id_note');
+  if (notes && notes.value.trim().length > 10) filled += 0.5;
+
+  const pct = Math.round((Math.min(filled, fields.length) / fields.length) * 100);
+  const fill = $('#progressFill');
+  const label = $('#progressLabel');
+  if (fill)  fill.style.width = pct + '%';
+  if (label) label.innerHTML = pct + '% <span class="t-prog">' +
+    TRANSLATIONS[currentLang].prog + '</span>';
+}
+
+// ── Notes character counter ──
+const notesField = $('#id_note');
+if (notesField) {
+  notesField.addEventListener('input', function () {
+    const count = this.value.length;
+    const display = $('#charCount');
+    if (display) display.textContent = count + ' / 500';
+    if (count > 500) this.value = this.value.slice(0, 500);
+    trackProgress();
+  });
+}
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', function () {
+  setLang(currentLang);
+  trackProgress();
+});
+</script>
+
+{% endblock %}

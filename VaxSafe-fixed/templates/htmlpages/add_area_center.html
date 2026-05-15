@@ -1,0 +1,267 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-add-area-center{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================================
+       UNIQUE STYLES — ADD AREA CENTER  (Task 1, sub-page)
+       prefix: aac- (add-area-center)
+       ============================================================ */
+    .aac-wrap {
+        max-width: 780px;
+        margin: 40px auto 60px;
+        padding: 0 20px;
+    }
+    .aac-card {
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+    .aac-head {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: #fff;
+        padding: 30px 36px;
+        position: relative;
+        overflow: hidden;
+    }
+    .aac-head::after {
+        content: "";
+        position: absolute;
+        right: -40px; top: -40px;
+        width: 200px; height: 200px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+    }
+    .aac-head h2 {
+        margin: 0 0 6px;
+        font-size: 26px;
+        font-weight: 800;
+        position: relative;
+        z-index: 1;
+    }
+    .aac-head p {
+        margin: 0;
+        opacity: 0.92;
+        font-size: 14px;
+        position: relative;
+        z-index: 1;
+    }
+    .aac-pill {
+        display: inline-block;
+        background: rgba(255,255,255,0.22);
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        position: relative;
+        z-index: 1;
+    }
+
+    .aac-body { padding: 32px 36px; }
+
+    .aac-field {
+        margin-bottom: 20px;
+    }
+    .aac-field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #34495e;
+        margin-bottom: 7px;
+        letter-spacing: 0.3px;
+    }
+    .aac-field label .req { color: #e74c3c; }
+    .aac-input, .aac-select, .aac-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e8ed;
+        border-radius: 12px;
+        font-size: 14px;
+        font-family: inherit;
+        background: #f8fafc;
+        transition: border-color .2s, background .2s;
+    }
+    .aac-textarea { resize: vertical; min-height: 90px; }
+    .aac-input:focus, .aac-select:focus, .aac-textarea:focus {
+        outline: none;
+        border-color: #f39c12;
+        background: #fff;
+    }
+    .aac-readonly {
+        background: #fff4e1;
+        color: #b9770e;
+        font-weight: 700;
+        border-color: #f39c12;
+    }
+
+    .aac-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .aac-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 26px;
+        padding-top: 22px;
+        border-top: 1px solid #f0f3f7;
+    }
+    .aac-btn {
+        flex: 1;
+        padding: 13px 22px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: transform .15s, box-shadow .2s;
+    }
+    .aac-btn-save {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(243, 156, 18, 0.32);
+    }
+    .aac-btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(243,156,18,0.42); }
+    .aac-btn-cancel {
+        background: #f0f3f7;
+        color: #5d6d7e;
+    }
+    .aac-btn-cancel:hover { background: #dfe6ec; }
+
+    .aac-helper {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 5px;
+    }
+
+    @media (max-width: 640px) {
+        .aac-row { grid-template-columns: 1fr; }
+        .aac-head, .aac-body { padding: 22px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="aac-wrap">
+    <div class="aac-card">
+
+        <div class="aac-head">
+            <span class="aac-pill">
+                <i class="fa fa-plus-circle"></i> New Center
+            </span>
+            <h2>নতুন Vaccination Center যোগ করুন</h2>
+            <p>
+                {% if is_superuser %}
+                    Super Admin হিসেবে যেকোনো এলাকায় কেন্দ্র যোগ করতে পারেন।
+                {% else %}
+                    আপনার এলাকা <strong>{{ admin_area }}</strong> — শুধু এই এলাকায় কেন্দ্র যোগ হবে।
+                {% endif %}
+            </p>
+        </div>
+
+        <form method="post" class="aac-body">
+            {% csrf_token %}
+
+            <div class="aac-field">
+                <label>কেন্দ্রের নাম <span class="req">*</span></label>
+                <input type="text" name="name" class="aac-input" required
+                       placeholder="যেমন: Square Hospital">
+            </div>
+
+            <div class="aac-field">
+                <label>ঠিকানা <span class="req">*</span></label>
+                <textarea name="address" class="aac-textarea" required
+                          placeholder="পূর্ণ ঠিকানা লিখুন..."></textarea>
+            </div>
+
+            <div class="aac-row">
+                <div class="aac-field">
+                    <label>শহর</label>
+                    <select name="city" class="aac-select">
+                        {% for c in cities %}
+                        <option value="{{ c }}" {% if c == 'Dhaka' %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="aac-field">
+                    <label>এলাকা <span class="req">*</span></label>
+                    {% if is_superuser %}
+                        <select name="area" class="aac-select" required>
+                            {% for a in all_areas %}
+                            <option value="{{ a }}">{{ a }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input type="hidden" name="area" value="{{ admin_area }}">
+                        <input type="text" class="aac-input aac-readonly"
+                               value="{{ admin_area }}" readonly>
+                        <div class="aac-helper">
+                            <i class="fa fa-info-circle"></i> আপনি শুধু আপনার এলাকায় কেন্দ্র যোগ করতে পারবেন।
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="aac-row">
+                <div class="aac-field">
+                    <label>ফোন</label>
+                    <input type="text" name="phone" class="aac-input"
+                           placeholder="যেমন: +880 1XXX-XXXXXX">
+                </div>
+                <div class="aac-field">
+                    <label>ইমেইল</label>
+                    <input type="email" name="email" class="aac-input"
+                           placeholder="center@example.com">
+                </div>
+            </div>
+
+            <div class="aac-row">
+                <div class="aac-field">
+                    <label>খোলার সময়</label>
+                    <input type="time" name="opening_time" class="aac-input">
+                </div>
+                <div class="aac-field">
+                    <label>বন্ধের সময়</label>
+                    <input type="time" name="closing_time" class="aac-input">
+                </div>
+            </div>
+
+            <div class="aac-field">
+                <label>উপলব্ধ ভ্যাকসিনসমূহ</label>
+                <input type="text" name="available_vaccines" class="aac-input"
+                       value="COVID-19, Influenza, Hepatitis B"
+                       placeholder="comma-separated, যেমন: COVID-19, Polio, MMR">
+                <div class="aac-helper">কমা দিয়ে আলাদা করে লিখুন।</div>
+            </div>
+
+            <div class="aac-field">
+                <label>বর্ণনা (ঐচ্ছিক)</label>
+                <textarea name="description" class="aac-textarea"
+                          placeholder="কেন্দ্র সম্পর্কে অতিরিক্ত তথ্য..."></textarea>
+            </div>
+
+            <div class="aac-actions">
+                <a href="{% url 'area_centers' %}" class="aac-btn aac-btn-cancel">
+                    <i class="fa fa-times"></i> বাতিল
+                </a>
+                <button type="submit" class="aac-btn aac-btn-save">
+                    <i class="fa fa-save"></i> কেন্দ্র সংরক্ষণ করুন
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

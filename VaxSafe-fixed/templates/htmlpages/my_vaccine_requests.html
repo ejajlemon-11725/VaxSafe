@@ -1,0 +1,278 @@
+{% extends 'base_log.html' %}
+{% block body_class %}page-my_vaccine_requests{% endblock %}
+{% block title %}আমার Vaccine Requests - VaxSafe{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="requests-page">
+  <div class="requests-container">
+
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-left">
+        <h1>📋 আমার Vaccine Requests</h1>
+        <p>আপনার সব টিকার request এবং তাদের status</p>
+      </div>
+      <a href="{% url 'submit_vaccine_request' %}" class="btn-new-request">
+        + নতুন Request
+      </a>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card stat-pending">
+        <div class="stat-num">{{ pending_count }}</div>
+        <div class="stat-label">⏳ Pending</div>
+      </div>
+      <div class="stat-card stat-approved">
+        <div class="stat-num">{{ approved_count }}</div>
+        <div class="stat-label">✅ Approved</div>
+      </div>
+      <div class="stat-card stat-rejected">
+        <div class="stat-num">{{ rejected_count }}</div>
+        <div class="stat-label">❌ Rejected</div>
+      </div>
+    </div>
+
+    <!-- Requests List -->
+    {% if vaccine_requests %}
+      <div class="requests-list">
+        {% for vr in vaccine_requests %}
+          <div class="request-card {% if vr.status == 'Approved' %}card-approved{% elif vr.status == 'Rejected' %}card-rejected{% else %}card-pending{% endif %}">
+
+            <div class="card-left">
+              <div class="vaccine-icon">
+                {% if vr.status == 'Approved' %}✅
+                {% elif vr.status == 'Rejected' %}❌
+                {% else %}⏳{% endif %}
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="card-top">
+                <h3 class="vaccine-name">{{ vr.vaccine_name }}</h3>
+                <span class="status-badge status-{{ vr.status|lower }}">{{ vr.status }}</span>
+              </div>
+
+              <div class="card-details">
+                <span>👤 {{ vr.get_recipient_name }}</span>
+                <span>📅 {{ vr.preferred_date|date:"d M Y" }}</span>
+                {% if vr.preferred_center %}
+                  <span>🏥 {{ vr.preferred_center }}</span>
+                {% endif %}
+                {% if vr.assigned_admin %}
+                  <span>👨‍💼 {{ vr.assigned_admin.get_full_name|default:vr.assigned_admin.username }}</span>
+                {% endif %}
+              </div>
+
+              {% if vr.note %}
+                <p class="card-note">📝 {{ vr.note }}</p>
+              {% endif %}
+
+              {% if vr.admin_note %}
+                <div class="admin-note
+                  {% if vr.status == 'Approved' %}admin-note-ok{% else %}admin-note-no{% endif %}">
+                  <strong>Admin:</strong> {{ vr.admin_note }}
+                </div>
+              {% endif %}
+
+              <div class="card-footer">
+                <span class="card-time">{{ vr.created_at|timesince }} আগে</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>কোনো request নেই</h3>
+        <p>এখনো কোনো vaccine request করেননি</p>
+        <a href="{% url 'submit_vaccine_request' %}" class="btn-new-request">
+          + প্রথম Request করুন
+        </a>
+      </div>
+    {% endif %}
+
+    <div class="back-link">
+      <a href="{% url 'dashboard' %}">← Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<style>
+.requests-page {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+  padding: 40px 20px;
+}
+
+.requests-container {
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-header h1 { font-size: 26px; color: #1a237e; margin: 0 0 6px; font-weight: 700; }
+.page-header p  { font-size: 14px; color: #546e7a; margin: 0; }
+
+.btn-new-request {
+  background: linear-gradient(135deg, #7c4dff 0%, #3d5afe 100%);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 4px 14px rgba(124,77,255,0.4);
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+.btn-new-request:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(124,77,255,0.5); }
+
+/* Stats */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+}
+
+.stat-num { font-size: 32px; font-weight: 800; }
+.stat-label { font-size: 13px; font-weight: 600; color: #546e7a; margin-top: 4px; }
+
+.stat-pending  .stat-num { color: #f57c00; }
+.stat-approved .stat-num { color: #2e7d32; }
+.stat-rejected .stat-num { color: #c62828; }
+
+/* Request Cards */
+.requests-list { display: flex; flex-direction: column; gap: 16px; }
+
+.request-card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  border-left: 5px solid #e0e0e0;
+  transition: transform 0.2s;
+}
+
+.request-card:hover { transform: translateX(4px); }
+
+.card-approved { border-left-color: #43a047; }
+.card-rejected { border-left-color: #e53935; }
+.card-pending  { border-left-color: #fb8c00; }
+
+.vaccine-icon { font-size: 32px; }
+
+.card-body { flex: 1; min-width: 0; }
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.vaccine-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #263238;
+  margin: 0;
+}
+
+.status-badge {
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-approved { background: #e8f5e9; color: #2e7d32; }
+.status-rejected { background: #ffebee; color: #c62828; }
+.status-pending  { background: #fff3e0; color: #e65100; }
+
+.card-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.card-details span {
+  font-size: 13px;
+  color: #546e7a;
+  background: #f5f5f5;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.card-note {
+  font-size: 13px;
+  color: #546e7a;
+  margin: 6px 0;
+  font-style: italic;
+}
+
+.admin-note {
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin: 8px 0;
+}
+
+.admin-note-ok { background: #e8f5e9; color: #1b5e20; border-left: 3px solid #43a047; }
+.admin-note-no { background: #ffebee; color: #b71c1c; border-left: 3px solid #e53935; }
+
+.card-footer { margin-top: 8px; }
+
+.card-time { font-size: 12px; color: #90a4ae; }
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.empty-icon { font-size: 60px; margin-bottom: 16px; }
+.empty-state h3 { font-size: 22px; color: #263238; margin: 0 0 8px; }
+.empty-state p  { color: #546e7a; margin: 0 0 20px; }
+
+.back-link { margin-top: 24px; text-align: center; }
+.back-link a { color: #546e7a; text-decoration: none; font-size: 14px; }
+.back-link a:hover { color: #1976d2; }
+
+@media (max-width: 576px) {
+  .stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat-card { padding: 12px 8px; }
+  .stat-num { font-size: 24px; }
+  .request-card { flex-direction: column; gap: 10px; }
+}
+</style>
+
+{% endblock %}
